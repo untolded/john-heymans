@@ -2,48 +2,58 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, MotionConfig } from "framer-motion";
-import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from "@/lib/gsap";
+import { gsap, useGSAP, SplitText, ScrollTrigger, MOTION_OK } from "@/lib/gsap";
 import { content } from "@/lib/content";
-import { photographers } from "@/lib/photos";
+import { photo, photographers, type PhotoSlug } from "@/lib/photos";
 import { Photo } from "@/components/shared/Photo";
 import { BookingModal } from "@/components/shared/BookingModal";
 import { FilmModal } from "@/components/shared/FilmModal";
 import { useModals } from "@/components/shared/useModals";
-import { Desk } from "./Desk";
-import { Parts } from "./Parts";
-import { Log } from "./Log";
+import { Social } from "@/components/shared/Social";
+import { Logos } from "@/components/shared/Logos";
+import { Quote } from "@/components/shared/Quote";
+import { LastLap } from "./LastLap";
 
 const t = content;
+const PART_THUMBS: PhotoSlug[] = ["xc-run", "watch-wrist", "track-sit", "budapest-portrait", "final-help"];
+
+function PlayIcon() {
+  return <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z" fill="currentColor" /></svg>;
+}
 
 export function ConceptC() {
   const root = useRef<HTMLDivElement>(null);
   const m = useModals();
-  // Always the same props on server and client; MotionConfig turns the gesture off for reduced motion.
+  const hero = photo("pan-indoor");
   const tap = { scale: 0.97 };
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add(MOTION_OK, () => {
-        // Hero: the paragraph settles in, the desk arrives a beat later.
-        const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
-        intro.from(".hero-role", { opacity: 0, duration: 0.6 }, 0);
-        intro.from(".hero .display-xl", { opacity: 0, y: 10, duration: 0.9 }, 0.1);
-        intro.from(".hero-sub", { opacity: 0, duration: 0.7 }, 0.5);
-        intro.from(".hero-side > *", { opacity: 0, y: 10, duration: 0.7, stagger: 0.12 }, 0.6);
+        const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+        intro.from(".hero-media", { scale: 1.1, duration: 2.2, ease: "power2.out" }, 0);
+        intro.fromTo(".hero-line", { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: "power4.inOut" }, 0.2);
+        intro.from(".hero-title span", { yPercent: 100, duration: 1, stagger: 0.1 }, 0.5);
+        intro.from([".hero-sub", ".hero-side > *"], { opacity: 0, y: 14, duration: 0.8, stagger: 0.08 }, 1);
+        gsap.to(".hero-media", { yPercent: 12, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
 
-        // Photographs are grey until they reach the middle of the viewport.
-        gsap.utils.toArray<HTMLElement>(".aside-photo").forEach((fig) => {
-          ScrollTrigger.create({ trigger: fig, start: "top 70%", end: "bottom 30%", toggleClass: { targets: fig, className: "is-colour" } });
+        // Every section title stands on a red line that draws in first.
+        gsap.utils.toArray<HTMLElement>(".title-line .line").forEach((line) => {
+          gsap.from(line, { scaleX: 0, duration: 1, ease: "power4.inOut", scrollTrigger: { trigger: line, start: "top 85%", once: true } });
         });
-        // Text arrives quietly, opacity only.
+        gsap.utils.toArray<HTMLElement>(".title-line .display").forEach((el) => {
+          SplitText.create(el, {
+            type: "lines",
+            mask: "lines",
+            autoSplit: true,
+            onSplit: (self) => gsap.from(self.lines, { yPercent: 105, duration: 0.9, stagger: 0.08, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } }),
+          });
+        });
         gsap.set("[data-reveal]", { opacity: 0 });
         ScrollTrigger.batch("[data-reveal]", { start: "top 88%", once: true, onEnter: (els) => gsap.to(els, { opacity: 1, duration: 0.8, stagger: 0.08 }) });
-        return () => gsap.utils.toArray<HTMLElement>(".aside-photo").forEach((f) => f.classList.add("is-colour"));
-      });
-      mm.add(`not all and ${MOTION_OK}`, () => {
-        gsap.utils.toArray<HTMLElement>(".aside-photo").forEach((f) => f.classList.add("is-colour"));
       });
     },
     { scope: root },
@@ -54,145 +64,139 @@ export function ConceptC() {
     <div ref={root}>
       <header className="nav">
         <a href="#top" className="wordmark">{t.brand.name}</a>
-        <nav className="nav-links" aria-label="Sections">
+        <div className="nav-right">
+          <a href="#story" className="hide-m">{t.nav.story}</a>
           <a href="#keynote" className="hide-m">{t.nav.keynote}</a>
-          <a href="#log" className="hide-m">{t.nav.story}</a>
           <a href="#proof" className="hide-m">{t.nav.proof}</a>
           <button onClick={m.openFilm} className="hide-m">{t.nav.filmShort}</button>
-          <a href="#enquire" className="pen">{t.nav.enquireShort}</a>
-        </nav>
+          <Social className="hide-m" />
+          <button className="nav-cta" onClick={() => m.openBooking()}>{t.nav.enquireShort}</button>
+        </div>
       </header>
 
       <main id="top">
-        {/* Hero. The desk is primary: the returning leader is already sold. The film is one click away. */}
-        <section className="hero wrap" aria-labelledby="hero-title">
-          <div className="hero-grid">
+        {/* Hero. Enquiry and film side by side; the red line is the finish line, and it comes back at the end. */}
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-media">
+            <Image src={hero.src} alt="John Heymans racing indoors, the field blurred around him" fill sizes="100vw" priority />
+          </div>
+          <span className="hero-line" aria-hidden="true" />
+          <div className="hero-inner wrap">
             <div>
-              <p className="hero-role">{t.brand.role}</p>
-              <h1 id="hero-title" className="display display-xl">{t.hero.c.headline}</h1>
+              <h1 id="hero-title" className="display display-hero hero-title">
+                <span>Everyone with</span><span>experience</span><span>said no.</span>
+              </h1>
               <p className="lede hero-sub">{t.hero.c.sub}</p>
             </div>
             <div className="hero-side">
-              <Desk onContinue={m.openBooking} />
-              <button className="film-link" onClick={m.openFilm}>
-                <Photo slug="stage-point" alt="" sizes="7rem" credit="hidden" />
-                <span><strong>{t.nav.film}</strong><span className="small">Sixty seconds. Voice-over by a leading athletics commentator.</span></span>
-              </button>
+              <motion.button className="btn btn-red" onClick={() => m.openBooking()} whileTap={tap}>{t.nav.enquire}</motion.button>
+              <motion.button className="btn btn-line" onClick={m.openFilm} whileTap={tap}><PlayIcon />{t.nav.film}</motion.button>
+              <span className="hero-credit">{hero.caption}. Photo {hero.credit}</span>
             </div>
           </div>
         </section>
 
-        <div className="wrap"><div className="rule" /></div>
-
-        {/* Reading flow: the proposition, with the numbers as a margin note. */}
-        <section className="wrap section-pad read" aria-labelledby="read-title">
-          <div className="page">
-            <div>
-              <h2 id="read-title" className="display display-l">{t.proposition.title}</h2>
-              {t.proposition.body.map((p) => <p key={p} className="body" data-reveal>{p}</p>)}
-              <dl className="numbers">
-                {t.numbers.map((n) => (
-                  <div key={n.label} className="number" data-reveal>
-                    <dt className="sr-only">{n.label}</dt>
-                    <dd><strong>{n.value}{n.unit ? <small>{n.unit}</small> : null}</strong><span className="small">{n.label}</span></dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <aside className="margin-note">
-              <Photo slug="kit-hips" alt="John in the Belgian kit on an indoor track" sizes="(min-width: 992px) 26rem, 100vw" className="aside-photo" credit="below" />
-            </aside>
+        <section className="wrap section-pad" aria-labelledby="statement-title">
+          <div className="statement-grid">
+            <div className="title-line"><span className="line" /><h2 id="statement-title" className="display display-l">{t.proposition.title}</h2></div>
+            <div>{t.proposition.body.map((p) => <p key={p} className="body" data-reveal>{p}</p>)}</div>
           </div>
+          <ul className="numbers">
+            {t.numbers.map((n) => (
+              <li key={n.label} className="number" data-reveal>
+                <p className="numeral">{n.value}{n.unit ? <small>{n.unit}</small> : null}</p>
+                <p className="label">{n.label}</p>
+              </li>
+            ))}
+          </ul>
         </section>
 
-        <Log />
+        <LastLap />
 
-        {/* Keynote */}
         <section className="wrap section-pad" id="keynote" aria-labelledby="keynote-title">
-          <div className="page">
+          <div className="keynote-grid">
             <div>
-              <h2 id="keynote-title" className="display display-l">{t.keynote.title}</h2>
-              <p className="lede" data-reveal>{t.keynote.intro}</p>
+              <div className="title-line"><span className="line" /><h2 id="keynote-title" className="display display-xl">{t.keynote.title}</h2></div>
               <dl className="facts">
-                {t.keynote.facts.map((f) => <div key={f.label} className="fact" data-reveal><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+                {t.keynote.facts.map((f) => <div key={f.label} className="fact" data-reveal><dt className="label">{f.label}</dt><dd>{f.value}</dd></div>)}
               </dl>
-              <h3 className="display-m" style={{ marginTop: "3rem", marginBottom: "0.5rem" }}>The five parts</h3>
-              <Parts />
-              <h3 className="display-m" style={{ marginTop: "3rem" }}>Where it works</h3>
-              <ul className="contexts">
-                {t.keynote.contexts.map((c) => <li key={c.title} className="context" data-reveal><strong>{c.title}</strong><span>{c.detail}</span></li>)}
-              </ul>
             </div>
-            <aside className="margin-note">
-              <div className="recording">
-                <Photo slug="stage-wide" alt="John on stage at Supernova" sizes="(min-width: 992px) 40rem, 100vw" className="aside-photo is-wide" credit="below" />
-                <div>
-                  <p><em>{t.keynote.supernova.title}.</em> {t.keynote.supernova.note}</p>
-                </div>
+            <div>
+              <p className="lede" data-reveal>{t.keynote.intro}</p>
+              <ol className="parts" style={{ marginTop: "2rem" }}>
+                {t.chapters.map((c, i) => (
+                  <li key={c.n} className="part">
+                    <span className="part-n">{c.n}</span>
+                    <div>
+                      <h3 className="part-title">{c.title}</h3>
+                      <p className="part-place">{c.place}</p>
+                      <p className="part-tease">{c.hook}</p>
+                    </div>
+                    <Photo slug={PART_THUMBS[i]} alt="" sizes="10rem" className="part-thumb" credit="hidden" />
+                  </li>
+                ))}
+              </ol>
+              <div className="contexts">
+                {t.keynote.contexts.map((c) => <div key={c.title} className="context" data-reveal><strong>{c.title}</strong><p>{c.detail}</p></div>)}
               </div>
-            </aside>
-          </div>
-        </section>
-
-        <div className="wrap"><div className="rule" /></div>
-
-        {/* Proof, written as a sentence. */}
-        <section className="wrap section-pad" id="proof" aria-labelledby="proof-title">
-          <div className="page">
-            <div>
-              <h2 id="proof-title" className="display display-l">{t.proof.title}</h2>
-              <p className="clients-line" data-reveal>
-                {t.proof.clients.map((c, i) => (
-                  <span key={c}><b>{c}</b>{i < t.proof.clients.length - 1 ? (i === t.proof.clients.length - 2 ? " and " : ", ") : "."}</span>
-                ))}{" "}
-                <span className="note">{t.proof.footnote}</span>
-              </p>
-              {t.proof.quotes.map((q) => (
-                <blockquote key={q.org} className="quote" data-reveal>
-                  <p>{q.text}</p>
-                  <footer><strong>{q.who}</strong>, <span>{q.org}</span></footer>
-                </blockquote>
-              ))}
             </div>
           </div>
+          <div className="recording">
+            <Image src={photo("stage-wide").src} alt="John on stage at Supernova" fill sizes="100vw" />
+            <div className="recording-copy">
+              <p className="lede">{t.keynote.supernova.title}. {t.keynote.supernova.note}</p>
+            </div>
+            <span className="photo-credit" style={{ position: "absolute", right: "0.75rem", bottom: "0.75rem", color: "#fff" }}>Photo {photo("stage-wide").credit}</span>
+          </div>
         </section>
 
-        <div className="wrap"><div className="rule" /></div>
+        <section className="wrap section-pad" id="proof" aria-labelledby="proof-title">
+          <div className="title-line"><span className="line" /><h2 id="proof-title" className="display display-xl">{t.proof.title}</h2></div>
+          <Logos />
+          <p className="label clients-note" data-reveal>{t.proof.footnote}</p>
+          <div className="quotes">
+            {t.proof.quotes.map((q) => <Quote key={q.org} q={q} />)}
+          </div>
+        </section>
 
-        {/* About */}
         <section className="wrap section-pad" id="about" aria-labelledby="about-title">
-          <div className="page">
-            <div>
-              <h2 id="about-title" className="display display-l">{t.about.title}</h2>
+          <div className="about-grid">
+            <Photo slug="stage-portrait-2" alt="John Heymans speaking" sizes="(min-width: 992px) 40vw, 100vw" className="about-img bw" />
+            <div className="about-copy">
+              <div className="title-line"><span className="line" /><h2 id="about-title" className="display display-xl">{t.about.title}</h2></div>
               {t.about.body.map((p) => <p key={p} className="body" data-reveal>{p}</p>)}
               <p className="signature" data-reveal>{t.about.signature}</p>
             </div>
-            <aside className="margin-note">
-              <Photo slug="track-laugh" alt="John laughing at the side of a track" sizes="(min-width: 992px) 26rem, 100vw" className="aside-photo" credit="below" />
-            </aside>
           </div>
         </section>
 
-        {/* Enquire: the desk again, on the counter. */}
         <section className="wrap section-pad enquire" id="enquire" aria-labelledby="enquire-title">
-          <div className="page">
+          <div className="enquire-grid">
             <div>
-              <h2 id="enquire-title" className="display display-l">{t.enquiry.title}</h2>
-              <p className="lede" data-reveal>{t.enquiry.intro}</p>
-              <p className="body" data-reveal style={{ marginTop: "1.5rem" }}>Or write to <a className="link" href={`mailto:${t.enquiry.email}`}>{t.enquiry.email}</a>.</p>
-              <motion.button className="btn btn-line" style={{ marginTop: "1.5rem" }} onClick={m.openFilm} whileTap={tap}>{t.nav.film}</motion.button>
+              <h2 id="enquire-title" className="display display-xl">{t.enquiry.title}</h2>
+              <p className="lede" data-reveal style={{ marginTop: "1.5rem" }}>{t.enquiry.intro}</p>
             </div>
-            <aside className="margin-note">
-              <Desk onContinue={m.openBooking} compact />
-            </aside>
+            <div className="enquire-actions">
+              <motion.button className="btn btn-red" onClick={() => m.openBooking()} whileTap={tap}>{t.enquiry.submit}</motion.button>
+              <a className="enquire-mail" href={`mailto:${t.enquiry.email}`}>{t.enquiry.email}</a>
+            </div>
           </div>
         </section>
       </main>
 
       <footer className="footer wrap">
-        <p>{t.footer.copyright}. {t.footer.made}</p>
-        <p>{t.footer.credits}: {photographers.join(", ")}</p>
-        <p>Concept C. The log. <Link href="/">All three concepts</Link></p>
+        <div className="footer-top">
+          <p className="footer-mark" aria-hidden="true">John<br />Heymans</p>
+          <div className="footer-links">
+            <a href={`mailto:${t.enquiry.email}`}>{t.enquiry.email}</a>
+            <Social variant="full" />
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>{t.footer.copyright} {new Date().getFullYear()}</span>
+          <span>{t.footer.credits}: {photographers.join(", ")}</span>
+          <span>Concept C. <Link href="/concept-a">A</Link> <Link href="/concept-b">B</Link></span>
+        </div>
       </footer>
 
       <BookingModal open={m.booking} onClose={m.closeBooking} prefill={m.prefill} />

@@ -11,7 +11,14 @@ export const content = {
     name: "John Heymans",
     role: "Olympic 5000m finalist. Keynote speaker.",
     shortRole: "Olympic finalist, keynote speaker",
+    pb: "13:03.46",
+    pbLabel: "5000m personal best",
   },
+
+  social: [
+    { name: "Instagram", handle: "@heymans.john", href: "https://www.instagram.com/heymans.john/" },
+    { name: "LinkedIn", handle: "John Heymans", href: "https://www.linkedin.com/in/john-heymans-308aa7154/" },
+  ],
 
   nav: {
     keynote: "Keynote",
@@ -27,7 +34,7 @@ export const content = {
 
   hero: {
     a: {
-      headline: "Two years from deciding to try, to the Olympic final.",
+      headline: "Two years from deciding to try to the Olympic final.",
       sub: "I got there on a race schedule my federation, my coach and my competitors all told me not to run. An algorithm I built picked it. It produced the fastest rise up the world rankings in the history of my sport.",
       kicker: "A 30-minute keynote on strategy, risk and the status quo, for teams that need a different edge.",
     },
@@ -36,8 +43,8 @@ export const content = {
       sub: "Nobody with experience thought the plan would work. I ran it anyway. Now I bring what I learned to teams that are coming off a hard year.",
     },
     c: {
-      headline: "I built an algorithm to get to the Olympics. Everyone with experience told me not to run it.",
-      sub: "Olympic 5000m finalist. I give a 30-minute keynote on strategy, risk and questioning the standard approach, in English, Dutch or French.",
+      headline: "Everyone with experience said no.",
+      sub: "So I ran the race schedule an algorithm picked instead. Two years later I was on the start line of the Olympic 5000m final. I bring that decision, and what it cost, to teams that need to perform this year.",
     },
   },
 
@@ -117,24 +124,34 @@ export const content = {
 
   proof: {
     title: "Booked by",
-    clients: [
-      "White & Case",
-      "Young Presidents' Organization",
-      "De Warande",
-      "The Merode",
-      "Cobepa",
+    logos: [
+      { slug: "ypo", name: "YPO" },
+      { slug: "kbc", name: "KBC" },
+      { slug: "dell", name: "Dell" },
+      { slug: "engie", name: "Engie" },
+      { slug: "sd-worx", name: "SD Worx" },
+      { slug: "duvel", name: "Duvel" },
+      { slug: "unizo", name: "Unizo" },
+      { slug: "warande", name: "De Warande" },
+      { slug: "garrincha", name: "Garrincha" },
+      { slug: "supernova", name: "Supernova" },
     ],
-    footnote: "Also booked by the largest entrepreneur network in Flanders, a world-ranked brewery and an urban sports complex.",
+    clients: ["White & Case", "Cobepa", "The Merode"],
+    footnote: "And White & Case, Cobepa and The Merode.",
     quotes: [
       {
-        text: "Engaging and directly relatable to business. John framed his rise from amateur to Olympic finalist in two years as lessons we could take back to our teams, not as a story about himself. His energy lifted the room.",
-        who: "Partner and Co-Head of Global M&A",
+        text: "His story of rising from amateur to Olympic finalist in just two years wasn't about self-promotion but about sharing life lessons directly applicable to business. His high energy further enhanced the experience.",
+        who: "Partner, Co-Head of Global M&A",
         org: "White & Case",
+        portrait: "/testimonials/white-case-portrait.png",
+        logo: "/testimonials/white-case-logo.png",
       },
       {
-        text: "He covered the highs of elite competition and the setbacks alongside them, and drew clear lines from both to the challenges our members face. His openness is what made it land.",
+        text: "Sharing not only the highs of elite competition but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
         who: "Programme Manager",
         org: "The Merode",
+        portrait: "/testimonials/merode-portrait.png",
+        logo: "/testimonials/merode-logo.png",
       },
     ],
   },
@@ -181,9 +198,7 @@ export const content = {
   footer: {
     contact: "Business enquiries",
     credits: "Photography",
-    legal: "Privacy",
     copyright: "John Heymans",
-    made: "Site in development",
   },
 } as const;
 

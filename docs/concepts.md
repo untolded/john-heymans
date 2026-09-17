@@ -1,24 +1,32 @@
 # Three landing-page concepts — design plan
 
-Written before building, per CLAUDE.md. Each concept is a full one-pager at its own route. The same copy, proof and photography run through all three so John compares design, not content.
+Revised after the first review (17 September 2026). The brief from that review: B's cinematic, high-energy register is the bar; A and C are rebuilt to meet it with their own ideas rather than a quieter register. One accent per concept, used consistently. Footers that read as footers. Social links in nav and footer. No labels above headings.
 
-| | A. Ranking | B. Made it | C. The log |
+| | A. Velocity | B. Made it | C. Stadium |
 |---|---|---|---|
 | Route | `/concept-a` | `/concept-b` | `/concept-c` |
-| Register | Instrument panel. Light, technical, data-led. | Cinema. Dark, photographic, heavy type. | Editorial long read. Stone paper, serif, first-person. |
-| Hero primary action | Booking enquiry (modal). Film is secondary. | The film. Enquiry is secondary. | Enquiry as an inline availability desk. Film is a linked thumbnail. |
-| The one bold element | The world-ranking climb, scrubbed by scroll: a pinned chart whose line draws itself while the race list beside it lights up race by race. | The final chapter: the words on his arms are written in marker, stroke by stroke, as you scroll onto the Olympic-final photograph. | The two years as a horizontal training log you scroll through sideways: dated entries, dry notes, one line per decision. |
-| Photography | Colour, with the Paris lavender track carried into the palette. | Colour as the event on a dark ground; large and full-bleed. | Mixed: colour arrives when an image reaches the centre of the viewport. |
-| Global motion (GSAP) | Scrubbed chart draw, odometer numerals, lane lines drawing in. | Section theme flips with the nav inverting, hero parallax, pinned marker reveal, line reveals. | Pinned horizontal scroll with containerAnimation, saturate-on-centre, line reveals. |
-| Micro-interactions (Framer Motion) | Button press states, row hover, modal transitions. | Magnetic primary button, modal, play button. | Keynote-part accordion, availability desk expansion, modal. |
+| Register | Speed. Blue-black, motion-blur photography, condensed capitals. | Cinema. Warm black, full-bleed photography, condensed capitals, Belgian yellow. | Film poster. Black, black-and-white photography, high-contrast serif capitals, one red line. |
+| Accent | Paris-track lavender `#A895DD`, on every CTA, every numeral, the race clock, the ranking line, and the enquiry band. | Belgian yellow `#F2C230`, on the nav CTA, chapter numbers, numerals, rules, the marker text, the play disc, the enquiry button, the footer line. | Belgian red `#E4322B`, on the finish line, every title rule, the distance counter, part numbers, the nav CTA and enquiry button. |
+| Hero primary action | Enquiry. Film secondary. | The film. Enquiry secondary. | Enquiry and film side by side, enquiry filled. |
+| The one bold element | The page is one 5000m: a race clock in the nav runs from 0:00.00 to his 13:03.46 personal best as you scroll. The five chapters run sideways in a pinned strip with the world-ranking line drawn across them. | The final chapter: "Hey mom" and "Made it" are written in marker across the Olympic-final photograph, one word per scroll pass. | The last lap: one pinned scene, five black-and-white frames cross-fading with a red finish line travelling in and a distance counter running 400 to 0. He crosses the line and the page shows colour for the first time. |
+| Type | Archivo variable, width 66, uppercase. | Big Shoulders + Hanken Grotesk. | Bricolage Grotesque only, heavy and mixed case. Replaced Bodoni Moda in round 3: too classical and hard to read. |
+| Photography | Pan-blur race shots in colour (VSP Pictures, Jacob Jasper, Belga). | Full colour, licensed Paris heats and final. | Grayscale by default; colour only at the finish and on hover. |
 
-## Why each hero decision
+## Why the two rebuilds are different from each other and from B
 
-- **A**: the primary audience is a decision-maker comparing three or four speakers. They need the price path fast. Enquiry first, film one click away.
-- **B**: the film is the brand's most persuasive asset and shares the site's narrative spine. Let it do the selling; the enquiry button is permanent but quiet.
-- **C**: the second audience, a senior leader who has already seen him speak, arrives sold. Put the desk on the counter. The film is there for anyone who has not.
+All three are now dark and photographic, so the differences are carried by type, colour and the bold element. A is cool and technical (blue-black, lavender, a grotesque, data). B is warm and loud (black, yellow, Big Shoulders, the marker). C is monochrome and theatrical (black, red, Bodoni, the finish). None of the three shares a typeface, an accent, or a scroll device.
 
-## Concept A. Ranking
+## Photo licensing
+
+Belga Image photographs are used only from `media/photos/01_Commercial License Pics`. Every other Belga file in the library is excluded from the build. New photographers in this round are credited by handle where no name is known: @vspicturescom, @jacobjasper, @ryanxallek, @quintenfelden, @erkipictures.
+
+## Concept A. Velocity (rebuilt)
+
+Palette: `--ground #0B0A12`, `--ink #F1EFFF`, `--lane #A895DD`, `--lane-deep #2B2150`. Archivo at width 66, weight 800, uppercase for every headline and numeral. The nav carries the race clock and a lavender progress line. The strip pins for the width of its five panels; the ranking line is an SVG with a clip that widens with scroll, so it survives the non-uniform scaling. Phones get the panels stacked and the line omitted.
+
+### Earlier direction, superseded
+
+## Concept A. Ranking (first round)
 
 **Idea.** The site is the algorithm's output rendered as a timing screen. Lane geometry and world-ranking data are the visual vernacular. It says: this speaker thinks in systems.
 
@@ -79,7 +87,13 @@ Written before building, per CLAUDE.md. Each concept is a full one-pager at its 
 
 **Principles.** One typeface does the shouting so nothing else has to. Yellow is spent twice. The most emotional asset is held back until the end and earned by the four chapters before it.
 
-## Concept C. The log
+## Concept C. Stadium (rebuilt)
+
+Palette: `--black #050505`, `--white #F4F2EE`, `--red #E4322B`. Bricolage Grotesque for everything: optical size 96, weight 700 to 800, mixed case for headlines; optical size 14 for body. The first version used Bodoni Moda capitals, which John and Maarten found too classical and hard to read. Photographs are grayscale by CSS filter, so colour can be revealed: on the last frame of the lap, on the Supernova recording on hover, and on the part thumbnails on hover. The red line under every title draws in before the title rises.
+
+### Earlier direction, superseded
+
+## Concept C. The log (first round)
 
 **Idea.** The site is John's own account, read like a long piece of writing with his training log laid across it. Ink on stone, one serif, the pen the constant. Handwriting appears only where he actually wrote something: on his arm.
 
@@ -131,6 +145,8 @@ Where the first draft was something I would produce for any speaker, and what ch
 - Root font size scales with viewport from 1440px to 1920px so the layout holds on large screens.
 
 ## Open items for John and Maarten
+
+0. Testimonial portraits and organisation logos from `media/Testimonials` are in place. The source portraits are under 110px, so they are shown small; higher-resolution versions would allow a larger treatment.
 
 1. The 60-second film is not in the repo. Both film modals show the poster frame and say the film is in final edit. Drop the MP4 into `public/media/promo.mp4` and it plays.
 2. The Supernova recording is not in the repo. Concept B has a slot for it in the keynote section.

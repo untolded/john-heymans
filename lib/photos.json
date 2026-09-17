@@ -118,34 +118,6 @@
     "credit": "Arthur Vermeylen",
     "caption": "Training, 2025"
   },
-  "final-arms": {
-    "src": "/photos/final-arms.jpg",
-    "width": 2400,
-    "height": 1569,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m final, Paris, 10 August 2024"
-  },
-  "final-arms-2": {
-    "src": "/photos/final-arms-2.jpg",
-    "width": 2400,
-    "height": 1569,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m final, Paris, 10 August 2024"
-  },
-  "final-wave": {
-    "src": "/photos/final-wave.jpg",
-    "width": 1862,
-    "height": 2400,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
-  },
-  "final-run": {
-    "src": "/photos/final-run.jpg",
-    "width": 2400,
-    "height": 1601,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
-  },
   "final-pan": {
     "src": "/photos/final-pan.jpg",
     "width": 2400,
@@ -153,40 +125,19 @@
     "credit": "Belga Image",
     "caption": "Olympic 5000m heats, Paris, 7 August 2024"
   },
-  "final-pack": {
-    "src": "/photos/final-pack.jpg",
-    "width": 2400,
-    "height": 1638,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m final, Paris, 10 August 2024"
-  },
-  "final-walk": {
-    "src": "/photos/final-walk.jpg",
-    "width": 1593,
-    "height": 2400,
-    "credit": "Belga Image",
-    "caption": "Olympic 5000m final, Paris, 10 August 2024"
-  },
-  "stadium": {
-    "src": "/photos/stadium.jpg",
-    "width": 2400,
-    "height": 1568,
-    "credit": "Belga Image",
-    "caption": "Stade de France, 10 August 2024"
-  },
-  "crowd": {
-    "src": "/photos/crowd.jpg",
+  "heats-pack": {
+    "src": "/photos/heats-pack.jpg",
     "width": 2400,
     "height": 1600,
     "credit": "Belga Image",
-    "caption": "Stade de France, 10 August 2024"
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
   },
-  "start-dark": {
-    "src": "/photos/start-dark.jpg",
-    "width": 1593,
+  "lavender-race": {
+    "src": "/photos/lavender-race.jpg",
+    "width": 1603,
     "height": 2400,
     "credit": "Belga Image",
-    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
   },
   "race-orange": {
     "src": "/photos/race-orange.jpg",
@@ -195,19 +146,19 @@
     "credit": "Belga Image",
     "caption": "European Indoor Championships, Apeldoorn, 2025"
   },
-  "race-face": {
-    "src": "/photos/race-face.jpg",
+  "final-help": {
+    "src": "/photos/final-help.jpg",
     "width": 2400,
-    "height": 1600,
+    "height": 1615,
     "credit": "Belga Image",
-    "caption": "European Indoor Championships, Istanbul, 2023"
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
   },
-  "lavender-race": {
-    "src": "/photos/lavender-race.jpg",
-    "width": 1603,
-    "height": 2400,
+  "final-arms": {
+    "src": "/photos/final-arms.jpg",
+    "width": 2400,
+    "height": 1569,
     "credit": "Belga Image",
-    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
   },
   "xc-beanie": {
     "src": "/photos/xc-beanie.jpg",
@@ -229,5 +180,124 @@
     "height": 2160,
     "credit": "Ruben Redant",
     "caption": "Cross country, Hulshout, 2024"
+  },
+  "pan-1": {
+    "src": "/photos/pan-1.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "pan-2": {
+    "src": "/photos/pan-2.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "pan-3": {
+    "src": "/photos/pan-3.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "pan-4": {
+    "src": "/photos/pan-4.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "stride-gold": {
+    "src": "/photos/stride-gold.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "stride-2": {
+    "src": "/photos/stride-2.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@vspicturescom",
+    "caption": "Track, May 2023"
+  },
+  "pan-indoor": {
+    "src": "/photos/pan-indoor.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "@jacobjasper",
+    "caption": "European Indoor Championships, Istanbul, 2023"
+  },
+  "pan-indoor-2": {
+    "src": "/photos/pan-indoor-2.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "@jacobjasper",
+    "caption": "European Indoor Championships, Istanbul, 2023"
+  },
+  "istanbul-face": {
+    "src": "/photos/istanbul-face.jpg",
+    "width": 2400,
+    "height": 1599,
+    "credit": "@jacobjasper",
+    "caption": "European Indoor Championships, Istanbul, 2023"
+  },
+  "hug-bw": {
+    "src": "/photos/hug-bw.jpg",
+    "width": 1440,
+    "height": 1800,
+    "credit": "@ryanxallek",
+    "caption": "Montgeron, July 2023"
+  },
+  "celebrate": {
+    "src": "/photos/celebrate.jpg",
+    "width": 1920,
+    "height": 2400,
+    "credit": "@ryanxallek",
+    "caption": "Montgeron, July 2023"
+  },
+  "montgeron-run": {
+    "src": "/photos/montgeron-run.jpg",
+    "width": 1920,
+    "height": 2400,
+    "credit": "@ryanxallek",
+    "caption": "Montgeron, July 2023"
+  },
+  "budapest-line": {
+    "src": "/photos/budapest-line.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "@quintenfelden",
+    "caption": "World Championships, Budapest, 2023"
+  },
+  "budapest-run": {
+    "src": "/photos/budapest-run.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "@quintenfelden",
+    "caption": "World Championships, Budapest, 2023"
+  },
+  "budapest-portrait": {
+    "src": "/photos/budapest-portrait.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "@quintenfelden",
+    "caption": "World Championships, Budapest, 2023"
+  },
+  "tokyo-run": {
+    "src": "/photos/tokyo-run.jpg",
+    "width": 2400,
+    "height": 1601,
+    "credit": "@erkipictures",
+    "caption": "World Championships, Tokyo, 2025"
+  },
+  "tokyo-pack": {
+    "src": "/photos/tokyo-pack.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "@erkipictures",
+    "caption": "World Championships, Tokyo, 2025"
   }
 }

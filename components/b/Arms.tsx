@@ -48,8 +48,8 @@ export function Arms({ tease, hook }: { tease: string; hook: string }) {
           <span className="marker arms-word">Made it</span>
         </div>
         <div className="arms-copy wrap">
-          <p className="label">05. Stade de France, 10 August 2024</p>
           <h2 id="arms-title" className="display display-l">The final</h2>
+          <p className="label chapter-place">Stade de France, 10 August 2024</p>
           <p className="lede">{tease}</p>
           <p className="label">{hook}</p>
         </div>

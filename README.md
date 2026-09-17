@@ -13,16 +13,17 @@ Open http://localhost:3000. The index lists the three concepts:
 
 | Route | Concept |
 |---|---|
-| `/concept-a` | Ranking. Light instrument panel, Archivo, Paris lavender. Bold element: the scroll-scrubbed world-ranking climb. |
+| `/concept-a` | Velocity. Blue-black, motion-blur photography, Archivo condensed, Paris lavender. A race clock in the nav runs to his personal best as you scroll; the story runs sideways with the ranking line drawn across it. |
 | `/concept-b` | Made it. Warm black, full-bleed photography, Big Shoulders. Bold element: the words on his arms, written on scroll. |
-| `/concept-c` | The log. Stone paper, Newsreader, cobalt ink. Bold element: the two years as a horizontal training log. |
+| `/concept-c` | Stadium. Black, black-and-white photography, Bodoni Moda capitals, one red line. The last lap: five frames, a finish line, and colour only when he crosses it. |
 
 The design plan and the check against the brief are in `docs/concepts.md`.
 
 ## Where things live
 
 - `lib/content.ts`: every string on the site, in one dictionary, ready for Dutch and French.
-- `lib/photos.json` and `public/photos/`: the selected photographs with credits and captions. Regenerate from `media/` if the selection changes.
+- `lib/photos.json` and `public/photos/`: the selected photographs with credits and captions. Belga Image files come only from the commercial-licence folder.
+- `public/logos/`: the ten client logos, rendered monochrome by CSS filter.
 - `components/shared/`: the booking modal, film modal, photo-with-credit component.
 - `components/a`, `components/b`, `components/c`: one folder per concept. GSAP lives in `useGSAP` hooks with `gsap.matchMedia`, so reduced motion and phones get the finished state.
 - `app/concept-*/`: route, per-concept fonts and stylesheet.

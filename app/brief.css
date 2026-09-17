@@ -1,0 +1,97 @@
+/* The brief for John. Neutral on purpose: it should not lean towards any one concept.
+   Each concept card previews its own typeface and accent. */
+
+.brief {
+  --bg: #0c0c0d;
+  --card: #151517;
+  --text: #f2f1ee;
+  --dim: rgba(242, 241, 238, 0.64);
+  --rule: rgba(242, 241, 238, 0.14);
+  --focus: #f2f1ee;
+  --pad: clamp(1rem, 5vw, 4rem);
+
+  font-family: var(--font-geist), "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-inline: var(--pad);
+  padding-block: clamp(2.5rem, 6vw, 5rem) 3rem;
+}
+.brief * { box-sizing: border-box; }
+:where(.brief) :where(h1, h2, h3, p, ol, ul) { margin: 0; }
+:where(.brief) :where(ol, ul) { padding: 0; list-style: none; }
+.brief a { color: inherit; }
+
+.brief-inner { max-width: 76rem; margin-inline: auto; }
+.brief-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; color: var(--dim); font-size: 0.9375rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--rule); }
+.brief-top strong { color: var(--text); font-weight: 600; }
+
+.brief-title { margin-top: clamp(2.5rem, 7vw, 5.5rem); font-weight: 700; font-size: clamp(2.5rem, 6.5vw, 5.5rem); line-height: 0.95; letter-spacing: -0.045em; max-width: 14ch; text-wrap: balance; }
+.brief-lede { margin-top: 1.75rem; font-size: clamp(1.15rem, 1.6vw, 1.4rem); line-height: 1.5; max-width: 40rem; text-wrap: pretty; }
+.brief-lede + .brief-lede { margin-top: 1rem; color: var(--dim); }
+
+.brief-h2 { margin-bottom: 0; font-weight: 700; font-size: clamp(1.6rem, 2.6vw, 2.2rem); line-height: 1.05; letter-spacing: -0.03em; }
+.brief-section { margin-top: clamp(3.5rem, 8vw, 6rem); }
+
+/* Concept cards */
+.cards { display: grid; gap: 1rem; margin-top: 1.75rem; }
+@media (min-width: 900px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+.card { position: relative; display: grid; grid-template-rows: auto 1fr; background: var(--card); border-radius: 0.75rem; overflow: hidden; text-decoration: none; color: var(--text); outline-offset: 4px; transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.card:hover { transform: translateY(-4px); }
+.card-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+.card-media img { object-fit: cover; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.card:hover .card-media img { transform: scale(1.05); }
+.card-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0) 60%); }
+.card-name { position: absolute; left: 1.1rem; bottom: 0.9rem; z-index: 1; line-height: 0.9; }
+.card-letter { display: block; font-size: 0.9375rem; font-family: var(--font-geist), sans-serif; font-weight: 600; margin-bottom: 0.35rem; }
+.card-body { display: grid; gap: 1rem; align-content: start; padding: 1.25rem 1.1rem 1.25rem; }
+.card-line { color: var(--dim); }
+.card-notice { display: grid; gap: 0.45rem; font-size: 0.9375rem; }
+.card-notice li { display: grid; grid-template-columns: 0.9rem 1fr; gap: 0.5rem; }
+.card-notice li::before { content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent); margin-top: 0.55rem; }
+.card-open { align-self: end; margin-top: 0.5rem; display: inline-flex; align-items: center; justify-content: space-between; gap: 1rem; height: 3rem; padding-inline: 1.1rem; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.card-open svg { transition: transform 0.3s; }
+.card:hover .card-open svg { transform: translateX(3px); }
+.card-swatches { display: flex; gap: 0.35rem; }
+.card-swatches span { width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 1px solid var(--rule); }
+
+.card-a { --accent: #a895dd; --accent-ink: #0b0a12; }
+.card-a .card-name b { font-family: var(--font-archivo); font-variation-settings: "wdth" 66; font-weight: 800; text-transform: uppercase; font-size: 3rem; color: #f1efff; }
+.card-b { --accent: #f2c230; --accent-ink: #0c0b0a; }
+.card-b .card-name b { font-family: var(--font-shoulders); font-variation-settings: "opsz" 72; font-weight: 800; text-transform: uppercase; font-size: 3.25rem; color: #ede7da; }
+.card-c { --accent: #e4322b; --accent-ink: #fff; }
+.card-c .card-name b { font-family: var(--font-brico); font-variation-settings: "opsz" 96, "wdth" 88; font-weight: 800; letter-spacing: -0.04em; font-size: 3rem; color: #f4f2ee; }
+.card-c .card-media img { filter: grayscale(1) contrast(1.08); }
+
+/* How to review */
+.steps { display: grid; gap: 1.5rem; margin-top: 1.75rem; counter-reset: step; }
+@media (min-width: 900px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
+.step { border-top: 1px solid var(--rule); padding-top: 1rem; }
+.step strong { display: block; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.35rem; }
+.step strong::before { counter-increment: step; content: counter(step) ". "; color: var(--dim); }
+.step p { color: var(--dim); }
+
+/* Elements to pick from */
+.picks { display: grid; grid-template-columns: 1fr; gap: 0; margin-top: 1.75rem; border-top: 1px solid var(--rule); }
+@media (min-width: 700px) { .picks { grid-template-columns: 1fr 1fr; column-gap: 2rem; } }
+.pick { display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; padding-block: 0.9rem; border-bottom: 1px solid var(--rule); }
+.pick strong { font-weight: 600; }
+.pick span { color: var(--dim); }
+
+.two-col { display: grid; gap: clamp(2.5rem, 6vw, 4rem); }
+@media (min-width: 900px) { .two-col { grid-template-columns: 1fr 1fr; } }
+.qs { margin-top: 1.25rem; display: grid; gap: 0.75rem; counter-reset: q; }
+.qs li { display: grid; grid-template-columns: 1.75rem 1fr; }
+.qs li::before { counter-increment: q; content: counter(q); color: var(--dim); font-variant-numeric: tabular-nums; }
+.notes { margin-top: 1.25rem; display: grid; gap: 0.75rem; color: var(--dim); }
+.notes li strong { color: var(--text); font-weight: 600; }
+
+.brief-foot { margin-top: clamp(3.5rem, 8vw, 6rem); padding-top: 1.25rem; border-top: 1px solid var(--rule); color: var(--dim); font-size: 0.9375rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+.brief :focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .card, .card-media img, .card-open svg { transition: none; }
+  .card:hover, .card:hover .card-media img { transform: none; }
+}
