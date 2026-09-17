@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# John Heymans, personal-brand website
 
-## Getting Started
+Next.js 16 (App Router, Turbopack), GSAP 3.15 with ScrollTrigger and SplitText, Framer Motion 13.
 
-First, run the development server:
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The index lists the three concepts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Concept |
+|---|---|
+| `/concept-a` | Ranking. Light instrument panel, Archivo, Paris lavender. Bold element: the scroll-scrubbed world-ranking climb. |
+| `/concept-b` | Made it. Warm black, full-bleed photography, Big Shoulders. Bold element: the words on his arms, written on scroll. |
+| `/concept-c` | The log. Stone paper, Newsreader, cobalt ink. Bold element: the two years as a horizontal training log. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The design plan and the check against the brief are in `docs/concepts.md`.
 
-## Learn More
+## Where things live
 
-To learn more about Next.js, take a look at the following resources:
+- `lib/content.ts`: every string on the site, in one dictionary, ready for Dutch and French.
+- `lib/photos.json` and `public/photos/`: the selected photographs with credits and captions. Regenerate from `media/` if the selection changes.
+- `components/shared/`: the booking modal, film modal, photo-with-credit component.
+- `components/a`, `components/b`, `components/c`: one folder per concept. GSAP lives in `useGSAP` hooks with `gsap.matchMedia`, so reduced motion and phones get the finished state.
+- `app/concept-*/`: route, per-concept fonts and stylesheet.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Not yet in the repo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The 60-second film. Drop it at `public/media/promo.mp4` and the film modals play it.
+- The Supernova recording of the full keynote.
+- Client logo files. Clients are set as wordmarks in type for now.
+- A form backend. Submitting the enquiry shows the success state after a short delay.

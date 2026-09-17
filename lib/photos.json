@@ -1,0 +1,233 @@
+{
+  "stage-wide": {
+    "src": "/photos/stage-wide.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "stage-lookup": {
+    "src": "/photos/stage-lookup.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "stage-point": {
+    "src": "/photos/stage-point.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "stage-portrait": {
+    "src": "/photos/stage-portrait.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "stage-portrait-2": {
+    "src": "/photos/stage-portrait-2.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "venue": {
+    "src": "/photos/venue.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Jelle Jansegers",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "stage-profile": {
+    "src": "/photos/stage-profile.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Raf Thomas",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "audience": {
+    "src": "/photos/audience.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Raf Thomas",
+    "caption": "Supernova, Antwerp, 2026"
+  },
+  "kit-hips": {
+    "src": "/photos/kit-hips.jpg",
+    "width": 1920,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Indoor track, 2026"
+  },
+  "kit-portrait": {
+    "src": "/photos/kit-portrait.jpg",
+    "width": 1920,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Indoor track, 2026"
+  },
+  "watch": {
+    "src": "/photos/watch.jpg",
+    "width": 1350,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Indoor track, 2026"
+  },
+  "watch-wrist": {
+    "src": "/photos/watch-wrist.jpg",
+    "width": 1601,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Indoor track, 2026"
+  },
+  "shoes": {
+    "src": "/photos/shoes.jpg",
+    "width": 1601,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Indoor track, 2026"
+  },
+  "outdoor-portrait": {
+    "src": "/photos/outdoor-portrait.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Training, 2025"
+  },
+  "track-lying": {
+    "src": "/photos/track-lying.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Training, 2025"
+  },
+  "track-sit": {
+    "src": "/photos/track-sit.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Training, 2025"
+  },
+  "track-laugh": {
+    "src": "/photos/track-laugh.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Arthur Vermeylen",
+    "caption": "Training, 2025"
+  },
+  "final-arms": {
+    "src": "/photos/final-arms.jpg",
+    "width": 2400,
+    "height": 1569,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+  },
+  "final-arms-2": {
+    "src": "/photos/final-arms-2.jpg",
+    "width": 2400,
+    "height": 1569,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+  },
+  "final-wave": {
+    "src": "/photos/final-wave.jpg",
+    "width": 1862,
+    "height": 2400,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
+  },
+  "final-run": {
+    "src": "/photos/final-run.jpg",
+    "width": 2400,
+    "height": 1601,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
+  },
+  "final-pan": {
+    "src": "/photos/final-pan.jpg",
+    "width": 2400,
+    "height": 1598,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
+  },
+  "final-pack": {
+    "src": "/photos/final-pack.jpg",
+    "width": 2400,
+    "height": 1638,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+  },
+  "final-walk": {
+    "src": "/photos/final-walk.jpg",
+    "width": 1593,
+    "height": 2400,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+  },
+  "stadium": {
+    "src": "/photos/stadium.jpg",
+    "width": 2400,
+    "height": 1568,
+    "credit": "Belga Image",
+    "caption": "Stade de France, 10 August 2024"
+  },
+  "crowd": {
+    "src": "/photos/crowd.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Belga Image",
+    "caption": "Stade de France, 10 August 2024"
+  },
+  "start-dark": {
+    "src": "/photos/start-dark.jpg",
+    "width": 1593,
+    "height": 2400,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m final, Paris, 10 August 2024"
+  },
+  "race-orange": {
+    "src": "/photos/race-orange.jpg",
+    "width": 1600,
+    "height": 2400,
+    "credit": "Belga Image",
+    "caption": "European Indoor Championships, Apeldoorn, 2025"
+  },
+  "race-face": {
+    "src": "/photos/race-face.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Belga Image",
+    "caption": "European Indoor Championships, Istanbul, 2023"
+  },
+  "lavender-race": {
+    "src": "/photos/lavender-race.jpg",
+    "width": 1603,
+    "height": 2400,
+    "credit": "Belga Image",
+    "caption": "Olympic 5000m heats, Paris, 7 August 2024"
+  },
+  "xc-beanie": {
+    "src": "/photos/xc-beanie.jpg",
+    "width": 1440,
+    "height": 2160,
+    "credit": "Ruben Redant",
+    "caption": "Cross country, Hulshout, 2024"
+  },
+  "xc-run": {
+    "src": "/photos/xc-run.jpg",
+    "width": 1440,
+    "height": 960,
+    "credit": "Ruben Redant",
+    "caption": "Cross country, Hulshout, 2024"
+  },
+  "xc-autumn": {
+    "src": "/photos/xc-autumn.jpg",
+    "width": 1440,
+    "height": 2160,
+    "credit": "Ruben Redant",
+    "caption": "Cross country, Hulshout, 2024"
+  }
+}

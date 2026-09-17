@@ -1,69 +1,37 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Archivo } from "next/font/google";
 
-export default function Home() {
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], display: "swap" });
+
+const concepts = [
+  { href: "/concept-a", letter: "A", name: "Ranking", line: "An instrument panel. Paper ground, Paris lavender, one typeface with a width axis. The bold element is the world-ranking climb, drawn by scroll." },
+  { href: "/concept-b", letter: "B", name: "Made it", line: "The film, extended. Warm black, full-bleed photography, condensed capitals, Belgian yellow spent twice. The bold element is the writing on his arms." },
+  { href: "/concept-c", letter: "C", name: "The log", line: "A long read in his own voice. Stone paper, one serif, cobalt ink. The bold element is the two years as a horizontal training log." },
+];
+
+export default function Index() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className={archivo.className} style={{ minHeight: "100vh", background: "#f3f2ee", color: "#101014", padding: "clamp(1.5rem, 5vw, 4rem)" }}>
+      <p style={{ fontSize: "0.9375rem", color: "#6b6a66" }}>John Heymans. Three landing-page concepts for review, September 2026.</p>
+      <h1 style={{ fontVariationSettings: '"wdth" 75', fontWeight: 700, fontSize: "clamp(2.5rem, 6vw, 5rem)", lineHeight: 0.92, letterSpacing: "-0.03em", margin: "1rem 0 3rem", maxWidth: "20ch" }}>
+        Same story, same proof, three ways of telling it.
+      </h1>
+      <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "1px", background: "#cfcdc6", border: "1px solid #cfcdc6" }}>
+        {concepts.map((c) => (
+          <li key={c.href} style={{ background: "#f3f2ee" }}>
+            <Link href={c.href} style={{ display: "grid", gridTemplateColumns: "3rem 1fr", gap: "1.5rem", padding: "1.75rem 1.5rem", color: "inherit", textDecoration: "none" }}>
+              <span style={{ fontVariationSettings: '"wdth" 72', fontWeight: 800, fontSize: "2.5rem", lineHeight: 1 }}>{c.letter}</span>
+              <span>
+                <strong style={{ display: "block", fontVariationSettings: '"wdth" 80', fontSize: "1.5rem", lineHeight: 1.1, marginBottom: "0.5rem" }}>{c.name}</strong>
+                <span style={{ display: "block", maxWidth: "48rem", lineHeight: 1.5 }}>{c.line}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+      <p style={{ marginTop: "2rem", fontSize: "0.9375rem", color: "#6b6a66", maxWidth: "48rem", lineHeight: 1.5 }}>
+        The design plan behind each concept, and what was changed after checking it against the brief, is in docs/concepts.md.
+      </p>
+    </main>
   );
 }
