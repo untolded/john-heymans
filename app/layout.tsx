@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrollManager } from "@/components/shared/ScrollManager";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,8 +10,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    // data-scroll-behavior lets Next switch smooth scrolling off during route changes,
+    // so a new page never animates in from the old scroll position.
+    <html lang="en" data-scroll-behavior="smooth">
+      <body>
+        <ScrollManager />
+        {children}
+      </body>
     </html>
   );
 }
