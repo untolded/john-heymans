@@ -29,7 +29,7 @@ type Live = {
 
 function Entry({ e }: { e: CopyEntry }) {
   return (
-    <div className={`entry k-${e.kind}`} data-entry={e.id}>
+    <div className={`entry k-${e.kind}${e.low ? " is-low" : ""}`} data-entry={e.id}>
       <p className="e-text">
         <Text text={e.text(c)} />
       </p>

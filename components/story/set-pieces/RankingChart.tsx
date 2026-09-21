@@ -1,5 +1,5 @@
-import { CHART, chartPoints, chartPath, chartY, quotaY, rankGuides } from "@/lib/story/layouts";
-import { SERIES } from "@/lib/story/ranking";
+import { CHART, chartPoints, chartPath, chartX, chartY, quotaY, rankGuides } from "@/lib/story/layouts";
+import { SERIES, quarterTicks } from "@/lib/story/ranking";
 import { facts, show, SHOW_PENDING } from "@/lib/story/data";
 import { content } from "@/lib/content";
 
@@ -16,7 +16,7 @@ export function RankingChartSvg({ className, drawn }: { className?: string; draw
   const qy = quotaY();
   const f = drawn ?? pts.length - 1;
   const placeholder = SHOW_PENDING && facts.ranking.series.placeholder;
-  const ticks = labels ? SERIES.filter((_, i) => i % 6 === 0) : [];
+  const ticks = labels && SERIES.length > 1 ? quarterTicks(Date.parse(SERIES[0].date), Date.parse(SERIES[SERIES.length - 1].date)) : [];
 
   return (
     <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className={`ranking-chart ${className ?? ""}`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
@@ -34,14 +34,11 @@ export function RankingChartSvg({ className, drawn }: { className?: string; draw
       </g>
       {labels && (
         <g className="rc-axis">
-          {ticks.map((p) => {
-            const i = SERIES.indexOf(p);
-            return (
-              <text key={p.date} x={pts[i].x} y={CHART.h - 8} textAnchor="middle">
-                {month.format(new Date(p.date)).toUpperCase()}
-              </text>
-            );
-          })}
+          {ticks.map((ms) => (
+            <text key={ms} x={chartX(ms)} y={CHART.h - 8} textAnchor="middle">
+              {month.format(new Date(ms)).toUpperCase()}
+            </text>
+          ))}
         </g>
       )}
       {qy != null && <line className="rc-quota" x1={CHART.padL} x2={CHART.w - CHART.padR} y1={qy} y2={qy} />}

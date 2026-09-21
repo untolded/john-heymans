@@ -6,6 +6,7 @@ import { gsap } from "@/lib/story/gsap";
 import { credits } from "@/lib/story/credits";
 import { useLoadGate } from "@/lib/story/media";
 import type { BeatId } from "@/lib/story/beats";
+import { creditFor } from "@/lib/story/photos";
 
 /**
  * A full-bleed photograph on the stage. It mounts when the load queue says
@@ -33,7 +34,7 @@ export function PhotoLayer({
     <div
       className={`L L-media photo-layer ${className ?? ""}`}
       data-slug={slug}
-      data-credit={p.credit}
+      data-credit={creditFor(slug)}
       style={{ "--focus": focus, "--focus-m": focusMobile ?? focus } as React.CSSProperties}
     >
       <div className="pl-inner">

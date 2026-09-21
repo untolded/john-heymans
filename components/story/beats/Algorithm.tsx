@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { content } from "@/lib/content";
 import { facts, show } from "@/lib/story/data";
 import { gsap } from "@/lib/story/gsap";
@@ -14,8 +15,8 @@ const c = content.story.algorithm;
 const PROMPT = show(facts.algorithm.prompt) ?? c.prompt;
 const REPLY = show(facts.algorithm.reply) ?? c.reply;
 const MEETS = facts.races.candidates.value ?? [];
-// Real meet names only once the race data is confirmed; until then every field is masked.
-const NAMED = !!show(facts.races.candidates) && !facts.races.candidates.placeholder;
+// The calendar is illustrative: its rows only show real names once every meet has one; until then every field is masked.
+const NAMED = MEETS.length > 0 && MEETS.every((m) => m.name);
 const NOISE = "01<>/[]=+";
 
 /** Deterministic field widths for a masked row, so the log looks like data without being any. */
@@ -72,7 +73,9 @@ export function Algorithm() {
       gsap.set(chat, { clipPath: `inset(${(H - caretH) / 2}px ${(W - 2) / 2}px ${(H - caretH) / 2}px ${(W - 2) / 2}px round 2px)` });
       tl.to(chat, { clipPath: "inset(0px 0px 0px 0px round 20px)", duration: 0.08, ease: "power3.inOut" }, 0);
       gsap.set(caret, { x: size.w / 2 - 1, y: size.h / 2 - caretH / 2, width: 2, height: caretH, autoAlpha: 1 });
-      tl.to(caret, { x: input.x, y: input.y + (input.h - 22) / 2, height: 22, duration: 0.07, ease: "power2.inOut" }, 0.004);
+      // The composer is tall enough for the whole prompt; the caret lands on its first line.
+      const lineH = parseFloat(getComputedStyle(q(".chat-input")[0]).lineHeight) || 24;
+      tl.to(caret, { x: input.x, y: input.y + (lineH - 22) / 2, height: 22, duration: 0.07, ease: "power2.inOut" }, 0.004);
       tl.set(caret, { autoAlpha: 0 }, 0.077);
       tl.set(q(".chat-caret"), { autoAlpha: 1 }, 0.077);
 
@@ -125,7 +128,7 @@ export function Algorithm() {
           at: 0.08,
           on: () => {
             placeholder.style.opacity = "0";
-            return R.type(typed, PROMPT);
+            return R.type(typed, PROMPT, { maxDuration: 3.4 });
           },
           off: () => {
             typed.textContent = "";
@@ -197,15 +200,18 @@ export function Algorithm() {
       <div className="L L-set algo-set">
         <div className="chat">
           <div className="chat-bg" />
-          <p className="chat-title" data-scramble>
-            {c.app}
+          <p className="chat-title">
+            <Image className="chat-logo" src="/story/brand/chatgpt-white.png" alt="" width={20} height={20} unoptimized />
+            <span data-scramble>{c.app}</span>
           </p>
           <div className="chat-thread">
             <div className="chat-you">
               <p data-scramble>{PROMPT}</p>
             </div>
             <div className="chat-ai">
-              <span className="chat-avatar" />
+              <span className="chat-avatar">
+                <Image src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+              </span>
               <div className="chat-ai-text">
                 {REPLY.map((line) => (
                   <p key={line} data-scramble>
@@ -221,8 +227,14 @@ export function Algorithm() {
           </div>
           <div className="chat-composer">
             <p className="chat-input">
-              <span className="chat-typed" />
-              <span className="chat-caret" />
+              {/* Invisible full prompt: the composer takes its final height up front, so typing never moves the layout. */}
+              <span className="chat-ghost" aria-hidden="true">
+                {PROMPT}
+              </span>
+              <span className="chat-live">
+                <span className="chat-typed" />
+                <span className="chat-caret" />
+              </span>
               <span className="chat-placeholder">{c.composer}</span>
             </p>
             <span className="chat-send">

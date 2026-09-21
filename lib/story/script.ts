@@ -37,6 +37,8 @@ export type CopyEntry = {
   steps?: number[];
   /** Lesson number, for the practical part to link back to. */
   lesson?: number;
+  /** A centre card set in the lower third, clear of a face in the photo behind it. */
+  low?: boolean;
 };
 
 const lessonCard = (n: 1 | 2 | 3 | 4, beat: BeatId, from: Moment, to: Moment): CopyEntry => ({
@@ -82,14 +84,15 @@ export const SCRIPT: readonly CopyEntry[] = [
   { id: "doubt.record", beat: "doubt", slot: "centre", kind: "record", text: (c) => c.doubt.record, from: ["doubt", 0.8], to: ["doubt", 0.92], reveal: "ink", exit: "blur" },
   lessonCard(2, "doubt", ["doubt", 0.93], ["setback", 0.08]),
 
-  { id: "setback.line", beat: "setback", slot: "copy", kind: "sentence", text: (c) => c.setback.line, from: ["setback", 0.09], to: ["setback", 0.3], reveal: "rise" },
-  { id: "setback.focus", beat: "setback", slot: "copy", kind: "sentence", text: (c) => c.setback.focus, from: ["setback", 0.36], to: ["setback", 0.64], reveal: "rise" },
-  { id: "setback.qualified", beat: "setback", slot: "centre", kind: "title", text: (c) => c.setback.qualified, from: ["setback", 0.72], to: ["setback", 0.89], reveal: "words", exit: "blur" },
+  // The setbacks read like the record line before them: centred above the chart, which stays in view.
+  { id: "setback.line", beat: "setback", slot: "centre", kind: "record", text: (c) => c.setback.line, from: ["setback", 0.08], to: ["setback", 0.29], reveal: "ink", exit: "blur" },
+  { id: "setback.focus", beat: "setback", slot: "centre", kind: "record", text: (c) => c.setback.focus, from: ["setback", 0.34], to: ["setback", 0.63], reveal: "ink", exit: "blur" },
+  { id: "setback.qualified", beat: "setback", slot: "centre", kind: "record", text: (c) => c.setback.qualified, from: ["setback", 0.72], to: ["setback", 0.89], reveal: "ink", exit: "blur" },
   lessonCard(3, "setback", ["setback", 0.9], ["village", 0.08]),
 
   { id: "village.a", beat: "village", slot: "copy", kind: "sentence", text: (c) => c.village.a, from: ["village", 0.1], to: ["village", 0.35], reveal: "rise" },
   { id: "village.b", beat: "village", slot: "copy", kind: "sentence", text: (c) => c.village.b, from: ["village", 0.35], to: ["village", 0.6], reveal: "rise" },
-  { id: "village.c", beat: "village", slot: "centre", kind: "title", text: (c) => c.village.c, from: ["village", 0.7], to: ["village", 0.87], reveal: "ink", exit: "blur" },
+  { id: "village.c", beat: "village", slot: "centre", kind: "title", text: (c) => c.village.c, from: ["village", 0.7], to: ["village", 0.87], reveal: "ink", exit: "blur", low: true },
   lessonCard(4, "village", ["village", 0.88], ["final", 0.06]),
 
   { id: "final.a", beat: "final", slot: "copy", kind: "sentence", text: (c) => c.final.a, from: ["final", 0.07], to: ["final", 0.18], reveal: "rise" },

@@ -15,7 +15,8 @@ import { Final } from "./beats/Final";
  * The sticky 100svh stage. Paint order across all beats: media, dim, set
  * pieces, the line, then copy. Hidden from assistive technology, because the
  * static story beneath it carries the same text in order. The handover has no
- * layers of its own: the ground turns to paper and the copy says the line.
+ * layers of its own: the copy says the line, and the practical part rises
+ * over the stage as a sheet of paper.
  */
 export function Stage({ touch }: { touch: boolean }) {
   return (

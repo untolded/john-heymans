@@ -1,8 +1,8 @@
 {
-  "games": { "value": "Paris 2024", "status": "pending", "source": "Repo copy. The Belga caption of final-arms also says Paris, 10 August 2024. Needs O3." },
-  "venue": { "value": "Stade de France", "status": "pending", "source": "Repo copy. Needs O3." },
-  "finalDate": { "value": "2024-08-10", "status": "pending", "source": "Belga caption of final-arms. Needs O3." },
-  "placing": { "value": 11, "status": "pending", "source": "Repo copy (11th). Needs O3." },
-  "time": { "value": null, "status": "pending", "source": "Needs O3." },
-  "personalBest": { "value": "13:03.46", "status": "pending", "source": "Repo copy. Needs O3 with where and when." }
+  "games": { "value": "Paris 2024", "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026)" },
+  "venue": { "value": "Stade de France", "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026): Stade de France, Saint-Denis" },
+  "finalDate": { "value": "2024-08-10", "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026); also the Belga caption of final-arms" },
+  "placing": { "value": 11, "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026)" },
+  "time": { "value": "13:19.25", "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026)" },
+  "personalBest": { "value": "13:03.46", "status": "confirmed", "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026): indoor 5000m, BU John Thomas Terrier Classic, Boston, 26 January 2024. Belgian record." }
 }

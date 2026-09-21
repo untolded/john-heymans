@@ -1,11 +1,9 @@
 import Image from "next/image";
 import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
-import { photo } from "@/lib/photos";
+import { photo, type PhotoSlug } from "@/lib/photos";
 import { clipCaptions } from "@/lib/story/assets";
 import { StoryPhoto, photoAlt, photoCredit } from "../StoryPhoto";
-import { ItenMapSvg } from "../set-pieces/ItenMap";
-import { SeasonGridSvg } from "../set-pieces/SeasonGrid";
 import { Enquiry } from "../Enquiry";
 import { LessonLink } from "./Actions";
 import { AudienceScale } from "./AudienceScale";
@@ -13,56 +11,40 @@ import { Quotes } from "./Quotes";
 import { ClipWall } from "./ClipWall";
 import { PracticalMotion } from "./PracticalMotion";
 
+/** Each logo's own proportions (from its SVG), so its width is known before it loads and the row never reflows. */
+const LOGO_SIZE: Record<string, [number, number]> = {
+  ypo: [433, 163],
+  kbc: [320, 320],
+  dell: [58, 33],
+  engie: [78, 28],
+  "sd-worx": [128, 41],
+  duvel: [676, 312],
+  unizo: [200, 92],
+  warande: [46, 38],
+  garrincha: [751, 100],
+  supernova: [163, 25],
+};
+
 const c = content.story;
 const p = c.practical;
 
-/** Each lesson's frame: a still from its chapter, as the story drew it. */
-function Frame({ n }: { n: number }) {
-  switch (n) {
-    case 1:
-      return (
-        <div className="lf-art lf-iten">
-          <ItenMapSvg labels={false} />
-          <span className="lf-readout">{fill(c.iten.altitude, { n: "2,400" })}</span>
-        </div>
-      );
-    case 2:
-      return (
-        <div className="lf-art lf-grid">
-          <SeasonGridSvg vertical />
-        </div>
-      );
-    case 3:
-      return (
-        <div className="lf-art lf-columns" aria-hidden="true">
-          <ul className="lf-cannot">
-            {c.setback.uncontrollable.map((w) => (
-              <li key={w}>{w}</li>
-            ))}
-          </ul>
-          <ul className="lf-can">
-            {c.setback.controllable.map((w) => (
-              <li key={w}>{w}</li>
-            ))}
-          </ul>
-        </div>
-      );
-    case 4:
-      return (
-        <div className="lf-art lf-photo">
-          <Image src={photo("lavender-race").src} alt={photoAlt("lavender-race")} fill sizes="(min-width: 992px) 20vw, 70vw" style={{ objectPosition: "50% 30%" }} />
-        </div>
-      );
-    default:
-      return (
-        <div className="lf-art lf-photo">
-          <Image src={photo("final-arms").src} alt={photoAlt("final-arms")} fill sizes="(min-width: 992px) 20vw, 70vw" style={{ objectPosition: "58% 24%" }} />
-        </div>
-      );
-  }
-}
+/** Each lesson's frame: John in the chapter it comes from. */
+const FRAMES: { slug: PhotoSlug; focus: string }[] = [
+  { slug: "iten", focus: "50% 30%" },
+  { slug: "kit-portrait", focus: "50% 22%" },
+  { slug: "shoes", focus: "52% 45%" },
+  { slug: "lavender-race", focus: "50% 30%" },
+  { slug: "final-arms", focus: "58% 24%" },
+];
 
-const FRAME_CREDIT: Record<number, string | null> = { 1: null, 2: null, 3: null, 4: photoCredit("lavender-race"), 5: photoCredit("final-arms") };
+function Frame({ n }: { n: number }) {
+  const f = FRAMES[n - 1];
+  return (
+    <div className="lf-art lf-photo">
+      <Image src={photo(f.slug).src} alt={photoAlt(f.slug)} fill sizes="(min-width: 992px) 20vw, 72vw" style={{ objectPosition: f.focus }} />
+    </div>
+  );
+}
 
 /**
  * The practical part. The story is over and the spell breaks on purpose:
@@ -107,7 +89,7 @@ export function Practical() {
                   {fill(c.lessonOf, { n: i + 1, total: c.lessons.length })}
                 </span>
               </LessonLink>
-              {FRAME_CREDIT[i + 1] && <p className="lf-credit">{FRAME_CREDIT[i + 1]}</p>}
+              {photoCredit(FRAMES[i].slug) && <p className="lf-credit">{photoCredit(FRAMES[i].slug)}</p>}
               <p className="lf-title" data-reveal="ink">
                 {lesson.title}
               </p>
@@ -137,8 +119,8 @@ export function Practical() {
               <Image
                 src={`/logos/${l.slug}.svg`}
                 alt={l.name}
-                width={200}
-                height={80}
+                width={LOGO_SIZE[l.slug]?.[0] ?? 200}
+                height={LOGO_SIZE[l.slug]?.[1] ?? 80}
                 unoptimized
                 style={{ height: `${p.logoHeights[l.slug as keyof typeof p.logoHeights] ?? 2.6}rem`, width: "auto" }}
               />
@@ -159,10 +141,12 @@ export function Practical() {
       </section>
 
       <section className="pr pr-enquiry" id="enquiry" aria-labelledby="pr-enquiry">
-        <h2 id="pr-enquiry" className="pr-h2" data-reveal="ink">
-          {c.enquiry.title}
-        </h2>
-        <p className="pr-lead">{c.enquiry.intro}</p>
+        <div className="pr-enquiry-copy">
+          <h2 id="pr-enquiry" className="pr-h2" data-reveal="ink">
+            {c.enquiry.title}
+          </h2>
+          <p className="pr-lead">{c.enquiry.intro}</p>
+        </div>
         <Enquiry context="inline" />
       </section>
     </div>

@@ -8,6 +8,7 @@ import { gsap } from "@/lib/story/gsap";
 import { useLoadGate } from "@/lib/story/media";
 import { fill, num } from "@/lib/story/format";
 import { Globe } from "../set-pieces/Globe";
+import { PhotoLayer, reportCredits } from "../media/PhotoLayer";
 import { AltitudeSvg, MAX_ALT, altLayout, startAltitude } from "../set-pieces/AltitudeProfile";
 import { useBeat } from "./useBeat";
 import { useStageSize, boxOf, entryEl } from "./stage";
@@ -30,7 +31,8 @@ const inOut = gsap.parseEase("power2.inOut");
  * becomes the flight: a great circle drawn across a dotted globe that turns
  * from Belgium to Kenya. The globe dives into western Kenya and gives way to
  * the climb: altitude lines, the amber line rising to 2,400 m, a counter
- * keeping step. Then the story holds at altitude for the line and lesson 1.
+ * keeping step. At the top, John on the red road in Iten, for the line and
+ * lesson 1.
  */
 export function Iten() {
   const size = useStageSize();
@@ -51,9 +53,11 @@ export function Iten() {
 
   const scope = useBeat(
     "iten",
-    ({ tl, q }) => {
+    ({ tl, q, root }) => {
       if (!size.w) return;
       const canvas = q("canvas.globe")[0] as unknown as HTMLCanvasElement;
+      const photo = q(".ph-iten")[0];
+      const photoOut = q(".iten-photo-out")[0];
       const globe = points ? new Globe(canvas, points, { touch: size.touch }) : null;
       globe?.resize(size.w, size.h);
 
@@ -87,6 +91,10 @@ export function Iten() {
       tl.fromTo(counter, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.03, ease: "power2.out" }, 0.48);
       tl.fromTo(climb, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.12, ease: "none" }, 0.5);
       tl.fromTo(q(".alt-top"), { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.02, ease: "back.out(3)" }, 0.62);
+      // At the top of the climb: the place itself, and the man in it.
+      tl.fromTo(photo, { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "power1.out" }, 0.65);
+      tl.fromTo(q(".ph-iten .pl-inner"), { scale: 1.08 }, { scale: 1, duration: 0.35, ease: "none" }, 0.65);
+      tl.to(alt, { autoAlpha: 0, duration: 0.04 }, 0.67);
 
       const total = climb.getTotalLength();
       const start = startAltitude();
@@ -125,9 +133,12 @@ export function Iten() {
           lastM = m;
         }
 
-        // Leaving: the last frame holds under the violet dim, then fades.
+        // Leaving: the last frame holds under the violet dim, then fades; the photo goes with the lesson card.
         const h = b.hide;
         set.style.opacity = String(h < 0.6 ? 1 - 0.7 * (h / 0.6) : 0.3 * (1 - (h - 0.6) / 0.4));
+        const out = h < 0.2 ? 1 - h / 0.2 : 0;
+        photoOut.style.opacity = String(out);
+        reportCredits(root, b.active && out > 0.3);
       };
     },
     [size.w, size.h, size.touch, points],
@@ -135,6 +146,9 @@ export function Iten() {
 
   return (
     <div className="beat" ref={scope} data-beat="iten">
+      <div className="L iten-photo-out">
+        <PhotoLayer slug="iten" beat="iten" focus="50% 30%" className="ph-iten" />
+      </div>
       <div className="L L-set iten-set">
         <canvas className="globe" />
         <svg className="L sweep" aria-hidden="true">

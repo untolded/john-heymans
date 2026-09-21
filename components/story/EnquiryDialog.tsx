@@ -7,7 +7,7 @@ import { Enquiry } from "./Enquiry";
 /** The enquiry in a dialog, opened by "Check availability" anywhere on the page. */
 export default function EnquiryDialog({ onClose }: { onClose: () => void }) {
   return (
-    <Dialog title={content.story.enquiry.modalTitle} onClose={onClose} closeLabel={content.story.film.close}>
+    <Dialog title={content.story.enquiry.modalTitle} onClose={onClose} closeLabel={content.story.film.close} size="gpt" brand={content.story.enquiry.chat.app}>
       <Enquiry context="modal" />
     </Dialog>
   );

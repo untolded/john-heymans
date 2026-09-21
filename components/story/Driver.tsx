@@ -72,7 +72,8 @@ export function Driver({ touch, ready }: { touch: boolean; ready: boolean }) {
     };
   }, [touch, ready]);
 
-  const tail = `calc(100svh - ${(touch ? last.length.touch : last.length.desktop) * (1 - RELEASE_AT)}vh)`;
+  // After the release point the stage holds one more screen while the paper sheet (pulled up by that much) covers it.
+  const tail = `calc(200svh - ${(touch ? last.length.touch : last.length.desktop) * (1 - RELEASE_AT)}vh)`;
 
   return (
     <div className="spacers" aria-hidden="true">

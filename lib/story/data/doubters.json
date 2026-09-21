@@ -1,11 +1,20 @@
 {
   "messages": {
     "value": [
-      { "role": "federation", "text": "That is not how qualification works." },
-      { "role": "coach", "text": "You will race yourself into the ground." },
-      { "role": "competitors", "text": "Nobody qualifies like that." }
+      {
+        "role": "federation",
+        "text": "Run fast times in the big outdoor meets. That's the route."
+      },
+      {
+        "role": "coach",
+        "text": "Three or four races a season? You need twelve at least."
+      },
+      {
+        "role": "competitors",
+        "text": "Indoor meets for ranking points? That won't get you to Paris."
+      }
     ],
-    "status": "pending",
-    "source": "Round 5 drafts, not quotes. Needs D1, approved by John. Until then all three say the storyline line."
+    "status": "confirmed",
+    "source": "Written for the story, not verbatim quotes (Maarten, 21 Sept 2026: no actual messages exist). Grounded in docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026): the conventional advice was 12 to 15 high-profile outdoor races chasing fast times; John raced three or four indoor meets for placing points, against his federation, coach and competitors (CLAUDE.md)."
   }
 }

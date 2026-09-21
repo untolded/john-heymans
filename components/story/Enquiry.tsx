@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
 import { track } from "@/lib/story/analytics";
-import { BackIcon } from "./icons";
+import { BackIcon, EditIcon, GptMark, SendIcon } from "./icons";
 
 const e = content.story.enquiry;
+const g = e.chat;
 const STEPS = ["type", "date", "size", "language", "contact"] as const;
 type StepId = (typeof STEPS)[number];
 type Choice = "type" | "size" | "language";
@@ -33,10 +34,11 @@ type Status = "idle" | "sending" | "sent" | "error";
 type Errors = Partial<Record<keyof Answers, string>>;
 
 /**
- * The enquiry as a short conversation in John's voice, after LISA: one
- * question at a time, the previous answer receding above it (click it to go
- * back), a progress bar, and full keyboard use. The plain route is always one
- * click away, and the email address is always on screen.
+ * The enquiry as a ChatGPT conversation, a nod to how the season was
+ * planned: the assistant asks one question at a time, each answer becomes a
+ * bubble (click it to change it), suggestions sit under the question and the
+ * composer's send button moves on. Full keyboard use; the plain form is
+ * always one click away, and the email address is always on screen.
  */
 export function Enquiry({ context }: { context: "inline" | "modal" }) {
   const [a, setA] = useState<Answers>(EMPTY);
@@ -46,6 +48,7 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
   const [errors, setErrors] = useState<Errors>({});
   const uid = useId();
   const form = useRef<HTMLFormElement>(null);
+  const thread = useRef<HTMLDivElement>(null);
   const [moved, setMoved] = useState(false);
 
   const set = <K extends keyof Answers>(k: K, v: Answers[K]) => {
@@ -62,6 +65,14 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
     setStep(n);
     track("enquiry_step", { step: n + 1, context });
   };
+
+  // The newest message is always in view, as in a chat.
+  useEffect(() => {
+    const t = thread.current;
+    if (!t) return;
+    const quick = !moved || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    t.scrollTo({ top: t.scrollHeight, behavior: quick ? "auto" : "smooth" });
+  }, [step, plain, status, moved]);
 
   // After moving between questions, focus lands on the new one.
   useEffect(() => {
@@ -121,18 +132,9 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
 
   const mail = <a href={`mailto:${e.email}`}>{e.email}</a>;
 
-  if (status === "sent") {
-    return (
-      <div className="enq enq-done" role="status">
-        <p className="enq-q">{e.success}</p>
-        <p className="enq-note">{fillNode(e.urgent, mail)}</p>
-      </div>
-    );
-  }
-
   const pick = (s: Choice, v: string, clicked: boolean) => {
     set(s, v);
-    // A click moves on by itself; arrow keys only select, Enter moves on.
+    // A click sends the answer, like a suggestion in a chat; arrow keys only select, Enter sends.
     if (clicked && !plain) window.setTimeout(() => go(STEPS.indexOf(s) + 1), 260);
   };
 
@@ -215,39 +217,86 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
 
   const current = STEPS[step];
   const last = step === STEPS.length - 1;
+  const sent = status === "sent";
+  // What the composer shows: the answer about to be sent, as if typed.
+  const draft = plain ? "" : current === "contact" ? [a.name, a.org].filter(Boolean).join(", ") : answer(current);
+  const hint = plain || current === "contact" ? g.details : g.pick;
 
   return (
-    <form ref={form} className="enq" data-plain={plain} data-context={context} onSubmit={submit} noValidate>
-      {plain ? (
-        <div className="enq-plain">
-          {choices("type")}
-          {date(false)}
-          {choices("size")}
-          {choices("language")}
-          {contact(false)}
-        </div>
-      ) : (
-        <div className="enq-stage">
-          {step > 0 && (
-            <button type="button" className="enq-prev" key={`prev-${step}`} onClick={() => go(step - 1)} aria-label={`${e.revisit}: ${question(STEPS[step - 1])}`}>
-              <span className="enq-prev-q">{question(STEPS[step - 1])}</span>
-              <span className="enq-prev-a">{answer(STEPS[step - 1])}</span>
-            </button>
-          )}
-          <div
-            className="enq-current"
-            key={current}
-            onKeyDown={(ev) => {
-              if (ev.key === "Enter" && !(ev.target instanceof HTMLTextAreaElement) && !last) {
-                ev.preventDefault();
-                if (answered(current)) go(step + 1);
-              }
-            }}
-          >
-            {current === "date" ? date(true) : current === "contact" ? contact(true) : choices(current, true)}
-          </div>
+    <form ref={form} className="enq gpt" data-plain={plain} data-context={context} data-status={status} onSubmit={submit} noValidate>
+      {context === "inline" && (
+        <div className="gpt-bar" aria-hidden="true">
+          <GptMark size={20} />
+          <span>{g.app}</span>
         </div>
       )}
+      <p className="sr-only" aria-live="polite">
+        {!plain && !sent ? fill(e.stepOf, { n: step + 1, total: STEPS.length }) : ""}
+      </p>
+
+      <div className="gpt-thread" ref={thread}>
+        <div className="gpt-ai">
+          <Avatar />
+          <p>{g.hello}</p>
+        </div>
+
+        {plain ? (
+          <div className="gpt-ai">
+            <Avatar />
+            <div className="enq-plain">
+              {choices("type")}
+              {date(false)}
+              {choices("size")}
+              {choices("language")}
+              {contact(false)}
+            </div>
+          </div>
+        ) : (
+          <>
+            {STEPS.slice(0, sent ? STEPS.length : step).map((s, i) => (
+              <Fragment key={s}>
+                <div className="gpt-ai gpt-past">
+                  <Avatar />
+                  <p>{question(s)}</p>
+                </div>
+                {sent ? (
+                  <p className="gpt-you">{answer(s)}</p>
+                ) : (
+                  <button type="button" className="gpt-you" onClick={() => go(i)} aria-label={`${e.revisit}: ${question(s)} ${answer(s)}`}>
+                    <span>{answer(s)}</span>
+                    <EditIcon />
+                  </button>
+                )}
+              </Fragment>
+            ))}
+            {!sent && (
+              <div
+                className="gpt-ai enq-current"
+                key={current}
+                onKeyDown={(ev) => {
+                  if (ev.key === "Enter" && !(ev.target instanceof HTMLTextAreaElement) && !last) {
+                    ev.preventDefault();
+                    if (answered(current)) go(step + 1);
+                  }
+                }}
+              >
+                <Avatar />
+                <div className="gpt-body">{current === "date" ? date(true) : current === "contact" ? contact(true) : choices(current, true)}</div>
+              </div>
+            )}
+          </>
+        )}
+
+        {sent && (
+          <div className="gpt-ai enq-done" role="status">
+            <Avatar />
+            <div className="gpt-body">
+              <p>{g.sent}</p>
+              <p className="enq-note">{fillNode(e.urgent, mail)}</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {status === "error" && (
         <p className="enq-error enq-send-error" role="alert">
@@ -255,44 +304,48 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
         </p>
       )}
 
-      <div className="enq-nav">
-        {!plain && step > 0 && (
-          <button type="button" className="enq-back" onClick={() => go(step - 1)}>
-            <BackIcon />
-            <span>{e.back}</span>
-          </button>
-        )}
-        {!plain && (
-          <p className="enq-count" aria-live="polite">
-            {fill(e.stepOf, { n: step + 1, total: STEPS.length })}
+      {!sent && (
+        <div className="gpt-composer">
+          {!plain && step > 0 && (
+            <button type="button" className="gpt-round" onClick={() => go(step - 1)} aria-label={e.back}>
+              <BackIcon />
+            </button>
+          )}
+          <p className="gpt-draft" data-empty={!draft} aria-hidden="true">
+            {draft || hint}
           </p>
-        )}
-        {plain || last ? (
-          <button type="submit" className="pill pill-amber" disabled={status === "sending"}>
-            {status === "sending" ? e.sending : e.send}
-          </button>
-        ) : (
-          <button type="submit" className="pill pill-ghost" disabled={!answered(current)}>
-            {e.next}
-          </button>
-        )}
-      </div>
-
-      {!plain && (
-        <div className="enq-bar" aria-hidden="true">
-          <i style={{ transform: `scaleX(${step / STEPS.length})` }} />
+          {plain || last ? (
+            <button type="submit" className="gpt-send gpt-send-label" disabled={status === "sending"}>
+              <span>{status === "sending" ? e.sending : e.send}</span>
+              <SendIcon />
+            </button>
+          ) : (
+            <button type="submit" className="gpt-send" disabled={!answered(current)} aria-label={e.next}>
+              <SendIcon />
+            </button>
+          )}
         </div>
       )}
 
+      <p className="gpt-fine">{g.disclaimer}</p>
       <p className="enq-direct">
-        <button type="button" className="link" onClick={() => setPlain((p) => !p)}>
-          {plain ? e.conversational : e.plain}
-        </button>
+        {!sent && (
+          <button type="button" className="link" onClick={() => setPlain((p) => !p)}>
+            {plain ? e.conversational : e.plain}
+          </button>
+        )}
         <span>{fillNode(e.direct, mail)}</span>
       </p>
     </form>
   );
 }
+
+/** The assistant's avatar: the ChatGPT knot in a ring. */
+const Avatar = () => (
+  <span className="gpt-avatar" aria-hidden="true">
+    <GptMark />
+  </span>
+);
 
 /** Fills {email} in a sentence with a link. */
 function fillNode(template: string, node: React.ReactNode) {

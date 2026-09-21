@@ -1,6 +1,6 @@
 import { content } from "@/lib/content";
 import { SCRIPT } from "@/lib/story/script";
-import { fill } from "@/lib/story/format";
+import { fill, ordinal } from "@/lib/story/format";
 import { facts, show } from "@/lib/story/data";
 import { StoryPhoto } from "./StoryPhoto";
 import { Text } from "./Text";
@@ -26,6 +26,21 @@ function Lesson({ n }: { n: 1 | 2 | 3 | 4 }) {
   );
 }
 
+const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const monthYear = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+
+/** The climb in one sentence, from the milestones' own labels, for people who cannot see the chart. */
+function rankingSummary(): string | null {
+  const series = show(facts.ranking.series);
+  const quota = show(facts.ranking.quota);
+  const hold = facts.ranking.hold.value;
+  if (!series?.length || quota == null || !hold) return null;
+  const a = series[0];
+  const b = series.find((p) => p.date === hold.start) ?? series[series.length - 1];
+  const phrase = (label: string) => (/^\d+$/.test(label) ? ordinal(Number(label)) : label.charAt(0).toLowerCase() + label.slice(1));
+  return fill(c.doubt.chartSummary, { a: phrase(a.label), from: monthYear.format(new Date(a.date)), b: phrase(b.label), to: monthYear.format(new Date(b.date)), quota });
+}
+
 /**
  * The whole story as a readable document, in story order. This is what the
  * server renders, what visitors with reduced motion get, what search engines
@@ -35,6 +50,7 @@ function Lesson({ n }: { n: 1 | 2 | 3 | 4 }) {
 export function StaticStory() {
   const messages = doubterMessages();
   const qualified = { date: show(facts.qualification.date), how: show(facts.qualification.how) };
+  const chartSummary = rankingSummary();
 
   return (
     <>
@@ -111,6 +127,7 @@ export function StaticStory() {
         <p className="sb-title">{text("doubt.answer")}</p>
         <figure className="sb-figure sb-chart">
           <RankingChartSvg />
+          {chartSummary && <figcaption className="sr-only">{chartSummary}</figcaption>}
         </figure>
         <p className="sb-record">{text("doubt.record")}</p>
         <Lesson n={2} />
@@ -142,7 +159,7 @@ export function StaticStory() {
         </div>
         <p className="sb-sentence">{text("setback.focus")}</p>
         <p className="sb-title">{text("setback.qualified")}</p>
-        {(qualified.date || qualified.how) && <p className="sb-note">{[qualified.date, qualified.how].filter(Boolean).join(". ")}</p>}
+        {qualified.date && qualified.how && <p className="sb-note">{fill(c.qualifiedNote, { date: day.format(new Date(qualified.date)), how: qualified.how })}</p>}
         <Lesson n={3} />
       </section>
 
@@ -150,7 +167,10 @@ export function StaticStory() {
         <h2 id="sb-village" className="sb-chapter">
           {c.chapters.village}
         </h2>
-        <StoryPhoto slug="lavender-race" sizes="(min-width: 992px) 40vw, 100vw" className="sb-photo" />
+        <div className="sb-pair">
+          <StoryPhoto slug="outdoor-portrait" sizes="(min-width: 992px) 30vw, 50vw" className="sb-photo" focus="30% 14%" />
+          <StoryPhoto slug="track-laugh" sizes="(min-width: 992px) 30vw, 50vw" className="sb-photo" />
+        </div>
         <p className="sb-sentence">{text("village.a")}</p>
         <p className="sb-sentence">{text("village.b")}</p>
         <p className="sb-title">{text("village.c")}</p>

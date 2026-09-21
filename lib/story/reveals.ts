@@ -72,7 +72,7 @@ export function ink(el: HTMLElement, opts: { delay?: number } = {}): Revealed {
  * Types text into an element: 38 to 72ms between characters, a pause after
  * each comma. The caret is a sibling element styled by CSS.
  */
-export function type(target: HTMLElement, text: string, opts: { delay?: number } = {}): gsap.core.Timeline {
+export function type(target: HTMLElement, text: string, opts: { delay?: number; maxDuration?: number } = {}): gsap.core.Timeline {
   const tl = gsap.timeline({ delay: opts.delay ?? 0 });
   let at = 0;
   target.textContent = "";
@@ -82,6 +82,8 @@ export function type(target: HTMLElement, text: string, opts: { delay?: number }
     const ch = text[i - 1];
     at += ch === " " && text[i - 2] === "," ? 0.22 : gsap.utils.random(0.038, 0.072);
   }
+  // A long prompt types faster rather than holding the scene.
+  if (opts.maxDuration && at > opts.maxDuration) tl.timeScale(at / opts.maxDuration);
   return tl;
 }
 

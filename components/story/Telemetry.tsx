@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { TELEMETRY, telemetryPending } from "@/lib/story/telemetry";
+import { TELEMETRY } from "@/lib/story/telemetry";
 import { local, type BeatId } from "@/lib/story/beats";
 import { story } from "@/lib/story/store";
 import { gsap } from "@/lib/story/gsap";
-import { SHOW_PENDING } from "@/lib/story/data";
-import { content } from "@/lib/content";
 
 const MAX = 4;
 
@@ -64,7 +62,6 @@ export function Telemetry() {
         if (!n) {
           n = document.createElement("p");
           n.className = "tl-line";
-          if (SHOW_PENDING && telemetryPending(e.id)) n.dataset.marker = content.story.dev.pending;
           nodes.set(e.id, n);
           if (before.has(e.id)) n.textContent = text;
           else gsap.to(n, { duration: 0.4, ease: "none", scrambleText: { text, chars: "01<>/[]=+", speed: 1 } });

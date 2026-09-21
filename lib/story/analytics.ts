@@ -14,7 +14,8 @@ export type StoryEvent =
   | "cta_clicked"
   | "enquiry_step"
   | "enquiry_sent"
-  | "clip_opened";
+  | "clip_opened"
+  | "bio_reel_sound";
 
 type Props = Record<string, string | number | boolean>;
 

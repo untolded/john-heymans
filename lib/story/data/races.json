@@ -210,12 +210,12 @@
         "category": "C"
       },
       {
-        "id": "m27",
-        "name": null,
-        "city": null,
-        "country": null,
-        "date": "2024-01-25",
-        "category": "GW"
+        "id": "boston",
+        "name": "BU John Thomas Terrier Classic",
+        "city": "Boston",
+        "country": "USA",
+        "date": "2024-01-26",
+        "category": "indoor"
       },
       {
         "id": "m28",
@@ -226,12 +226,12 @@
         "category": "B"
       },
       {
-        "id": "m29",
-        "name": null,
-        "city": null,
-        "country": null,
-        "date": "2024-02-07",
-        "category": "C"
+        "id": "lievin",
+        "name": "Meeting de Liévin",
+        "city": "Liévin",
+        "country": "France",
+        "date": "2024-02-10",
+        "category": "indoor"
       },
       {
         "id": "m30",
@@ -250,12 +250,12 @@
         "category": "D"
       },
       {
-        "id": "m32",
-        "name": null,
-        "city": null,
-        "country": null,
-        "date": "2024-03-03",
-        "category": "C"
+        "id": "glasgow",
+        "name": "World Athletics Indoor Championships",
+        "city": "Glasgow",
+        "country": "UK",
+        "date": "2024-03-02",
+        "category": "indoor"
       },
       {
         "id": "m33",
@@ -370,87 +370,37 @@
         "category": "B"
       }
     ],
-    "status": "pending",
-    "placeholder": true,
-    "source": "Shape-only placeholder: dates and categories only, no names. Needs A3."
+    "status": "confirmed",
+    "source": "Illustrative: the dots stand for the international calendar he chose from, and the page never names or dates them. Boston, Liévin and Glasgow are the real races (docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026))."
   },
   "chosen": {
     "value": [
       {
-        "id": "m04",
+        "id": "boston",
         "result": {
           "place": null,
-          "time": null,
+          "time": "13:03.46",
           "points": null
         }
       },
       {
-        "id": "m09",
+        "id": "lievin",
         "result": {
           "place": null,
-          "time": null,
+          "time": "7:41.59",
           "points": null
         }
       },
       {
-        "id": "m13",
+        "id": "glasgow",
         "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m18",
-        "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m22",
-        "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m27",
-        "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m32",
-        "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m38",
-        "result": {
-          "place": null,
-          "time": null,
-          "points": null
-        }
-      },
-      {
-        "id": "m43",
-        "result": {
-          "place": null,
-          "time": null,
+          "place": 8,
+          "time": "7:48.18",
           "points": null
         }
       }
     ],
-    "status": "pending",
-    "placeholder": true,
-    "source": "Placeholder. Needs A3: the races the algorithm chose, in order, with results."
+    "status": "confirmed",
+    "source": "The 2024 indoor races in docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), confirmed by Maarten as the races the strategy picked (21 Sept 2026)."
   }
 }

@@ -299,5 +299,13 @@
     "height": 1600,
     "credit": "@erkipictures",
     "caption": "World Championships, Tokyo, 2025"
+  },
+  "iten": {
+    "src": "/photos/iten.jpg",
+    "width": 1280,
+    "height": 1920,
+    "credit": "",
+    "caption": "Iten, Kenya",
+    "free": true
   }
 }

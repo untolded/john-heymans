@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# source videos over GitHub's 100 MB limit; the web versions are in public/
+/media/Videos/20260826 John Heymans - Video keynote v2.mp4
+/media/Videos/(winner) 20260814 Juliana - Shoe rotation - Hook 3.mov

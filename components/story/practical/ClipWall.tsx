@@ -8,6 +8,7 @@ import { track } from "@/lib/story/analytics";
 import { useStoryPage } from "../StoryRoot";
 import { Dialog } from "../Dialog";
 import { PauseIcon, PlayIcon } from "../icons";
+import { sourcesFor } from "@/lib/story/video";
 
 const p = content.story.practical;
 
@@ -50,7 +51,11 @@ function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: num
       aria-hidden={copy || undefined}
       tabIndex={copy ? -1 : undefined}
     >
-      <video ref={video} src={`/videos/testimonial-${id}.mp4`} poster={`/videos/testimonial-${id}.jpg`} muted loop playsInline preload="none" />
+      <video ref={video} poster={`/videos/testimonial-${id}.jpg`} muted loop playsInline preload="none">
+        {sourcesFor(`/videos/testimonial-${id}`, true).map((s) => (
+          <source key={s.src} src={s.src} type={s.type} />
+        ))}
+      </video>
       <span className="clip-time" aria-hidden="true">
         {seconds}s
       </span>
@@ -138,7 +143,10 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
       {current && (
         <Dialog title={p.roomDialog} onClose={() => setOpen(null)} closeLabel={content.story.film.close} size="wide">
           <div className="film-frame film-frame-tall">
-            <video src={`/videos/testimonial-${current.id}.mp4`} poster={`/videos/testimonial-${current.id}.jpg`} controls autoPlay playsInline>
+            <video poster={`/videos/testimonial-${current.id}.jpg`} controls autoPlay playsInline>
+              {sourcesFor(`/videos/testimonial-${current.id}`, true).map((s) => (
+                <source key={s.src} src={s.src} type={s.type} />
+              ))}
               {captions[current.id] && <track kind="subtitles" src={captions[current.id]!} srcLang="en" label="English" default />}
             </video>
           </div>

@@ -60,6 +60,7 @@ export function Final() {
       const ink = q(".arms-ink")[0];
       const inkLayer = q(".final-ink")[0];
       const dim = q(".final-dim")[0];
+      const dimOut = q(".final-dim-out")[0];
       const closeLine = q(".closeline")[0];
 
       // Framings: tight on the writing, then the whole photo. Phones keep one framing that shows both arms.
@@ -130,7 +131,12 @@ export function Final() {
 
       // The start line from the opener, under the close.
       const last = boxOf(entryEl("final.close", ".tl:last-child") ?? entryEl("final.close"));
-      if (last) gsap.set(closeLine, { x: last.x, y: last.y + last.h + Math.max(8, H * 0.012), width: last.w, scaleX: 0 });
+      if (last) {
+        const lineY = last.y + last.h + Math.max(8, H * 0.012);
+        gsap.set(closeLine, { x: last.x, y: lineY, width: last.w, scaleX: 0 });
+        // The lesson line sits clear below the start line, however tall the close sets.
+        document.querySelector<HTMLElement>(".copy-overlay")?.style.setProperty("--under-top", `${Math.round(lineY + Math.max(28, H * 0.045))}px`);
+      }
       tl.to(closeLine, { scaleX: 1, duration: 0.06, ease: "power2.inOut" }, 0.76);
 
       // Writing: each phrase at its own speed, finished at once if the visitor is already past it.
@@ -155,6 +161,7 @@ export function Final() {
         // Leaving for the handover: everything fades with the stadium.
         const out = b.hide < 0.25 ? 1 - b.hide / 0.25 : 0;
         media.style.opacity = String(out);
+        dimOut.style.opacity = String(out);
         inkLayer.style.opacity = String(out);
         reportCredits(root, b.active && out > 0.3);
         credits.report("final-arms@final", ARMS.credit, b.active && out > 0.3 && p > 0.3 && p < 0.58 ? 1 : 0);
@@ -172,7 +179,10 @@ export function Final() {
           {gate.load && <Image src={ARMS.src} alt="" fill sizes="2400px" fetchPriority={gate.priority} />}
         </div>
       </div>
-      <div className="L L-dim final-dim" />
+      {/* The wrapper fades the dim out with the stadium; the timeline owns the dim's own opacity. */}
+      <div className="L final-dim-out">
+        <div className="L L-dim final-dim" />
+      </div>
       <div className="L L-line final-ink">
         <div className="arms-ink" style={{ width: IW, height: IH }}>
           <svg viewBox={`0 0 ${IW} ${IH}`} className="handwriting" aria-hidden="true">

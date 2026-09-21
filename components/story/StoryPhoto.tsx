@@ -2,6 +2,7 @@ import Image from "next/image";
 import { content } from "@/lib/content";
 import { photo, type PhotoSlug } from "@/lib/photos";
 import { fill } from "@/lib/story/format";
+import { creditFor } from "@/lib/story/photos";
 
 type AltSlug = keyof typeof content.story.photoAlt;
 
@@ -9,7 +10,10 @@ type AltSlug = keyof typeof content.story.photoAlt;
 export const photoAlt = (slug: PhotoSlug) => content.story.photoAlt[slug as AltSlug] ?? "";
 
 /** "Photo: Jelle Jansegers" */
-export const photoCredit = (slug: PhotoSlug) => fill(content.story.credit, { name: photo(slug).credit });
+export const photoCredit = (slug: PhotoSlug) => {
+  const name = creditFor(slug);
+  return name ? fill(content.story.credit, { name }) : "";
+};
 
 /**
  * A photograph with its credit, always. Children sit on top of the image in
@@ -35,7 +39,7 @@ export function StoryPhoto({
         <Image src={p.src} alt={photoAlt(slug)} fill sizes={sizes} style={focus ? { objectPosition: focus } : undefined} />
         {children}
       </div>
-      <figcaption className="sphoto-credit">{photoCredit(slug)}</figcaption>
+      {photoCredit(slug) && <figcaption className="sphoto-credit">{photoCredit(slug)}</figcaption>}
     </figure>
   );
 }

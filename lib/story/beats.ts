@@ -36,7 +36,8 @@ export const BEATS: readonly BeatConfig[] = [
   { id: "setback", length: { desktop: 220, touch: 180 }, ground: "low", chapter: true, lesson: 3 },
   { id: "village", length: { desktop: 180, touch: 150 }, ground: "warm", chapter: true, lesson: 4 },
   { id: "final", length: { desktop: 300, touch: 240 }, ground: "stadium", chapter: true, lesson: 5 },
-  { id: "handover", length: { desktop: 100, touch: 80 }, ground: "paper", chapter: false },
+  // The story ends on the dark. The practical part then rises over it as a sheet of paper.
+  { id: "handover", length: { desktop: 100, touch: 80 }, ground: "night", chapter: false },
 ];
 
 export const BEAT_INDEX = Object.fromEntries(BEATS.map((b, i) => [b.id, i])) as Record<BeatId, number>;
@@ -74,8 +75,12 @@ export const GROUND_SWITCHES: readonly GroundSwitch[] = [
   { from: "signal", to: "low", at: ["setback", 0], length: 0.2 },
   { from: "low", to: "warm", at: ["village", 0], length: 0.2 },
   { from: "warm", to: "stadium", at: ["final", 0], length: 0.16 },
-  { from: "stadium", to: "paper", at: ["handover", 0.02], length: 0.4 },
+  { from: "stadium", to: "night", at: ["handover", 0], length: 0.3 },
 ];
 
-/** Handover progress at which the stage stops holding and the page scrolls on. */
+/**
+ * Handover progress at which the story is over: the paper sheet of the
+ * practical part starts rising over the held stage. The stage lets go one
+ * screen later, once the sheet covers it.
+ */
 export const RELEASE_AT = 0.6;

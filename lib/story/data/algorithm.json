@@ -1,7 +1,35 @@
 {
-  "meetsEvaluated": { "value": 212, "status": "pending", "source": "Round 5 build. Not confirmed by John. Needs A2." },
-  "inputs": { "value": null, "status": "pending", "source": "Needs A2." },
-  "objective": { "value": null, "status": "pending", "source": "Needs A2, in John's words." },
-  "prompt": { "value": null, "status": "pending", "source": "Needs A1. Until then the storyline prompt in lib/content.ts is used." },
-  "reply": { "value": null, "status": "pending", "source": "Needs A1. Until then round 5's reply lines are used." }
+  "inputs": {
+    "value": [
+      "Meet category",
+      "Expected field depth",
+      "Target time"
+    ],
+    "status": "confirmed",
+    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 7.3"
+  },
+  "target": {
+    "value": 1215,
+    "status": "confirmed",
+    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 7.1: the model's projected cut for the top 42"
+  },
+  "objective": {
+    "value": "Identify the combination of world meetings that maximises ranking points while minimising total race count, physical fatigue, travel load and injury risk.",
+    "status": "confirmed",
+    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 7.3, spelling made British to match the site"
+  },
+  "prompt": {
+    "value": "Identify the combination of world meetings that maximises ranking points while minimising total race count, physical fatigue, travel load and injury risk.",
+    "status": "confirmed",
+    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 7.3. The doc gives it as the constraint objective, not a verbatim chat log."
+  },
+  "reply": {
+    "value": [
+      "Target: 1,215 ranking points. That is where the top 42 is projected to close.",
+      "Placing points are not linear. Top three at a Gold or Silver indoor meet outscores a fast time in tenth at a Diamond League.",
+      "Plan: indoors, Gold and Silver meets, three or four races instead of twelve."
+    ],
+    "status": "confirmed",
+    "source": "Written from sections 7.1 to 7.4 of docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026). A reconstruction of the method, not ChatGPT's actual words."
+  }
 }

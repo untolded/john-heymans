@@ -72,3 +72,17 @@ Built from `docs/build-brief.md`. One scrolling page that plays like a short fil
 **Enquiries.** `app/api/enquiry/route.ts` validates, drops honeypot hits, allows five per hour per visitor and sends through Resend once `RESEND_API_KEY` and `ENQUIRY_FROM` are set (`ENQUIRY_TO` defaults to the address on the site). Until then it answers 503 and the form shows the email address.
 
 **Checking a moment.** In development, `window.__story.seek("final", 0.6)` jumps to any point of any beat.
+
+### Round 7 changes (21 September 2026)
+
+- **Facts** now come from `docs/john_heymans_olympic_journey_ai_strategy.md`: the final (11th, 13:19.25), the qualifying run (13:03.46 indoors in Boston on 26 January 2024, under the 13:05.00 standard), the ranking milestones, the quota of 42, the ChatGPT prompt and the method behind the reply. The ranking history is five milestones, several of them ranges; `lib/story/ranking.ts` draws a monotone curve through them (no invented dips) and the chip only ever shows the milestones' own labels ("Top 100", "37", "Top 40", "Top 30").
+- **Chart**: the rise crosses the quota in July 2023; the setbacks chapter zooms in time and rank on the months spent just inside the top 42, then marks the Boston run.
+- **Film**: `public/story/film/` holds a clean hero loop cut from the six title-free shots of the keynote film (landscape and portrait, cropped above the burned-in subtitles), posters taken from the loops' first frames, and the full film with sound for the modal.
+- **Video hosting**: every video is served from the site itself, twice: AV1 in WebM first (`lib/story/video.ts`), H.264 in MP4 as the fallback for browsers without AV1. WebM sizes: hero loop 1.9 MB, portrait loop 0.9 MB, film 18 MB, reel 10.4 MB, audience clips 0.8 to 4.3 MB. Encoded with SVT-AV1 (`-preset 4-5 -crf 35-46 -svtav1-params tune=0`, Opus audio, `-cues_to_front 1`). The two source files over 100 MB are in `.gitignore`.
+- **Facts are complete**: `npm run build:launch` passes. The doubters' notifications are written for the story (no real messages exist), grounded in the strategy doc's account of the conventional advice. The season grid's grey dots are an illustration of the calendar; only Boston, Liévin and Glasgow are real races, and the page never names or dates the others.
+- **Handover**: the story ends on the dark ground; the practical part rises over the held stage as a sheet of paper (`margin-top: -100svh` in cinema, one extra screen of tail in `Driver.tsx`). The frame flips to ink from an IntersectionObserver, only once paper fills the header band.
+- **Enquiry**: one component, styled as a ChatGPT conversation, inline and in the modal (`Dialog size="gpt"`). The logo files are in `public/story/brand/`.
+- **Village**: two photos (`outdoor-portrait` tense, `track-laugh` laughing), side by side on landscape screens and stacked on portrait ones.
+- **About**: the vertical reel (`public/story/reel/about.mp4`), muted on screen, sound one tap away.
+- **Footer**: the scroll pace is now a results board at the top of the footer.
+- Photos marked `"free": true` in `lib/photos.json` (the Iten photo) are copyright free and carry no credit. Any other photo without a photographer is listed by `npm run build` and blocks `build:launch`.

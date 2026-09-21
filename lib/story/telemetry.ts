@@ -14,19 +14,29 @@ export type TelemetryEntry = { id: string; beat: BeatId; at: number; text: () =>
 
 const t = content.story.telemetry;
 const line = (s: string) => () => s;
+const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
+/** A line filled from facts, or skipped when any of them may not be shown. */
+const facty =
+  (template: string, get: () => Record<string, string | number | undefined | null>) =>
+  (): string | null => {
+    const vars = get();
+    if (Object.values(vars).some((v) => v == null)) return null;
+    return fill(template, vars as Record<string, string | number>);
+  };
 
 export const TELEMETRY: readonly TelemetryEntry[] = [
-  { id: "objective", beat: "algorithm", at: 0.3, text: line(t.objective) },
-  { id: "calendar", beat: "algorithm", at: 0.38, text: line(t.calendar) },
   {
-    id: "scored",
+    id: "objective",
     beat: "algorithm",
-    at: 0.44,
-    text: () => {
-      const n = show(facts.algorithm.meetsEvaluated);
-      return n == null ? null : fill(t.scored, { n: num(n) });
-    },
+    at: 0.3,
+    text: facty(t.objective, () => {
+      const p = show(facts.algorithm.target);
+      return { points: p == null ? p : num(p), quota: show(facts.ranking.quota) };
+    }),
   },
+  { id: "calendar", beat: "algorithm", at: 0.38, text: line(t.calendar) },
+  { id: "scored", beat: "algorithm", at: 0.44, text: line(t.scored) },
   { id: "projecting", beat: "algorithm", at: 0.5, text: line(t.projecting) },
   { id: "optimising", beat: "algorithm", at: 0.55, text: line(t.optimising) },
   { id: "selected", beat: "algorithm", at: 0.86, text: line(t.selected) },
@@ -36,11 +46,18 @@ export const TELEMETRY: readonly TelemetryEntry[] = [
   { id: "tracking", beat: "doubt", at: 0.58, text: line(t.tracking) },
   { id: "record", beat: "doubt", at: 0.84, text: line(t.record) },
 
+  { id: "holding", beat: "setback", at: 0.12, text: facty(t.holding, () => ({ quota: show(facts.ranking.quota) })) },
   { id: "sorting", beat: "setback", at: 0.33, text: line(t.sorting) },
   { id: "controllables", beat: "setback", at: 0.5, text: line(t.controllables) },
-  { id: "recovering", beat: "setback", at: 0.68, text: line(t.recovering) },
-  { id: "quota", beat: "setback", at: 0.8, text: line(t.quota) },
+  { id: "standard", beat: "setback", at: 0.66, text: facty(t.standard, () => ({ standard: show(facts.qualification.standard) })) },
+  {
+    id: "qualified",
+    beat: "setback",
+    at: 0.7,
+    text: facty(t.qualified, () => {
+      const d = show(facts.qualification.date);
+      return { city: show(facts.qualification.city), date: d ? day.format(new Date(d)) : d, time: show(facts.result.personalBest) };
+    }),
+  },
 ];
 
-/** Whether a telemetry line is a pending value shown only in development. */
-export const telemetryPending = (id: string) => id === "scored" && facts.algorithm.meetsEvaluated.status !== "confirmed";

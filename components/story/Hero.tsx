@@ -104,7 +104,9 @@ export function Hero({ film }: { film: FilmAssets }) {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
         >
-          {film.loopPortrait && <source src={film.loopPortrait} type="video/mp4" media="(orientation: portrait)" />}
+          {film.loopPortrait.map((s) => (
+            <source key={`p-${s.src}`} src={s.src} type={s.type} media="(orientation: portrait)" />
+          ))}
           {film.loop.map((s) => (
             <source key={s.src} src={s.src} type={s.type} />
           ))}

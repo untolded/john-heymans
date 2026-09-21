@@ -2,7 +2,7 @@ import { content } from "@/lib/content";
 import { facts, show, mark } from "@/lib/story/data";
 import { fill, ordinal } from "@/lib/story/format";
 import { Social } from "@/components/shared/Social";
-import { StoryPhoto } from "./StoryPhoto";
+import { BioReel } from "./BioReel";
 
 const b = content.story.bio;
 
@@ -27,7 +27,7 @@ export function Bio() {
   const list = figures();
   return (
     <section className="bio" id="about" data-ground="paper" aria-labelledby="bio-title">
-      <StoryPhoto slug="outdoor-portrait" sizes="(min-width: 992px) 38vw, 100vw" className="bio-photo" focus="50% 30%" />
+      <BioReel />
       <div className="bio-copy">
         <h2 id="bio-title" className="pr-h2" data-reveal="rise">
           {b.title}

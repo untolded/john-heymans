@@ -10,13 +10,14 @@ const e = content.story.enquiry;
 
 /**
  * A footer that looks like one: the name across the full width, the email
- * large, the enquiry pill, socials with handles, every photographer, and the
- * scroll pace line for whoever made it all the way down.
+ * large, the enquiry pill, socials with handles, every photographer. It
+ * opens on the scroll pace board, for whoever made it all the way down.
  */
 export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
   const photographers = pagePhotographers(filmIsStandIn);
   return (
     <footer className="footer" data-ground="paper">
+      <ScrollPace />
       <p className="footer-mark" aria-hidden="true">
         {f.wordmark}
       </p>
@@ -37,7 +38,6 @@ export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
         <p>{fill(f.copyright, { year: new Date().getFullYear() })}</p>
         <a href="#top">{f.top}</a>
       </div>
-      <ScrollPace />
     </footer>
   );
 }

@@ -21,6 +21,12 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".json")).sort()) {
   walk(JSON.parse(readFileSync(path.join(DIR, file), "utf8")), [file.replace(/\.json$/, "")]);
 }
 
+// Photographs without a known photographer: production shows them without a credit line.
+const photos = JSON.parse(readFileSync("lib/photos.json", "utf8"));
+for (const [slug, p] of Object.entries(photos)) {
+  if (!p.credit && !p.free) pending.push({ where: `photo credit: ${slug}`, placeholder: false, source: "Photographer unknown. Needed before launch: credits are shown wherever images appear." });
+}
+
 if (!pending.length) {
   console.log("Facts: every value is confirmed.");
   process.exit(0);

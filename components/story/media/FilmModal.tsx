@@ -18,7 +18,6 @@ export default function FilmModal({ onClose, film }: { onClose: () => void; film
     <Dialog title={t.title} onClose={onClose} closeLabel={t.close} size="wide">
       <div className="film-frame">
         <video
-          src={film.film}
           poster={film.poster}
           controls
           autoPlay
@@ -27,6 +26,9 @@ export default function FilmModal({ onClose, film }: { onClose: () => void; film
             if (!e.currentTarget.muted && !film.filmIsStandIn) track("film_sound_on");
           }}
         >
+          {film.film.map((s) => (
+            <source key={s.src} src={s.src} type={s.type} />
+          ))}
           {film.captions && <track kind="captions" src={film.captions} srcLang="en" label={t.captions} default />}
         </video>
       </div>

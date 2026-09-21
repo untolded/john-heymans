@@ -1,5 +1,0 @@
-{
-  "sleep": { "value": null, "status": "pending", "source": "Optional, S3." },
-  "nutrition": { "value": null, "status": "pending", "source": "Optional, S3." },
-  "training": { "value": null, "status": "pending", "source": "Optional, S3." }
-}

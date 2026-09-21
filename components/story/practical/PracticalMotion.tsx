@@ -25,7 +25,8 @@ export function PracticalMotion() {
           trigger: el,
           start: "top 80%",
           once: true,
-          onEnter: () => (el.dataset.reveal === "ink" ? R.ink(el) : R.rise(el)),
+          // Element-level rises: splitting into line masks re-lays the text out and nudges the page.
+          onEnter: () => (el.dataset.reveal === "ink" ? R.ink(el) : R.rise(el, { small: true })),
         });
       });
       const scale = root.querySelector(".scale-svg");

@@ -409,33 +409,34 @@ export const content = {
       app: "ChatGPT",
       composer: "Ask anything",
       send: "Send",
-      prompt: "Build an algorithm that gets me to the Olympics.",
+      prompt: "Identify the combination of world meetings that maximises ranking points while minimising total race count, physical fatigue, travel load and injury risk.",
       reply: [
-        "Olympic qualification is decided by world ranking points.",
-        "Your points come from your time and your place, weighted by the category of the meet.",
-        "So we look for the meets where your place is worth the most.",
+        "Target: 1,215 ranking points. That is where the top 42 is projected to close.",
+        "Placing points are not linear. Top three at a Gold or Silver indoor meet outscores a fast time in tenth at a Diamond League.",
+        "Plan: indoors, Gold and Silver meets, three or four races instead of twelve.",
       ],
       you: "I asked",
       assistant: "ChatGPT replied",
-      caption: "Not one of those races was the one anyone would have chosen for me.",
+      caption: "Three or four races instead of twelve. Indoors, where a top-three place is worth more than a fast time.",
       gridSummary: "Every candidate meet in the qualifying window, and the season the algorithm chose, connected in date order.",
     },
 
     telemetry: {
-      objective: "Objective: maximise world ranking",
+      objective: "Target: {points} points, the projected cut for the top {quota}",
       calendar: "Reading the international calendar",
-      scored: "Meets scored: {n}",
-      projecting: "Projecting ranking after every combination",
-      optimising: "Optimising for points per race",
-      selected: "Season selected",
+      scored: "Scoring each meet: odds of a top-three place",
+      projecting: "Weighing place against time, by meet category",
+      optimising: "Minimising races, travel and injury risk",
+      selected: "Season selected: indoors, Gold and Silver",
       objections: "Objections: federation, coach, competitors",
       unchanged: "Schedule unchanged",
       tracking: "Tracking world ranking",
       record: "Fastest rise in the history of the event",
+      holding: "Inside the top {quota}, by a few places",
       sorting: "Separating what I control",
       controllables: "Sleep. Nutrition. Training.",
-      recovering: "Ranking recovering",
-      quota: "Inside the Olympic quota",
+      standard: "Olympic standard: {standard}",
+      qualified: "{city}, {date}: {time}",
     },
 
     doubt: {
@@ -453,7 +454,7 @@ export const content = {
       now: "now",
       answer: "I ran it anyway.",
       record: "The fastest rise up the world rankings in the history of my event.",
-      chartSummary: "My world ranking climbed from {a} to {b} between {from} and {to}.",
+      chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}.",
     },
 
     setback: {
@@ -465,6 +466,8 @@ export const content = {
       focus: "So I focused on what I could control.",
       qualified: "In the end, I qualified.",
     },
+
+    qualifiedNote: "{date}: {how}.",
 
     village: {
       a: "The day I arrived in the Olympic village, I had a choice.",
@@ -501,6 +504,9 @@ export const content = {
       finalLabel: "Olympic 5000m",
       finalValue: "Final",
       placing: "{ordinal} in the final",
+      quotaLine: "The Olympic quota: {n} runners",
+      qualifiedTitle: "{time} in {city}",
+      qualifiedLine: "Under the {standard} Olympic standard",
     },
 
     photoAlt: {
@@ -509,7 +515,11 @@ export const content = {
       "heats-pack": "John with his fist in the air as he finishes his Olympic 5000m heat in Paris",
       "final-pan": "The field of an Olympic 5000m heat in Paris, in motion",
       "final-arms": "John after the Olympic 5000m final, hands on his head, with Hey mom written on one arm and Made it on the other",
-      "outdoor-portrait": "John stretching on an outdoor track",
+      "outdoor-portrait": "John on a track, tense, catching his breath",
+      iten: "John on a red dirt road in Iten, Kenya, smiling",
+      "kit-portrait": "John in the Belgian kit on an indoor track, checking his watch",
+      shoes: "John tying his racing spikes on a bench before a race",
+      "track-laugh": "John sitting on a track, laughing",
       "stage-wide": "John on stage at Supernova, Antwerp",
     },
 
@@ -538,10 +548,6 @@ export const content = {
       /** Logo heights in rem, set by eye so each carries the same visual weight. */
       logoHeights: { ypo: 3.1, kbc: 3.4, dell: 3.1, engie: 2.3, "sd-worx": 2.2, duvel: 3.2, unizo: 2.9, warande: 3.2, garrincha: 1.35, supernova: 1.45 },
       quotesTitle: "What organisers wrote",
-      quoteNext: "Next testimonial",
-      quotePause: "Pause the testimonials",
-      quotePlay: "Play the testimonials",
-      quoteShow: "Show testimonial {n}",
       roomTitle: "What the room said",
       roomNote: "Filmed straight after the keynote at Supernova, Antwerp.",
       roomPause: "Pause the clips",
@@ -553,8 +559,18 @@ export const content = {
 
     enquiry: {
       title: "Bring this to your team.",
-      modalTitle: "Check availability",
+      modalTitle: "Check John's availability",
       intro: "Five short questions. You get availability and a fee within two working days.",
+      /** The enquiry is styled as a ChatGPT conversation, a nod to how the season was planned. */
+      chat: {
+        app: "ChatGPT",
+        hello: "Let's see if John is free for your event. Five quick questions, then he replies with availability and a fee within two working days.",
+        pick: "Choose an answer above",
+        details: "Add your details above, then send",
+        disclaimer: "Not actually ChatGPT. Your answers go straight to John.",
+        edit: "Change this answer",
+        sent: "Sent. John replies within two working days, usually sooner.",
+      },
       steps: {
         type: {
           q: "What kind of event is it?",
@@ -565,18 +581,18 @@ export const content = {
           q: "Roughly how many people will be in the room?",
           options: ["8 to 20", "20 to 50", "100 or more", "1,000 or more"],
         },
-        language: { q: "Which language?", options: ["English", "Dutch", "French"] },
+        language: { q: "Which language should John speak?", options: ["English", "Dutch", "French"] },
         contact: {
-          q: "Who should I reply to?",
+          q: "Who should John reply to?",
           name: "Your name",
           org: "Organisation",
           email: "Work email",
-          message: "Anything else I should know",
+          message: "Anything else John should know",
           optional: "optional",
         },
       },
-      next: "Next",
-      back: "Back",
+      next: "Next question",
+      back: "Previous question",
       send: "Send enquiry",
       sending: "Sending",
       plain: "Prefer one form?",
@@ -585,10 +601,10 @@ export const content = {
       revisit: "Change this answer",
       success: "Thanks. You'll hear from me within two working days.",
       urgent: "Anything urgent: {email}",
-      error: "That didn't go through. Write to me directly at {email}.",
-      required: "I need this one to reply.",
+      error: "That didn't go through. Write to John directly at {email}.",
+      required: "John needs this one to reply.",
       invalidEmail: "That email address doesn't look complete.",
-      direct: "Or write to me directly at {email}",
+      direct: "Or write directly to {email}",
       email: "hello@johnheymans.com",
     },
 
@@ -606,6 +622,13 @@ export const content = {
       },
       years: "{n} years",
       follow: "Follow the training",
+      reel: {
+        label: "John on his road to the Olympics, in his own words",
+        soundOn: "Play with sound",
+        soundOff: "Sound on",
+        play: "Play the video",
+        pause: "Pause the video",
+      },
     },
 
     footer: {
@@ -613,8 +636,19 @@ export const content = {
       contact: "Business enquiries",
       credits: "Photography: {names}",
       copyright: "© John Heymans {year}",
-      pace: "You scrolled {d} m at a pace of {p} per km. At that pace, 5,000 m would take you {t}.",
-      pb: "I needed {pb}.",
+      /** The easter egg: your scroll, timed like a race. */
+      pace: {
+        title: "Your run down this page",
+        waiting: "You're on the last lap.",
+        lead: "You just scrolled {d} m. Here's your split.",
+        pace: "Your pace",
+        perKm: "{p} /km",
+        five: "Your 5,000 m at that pace",
+        mine: "Mine, {city} {year}",
+        mineShort: "Mine",
+        blank: "--:--",
+        days: "{d} d {h} h",
+      },
       top: "Back to the top",
     },
 
@@ -630,6 +664,7 @@ export const content = {
     dev: {
       pending: "Pending",
       placeholder: "Placeholder",
+      creditPending: "photographer to confirm",
     },
   },
 
