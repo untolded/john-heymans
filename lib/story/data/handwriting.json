@@ -1,0 +1,95 @@
+{
+  "image": {
+    "slug": "final-arms",
+    "width": 2400,
+    "height": 1569
+  },
+  "method": "Traced from the ink in public/photos/final-arms.jpg. Each word was sampled upright along its baseline (principal axis of the dark pixels) and its strokes drawn as centre lines in that frame; matrix maps the upright frame back to image pixels. MOM is foreshortened into a smear in the photo, so it is set in the M from MADE and an O of the same weight, fitted over the smear.",
+  "phrases": [
+    {
+      "id": "hey-mom",
+      "text": "HEY MOM",
+      "words": [
+        {
+          "id": "hey",
+          "matrix": [
+            0.8152,
+            0.5792,
+            -0.5792,
+            0.8152,
+            760.22,
+            470.51
+          ],
+          "weight": 9.5,
+          "cap": [
+            -12.7,
+            12
+          ],
+          "strokes": [
+            "M-39.5 -10.2 L-36.5 11",
+            "M-23.5 -12.2 L-16.5 11",
+            "M-39 -3.2 L-20 -3.2",
+            "M12 -12.7 L-8.5 -12.7 L0 7.3 L22 7.3",
+            "M-5 -4.2 L12 -4.2",
+            "M23 -12.7 L42.5 -2.2 L45.5 12",
+            "M44 -12.7 L42.5 -2.2"
+          ]
+        },
+        {
+          "id": "mom",
+          "matrix": [
+            0.6849,
+            0.7286,
+            -0.7286,
+            0.6849,
+            844.94,
+            545.22
+          ],
+          "weight": 10,
+          "cap": [
+            -14,
+            12
+          ],
+          "strokes": [
+            "M-42 12 L-41 -14 L-34 0 L-26 -14 L-27 12",
+            "M0 -14 C10 -14 12 -7 12 -1 C12 6 9 12 0 12 C-9 12 -12 6 -12 -1 C-12 -7 -10 -14 0 -14 Z",
+            "M26 12 L27 -14 L34 0 L42 -14 L42 12"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "made-it",
+      "text": "MADE IT",
+      "words": [
+        {
+          "id": "made-it",
+          "matrix": [
+            0.6969,
+            -0.7172,
+            0.7172,
+            0.6969,
+            1495.07,
+            411.63
+          ],
+          "weight": 11.5,
+          "cap": [
+            -16,
+            14
+          ],
+          "strokes": [
+            "M-74 14 L-73 -15 L-66.5 0 L-57 -15 L-60 14",
+            "M-42.5 14 L-29 -16 L-20 14",
+            "M-38 4 L-22 4",
+            "M-1.5 14 L-1.5 -16 L10 -16 C22 -16 25 -8 25 -1 C25 7 20 14 8 14 L-1.5 14",
+            "M56 -11 L37.5 -11 L36 11.5 L58 11.5",
+            "M36.5 -2 L54 -2",
+            "M81.5 -16 L81.5 14",
+            "M94.5 -15.5 L116.5 -15.5",
+            "M104.5 -15.5 L104 14"
+          ]
+        }
+      ]
+    }
+  ]
+}

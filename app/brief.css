@@ -95,3 +95,13 @@
   .card, .card-media img, .card-open svg { transition: none; }
   .card:hover, .card:hover .card-media img { transform: none; }
 }
+
+/* The new direction leads, wider than the three reference cards */
+.cards-lead { grid-template-columns: 1fr; }
+.card-lead { --accent: #ff7a2f; --accent-ink: #150800; }
+@media (min-width: 900px) { .card-lead { grid-template-columns: 1.15fr 1fr; grid-template-rows: none; align-items: stretch; } }
+.card-lead .card-media { aspect-ratio: 16 / 10; }
+.card-lead .card-body { padding: clamp(1.25rem, 2.5vw, 2rem); align-content: center; gap: 1.25rem; }
+.card-lead .card-line { color: var(--text); font-size: clamp(1.05rem, 1.3vw, 1.2rem); }
+.card-lead .card-name b { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.04em; font-size: clamp(2.5rem, 5vw, 4rem); color: #f5f3ff; }
+.card-lead .card-open { justify-self: start; padding-inline: 1.5rem; }

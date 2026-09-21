@@ -1,0 +1,168 @@
+{
+  "series": {
+    "value": [
+      {
+        "date": "2023-07-01",
+        "rank": 300,
+        "points": null
+      },
+      {
+        "date": "2023-07-15",
+        "rank": 296,
+        "points": null
+      },
+      {
+        "date": "2023-07-29",
+        "rank": 288,
+        "points": null
+      },
+      {
+        "date": "2023-08-12",
+        "rank": 262,
+        "points": null
+      },
+      {
+        "date": "2023-08-26",
+        "rank": 226,
+        "points": null
+      },
+      {
+        "date": "2023-09-09",
+        "rank": 188,
+        "points": null
+      },
+      {
+        "date": "2023-09-23",
+        "rank": 152,
+        "points": null
+      },
+      {
+        "date": "2023-10-07",
+        "rank": 124,
+        "points": null
+      },
+      {
+        "date": "2023-10-21",
+        "rank": 102,
+        "points": null
+      },
+      {
+        "date": "2023-11-04",
+        "rank": 86,
+        "points": null
+      },
+      {
+        "date": "2023-11-18",
+        "rank": 74,
+        "points": null
+      },
+      {
+        "date": "2023-12-02",
+        "rank": 66,
+        "points": null
+      },
+      {
+        "date": "2023-12-16",
+        "rank": 61,
+        "points": null
+      },
+      {
+        "date": "2023-12-30",
+        "rank": 68,
+        "points": null
+      },
+      {
+        "date": "2024-01-13",
+        "rank": 77,
+        "points": null
+      },
+      {
+        "date": "2024-01-27",
+        "rank": 81,
+        "points": null
+      },
+      {
+        "date": "2024-02-10",
+        "rank": 72,
+        "points": null
+      },
+      {
+        "date": "2024-02-24",
+        "rank": 63,
+        "points": null
+      },
+      {
+        "date": "2024-03-09",
+        "rank": 57,
+        "points": null
+      },
+      {
+        "date": "2024-03-23",
+        "rank": 63,
+        "points": null
+      },
+      {
+        "date": "2024-04-06",
+        "rank": 69,
+        "points": null
+      },
+      {
+        "date": "2024-04-20",
+        "rank": 60,
+        "points": null
+      },
+      {
+        "date": "2024-05-04",
+        "rank": 51,
+        "points": null
+      },
+      {
+        "date": "2024-05-18",
+        "rank": 45,
+        "points": null
+      },
+      {
+        "date": "2024-06-01",
+        "rank": 40,
+        "points": null
+      },
+      {
+        "date": "2024-06-15",
+        "rank": 37,
+        "points": null
+      },
+      {
+        "date": "2024-06-29",
+        "rank": 35,
+        "points": null
+      }
+    ],
+    "status": "pending",
+    "placeholder": true,
+    "source": "Shape-only placeholder. Needs A4: position and score over time from World Athletics."
+  },
+  "quota": {
+    "value": 42,
+    "status": "pending",
+    "placeholder": true,
+    "source": "Placeholder. Needs A4: the Olympic quota for the 5000m."
+  },
+  "window": {
+    "value": {
+      "start": "2023-07-01",
+      "end": "2024-06-29"
+    },
+    "status": "pending",
+    "placeholder": true,
+    "source": "Placeholder. Needs A4: the qualification window."
+  },
+  "setbackSpan": {
+    "value": {
+      "start": "2023-12-16",
+      "end": "2024-04-20"
+    },
+    "status": "pending",
+    "placeholder": true,
+    "source": "Placeholder. Follows S1 once the setbacks are dated."
+  }
+}

@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { ScrollTrigger } from "@/lib/gsap";
+import gsap from "gsap";
+// ScrollTrigger on its own: importing lib/gsap here would load every plugin on every page.
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 const KEY = (path: string) => `scroll:${path}`;
 const ENFORCE_MS = 1500;

@@ -1,0 +1,7 @@
+{
+  "meetsEvaluated": { "value": 212, "status": "pending", "source": "Round 5 build. Not confirmed by John. Needs A2." },
+  "inputs": { "value": null, "status": "pending", "source": "Needs A2." },
+  "objective": { "value": null, "status": "pending", "source": "Needs A2, in John's words." },
+  "prompt": { "value": null, "status": "pending", "source": "Needs A1. Until then the storyline prompt in lib/content.ts is used." },
+  "reply": { "value": null, "status": "pending", "source": "Needs A1. Until then round 5's reply lines are used." }
+}

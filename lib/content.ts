@@ -195,6 +195,444 @@ export const content = {
     close: "Close",
   },
 
+
+  /** The one-page story. Round 5: one continuous film, then the practical part. */
+  signal: {
+    nav: { cta: "Check availability", wordmark: "John Heymans" },
+
+    hero: {
+      line: "Olympic 5000m finalist. A 30-minute keynote on strategy, risk and the edge nobody else is looking for.",
+      soundOn: "Sound on",
+      soundOff: "Sound off",
+      scroll: "Scroll to begin",
+    },
+
+    story: {
+      opener: {
+        title: "They all said it couldn't be done.",
+        sub: "Two years before Paris I had no ranking, no standard and no plan. I had a decision.",
+      },
+      kenya: {
+        title: "So I went where the best already were.",
+        line: "Iten, Kenya. Two thousand four hundred metres above sea level, where the best distance runners in the world do their work.",
+        note: "I trained with them for weeks and learned how they do it. Not harder than everyone else. Better, every single day.",
+        from: { place: "Brussels", alt: "76 m" },
+        to: { place: "Iten", alt: "2,400 m" },
+      },
+      edge: {
+        title: "It still wasn't enough.",
+        line: "Everyone up there trains like that. Consistency got me into the group. It was never going to get me past it. I needed an edge nobody else was using.",
+      },
+      chat: {
+        title: "So I asked for one.",
+        app: "ChatGPT",
+        prompt: "Build an algorithm that gets me to the Olympics.",
+        reply: [
+          "Olympic qualification runs on world ranking points, not on your personal best.",
+          "Points come from your result and your position, weighted by the category of the meet.",
+          "So the question is not where you run fastest. It is where the points are.",
+        ],
+        compute: ["Reading the international calendar", "212 meets scored", "Projecting the ranking after every combination", "Optimising for points per race"],
+        outputTitle: "The schedule it produced",
+        output: [
+          "Skip the fast meets where I finish twelfth.",
+          "Enter the category meets where I can place.",
+          "Two continental meets, four weeks apart.",
+          "One national title, for the points nobody counts.",
+        ],
+        caption: "Not one of those was the race anyone would have chosen for me.",
+      },
+      doubt: {
+        messages: [
+          { who: "My federation", text: "That is not how qualification works." },
+          { who: "My coach", text: "You will race yourself into the ground." },
+          { who: "My rivals", text: "Nobody qualifies like that." },
+        ],
+        answer: "I ran it anyway.",
+        flashes: ["Fastest rise up the world rankings in the history of my event", "Olympic quota secured"],
+      },
+      setback: {
+        title: "Then it stopped going to plan.",
+        line: "Illness. A lost block of training. Results that made no sense on paper.",
+        note: "So I cut the list in two. Everything I could not control went out. What stayed was the part I could.",
+        controllables: ["Sleep", "Nutrition", "Training"],
+        outcome: "The schedule held. I qualified.",
+      },
+      village: {
+        title: "In the Olympic village I made one last decision.",
+        line: "Half the athletes there were being eaten alive by the pressure. I decided to enjoy every hour of it instead.",
+      },
+      final: {
+        title: "Nobody had me in that final.",
+        line: "I ran it anyway, in front of a full Stade de France, and finished eleventh in the world.",
+        marker: ["Hey mom", "Made it"],
+        close: "Dare to dream big.",
+        closeNote: "That is the story. Here is what your team takes from it.",
+      },
+    },
+
+    practical: {
+      title: "The keynote",
+      lead: "Thirty minutes, five decisions, one story your team can use on Monday morning.",
+      facts: [
+        { label: "Length", value: "30 minutes, plus optional Q&A" },
+        { label: "Languages", value: "English, Dutch or French" },
+        { label: "Format", value: "In person, on your stage or at your table" },
+        { label: "Built for", value: "Teams coming off a hard year, and teams about to take a risk" },
+      ],
+      audienceTitle: "Where it works",
+      audience: [
+        { title: "Conferences and business fairs", detail: "Main-stage keynote for 1,000 delegates or more.", size: "1,000+" },
+        { title: "Company events", detail: "Team days and internal events, from 100 people.", size: "100+" },
+        { title: "Executive offsites", detail: "Strategy sessions for senior leadership teams.", size: "20 to 50" },
+        { title: "Leadership dinners", detail: "Around one table, with Q&A over dinner.", size: "8 to 20" },
+      ],
+      takeawayTitle: "What your audience takes home",
+      takeaways: [
+        { n: "01", title: "Your environment sets your ceiling", line: "People grow fastest in teams that hold a higher standard than they do." },
+        { n: "02", title: "Consistency beats intensity", line: "The best are not working harder on their best day. They are working every day." },
+        { n: "03", title: "The edge is where the consensus isn't", line: "The advantage is in the process everyone has stopped questioning." },
+        { n: "04", title: "Control what you can control", line: "Separate the two lists, then spend everything on the shorter one." },
+        { n: "05", title: "Big goals set the height of the ceiling", line: "Small ambitions are met exactly. Large ones change what a team attempts." },
+      ],
+      recording: "A full recording of the keynote at Supernova exists. Ask for the private link when you enquire.",
+    },
+
+    room: {
+      title: "What the room says",
+      note: "Filmed straight after the keynote at Supernova, Antwerp.",
+      hint: "Click for sound",
+    },
+
+    bio: {
+      title: "About John",
+      role: "Olympic 5000m finalist. Keynote speaker.",
+      body: [
+        "I am a Belgian distance runner and a bio-engineer by training. I started running seriously late, graduated during Covid, and decided on the Olympics two years before Paris.",
+        "The keynote came out of people asking how the ranking climb actually happened. The honest answer is a mix of environment, a model most people told me to ignore, and knowing which setbacks were worth my attention. That answer turned out to be useful to teams as well.",
+      ],
+      stats: [
+        { value: "11th", label: "Olympic 5000m final, Paris 2024" },
+        { value: "13:03.46", label: "5000m personal best" },
+        { value: "2 years", label: "From the decision to the final" },
+        { value: "15+", label: "Keynotes delivered, all by word of mouth" },
+      ],
+    },
+
+    enquire: {
+      title: "Bring this to your team",
+      sub: "Tell me about the event. You get availability and a fee within two working days.",
+    },
+  },
+
+  /**
+   * The story page (round 6, /story). One film-like story, then the practical
+   * part. Placeholders in braces are filled by lib/story/format.ts. A word in
+   * asterisks is the word the amber line underlines. A vertical bar is a
+   * line break in a title card; translators move it with the words.
+   */
+  story: {
+    meta: {
+      title: "John Heymans, Olympic 5000m finalist and keynote speaker",
+      description: "Two years. One algorithm. The Olympic final. I built the algorithm that chose my races. A 30-minute keynote on strategy, risk and finding the edge.",
+      person: "Belgian Olympic 5000m finalist and keynote speaker.",
+      imageAlt: "John Heymans on stage, with the line: Two years. One algorithm. The Olympic final.",
+    },
+
+    a11y: {
+      skip: "Skip to the keynote details",
+      storyTitle: "The story",
+      heroRegion: "Keynote film",
+    },
+
+    frame: {
+      wordmark: "John Heymans",
+      home: "John Heymans, back to the top",
+      cta: "Check availability",
+      ctaShort: "Availability",
+      skip: "Skip the story",
+      progress: "Story progress",
+      soundOn: "Turn story sound on",
+      soundOff: "Turn story sound off",
+    },
+
+    chapters: {
+      opener: "",
+      iten: "Iten",
+      edge: "The edge",
+      algorithm: "The algorithm",
+      doubt: "The doubters",
+      setback: "Setbacks",
+      village: "The village",
+      final: "The final",
+      handover: "",
+    },
+
+    credit: "Photo: {name}",
+
+    hero: {
+      line: "Two years. One algorithm. The Olympic final.",
+      sub: "A 30-minute keynote on strategy, risk and finding the edge.",
+      film: "Watch the film with sound",
+      scroll: "Scroll to begin",
+      pause: "Pause the film",
+      play: "Play the film",
+      standInCredit: "Stand-in film cut from photos by {names}",
+      /** Seconds in the hero film where it shows its own text. Our line steps aside. */
+      quietCues: [] as { start: number; end: number }[],
+    },
+
+    film: {
+      title: "The film",
+      close: "Close",
+      standIn: "The 60-second film is in its final edit. Until it arrives, this is the stand-in cut, without sound.",
+      captions: "English",
+    },
+
+    opener: {
+      title: "They all said|it couldn't|be|done.",
+    },
+
+    iten: {
+      destination: "Iten, Kenya",
+      altitude: "{n} m",
+      line: "So I trained with the best, and learned their ways.",
+      mapSummary: "A flight to Iten, Kenya, and a climb to 2,400 m.",
+    },
+
+    edge: {
+      a: "However, this wouldn't be enough.",
+      b: "I needed an *edge*.",
+    },
+
+    algorithm: {
+      app: "ChatGPT",
+      composer: "Ask anything",
+      send: "Send",
+      prompt: "Build an algorithm that gets me to the Olympics.",
+      reply: [
+        "Olympic qualification is decided by world ranking points.",
+        "Your points come from your time and your place, weighted by the category of the meet.",
+        "So we look for the meets where your place is worth the most.",
+      ],
+      you: "I asked",
+      assistant: "ChatGPT replied",
+      caption: "Not one of those races was the one anyone would have chosen for me.",
+      gridSummary: "Every candidate meet in the qualifying window, and the season the algorithm chose, connected in date order.",
+    },
+
+    telemetry: {
+      objective: "Objective: maximise world ranking",
+      calendar: "Reading the international calendar",
+      scored: "Meets scored: {n}",
+      projecting: "Projecting ranking after every combination",
+      optimising: "Optimising for points per race",
+      selected: "Season selected",
+      objections: "Objections: federation, coach, competitors",
+      unchanged: "Schedule unchanged",
+      tracking: "Tracking world ranking",
+      record: "Fastest rise in the history of the event",
+      sorting: "Separating what I control",
+      controllables: "Sleep. Nutrition. Training.",
+      recovering: "Ranking recovering",
+      quota: "Inside the Olympic quota",
+    },
+
+    doubt: {
+      roles: {
+        federation: "My federation",
+        coach: "My coach",
+        competitors: "My competitors",
+      },
+      initials: {
+        federation: "F",
+        coach: "C",
+        competitors: "C",
+      },
+      fallback: "That will never work.",
+      now: "now",
+      answer: "I ran it anyway.",
+      record: "The fastest rise up the world rankings in the history of my event.",
+      chartSummary: "My world ranking climbed from {a} to {b} between {from} and {to}.",
+    },
+
+    setback: {
+      line: "It didn't always go to plan. Setbacks came, one after another.",
+      uncontrollable: ["Illness", "Weather", "Injury"],
+      controllable: ["Sleep", "Nutrition", "Training"],
+      cannot: "Out of my control",
+      can: "In my control",
+      focus: "So I focused on what I could control.",
+      qualified: "In the end, I qualified.",
+    },
+
+    village: {
+      a: "The day I arrived in the Olympic village, I had a choice.",
+      b: "Let the pressure get to me, or enjoy every minute of it.",
+      c: "I chose to enjoy it.",
+    },
+
+    final: {
+      a: "Nobody believed I'd make that final.",
+      b: "I was the underdog.",
+      arms: "Hey mom, made it.",
+      close: "Dare to|dream big.",
+    },
+
+    handover: {
+      line: "That's the story. Here's what your team takes from it.",
+    },
+
+    /** One lesson per chapter, in keynote order. The practical part uses the same five. */
+    lessons: [
+      { title: "Your environment sets your ceiling.", line: "And consistency beats hard work." },
+      { title: "The edge is where the consensus isn't.", line: "Don't be afraid to challenge the status quo." },
+      { title: "Focus on what you can control.", line: "And stop overthinking what you can't." },
+      { title: "Embrace the pressure.", line: "It comes with the moments that matter." },
+      { title: "Dare to dream big.", line: "Your dreams set your ceiling." },
+    ],
+    lessonOf: "{n} of {total}",
+
+    ranking: {
+      label: "World ranking",
+      outside: "Outside the quota",
+      climbing: "Climbing",
+      inside: "Inside the quota",
+      finalLabel: "Olympic 5000m",
+      finalValue: "Final",
+      placing: "{ordinal} in the final",
+    },
+
+    photoAlt: {
+      "track-lying": "John lying on a red track after a session, seen from above",
+      "lavender-race": "John racing an Olympic 5000m heat in Paris",
+      "heats-pack": "John with his fist in the air as he finishes his Olympic 5000m heat in Paris",
+      "final-pan": "The field of an Olympic 5000m heat in Paris, in motion",
+      "final-arms": "John after the Olympic 5000m final, hands on his head, with Hey mom written on one arm and Made it on the other",
+      "outdoor-portrait": "John stretching on an outdoor track",
+      "stage-wide": "John on stage at Supernova, Antwerp",
+    },
+
+    practical: {
+      title: "The keynote",
+      lead: "Thirty minutes, five lessons, one story your team can use on Monday morning.",
+      facts: [
+        { figure: "30", line: "minutes, plus optional Q&A" },
+        { figure: "3", line: "languages: English, Dutch or French" },
+        { figure: "5", line: "lessons, one per chapter of the story" },
+      ],
+      format: "In person, on your stage or at your table.",
+      lessonsTitle: "The five lessons",
+      lessonBack: "Back to lesson {n} in the story",
+      scaleTitle: "Where it works",
+      scaleLead: "As comfortable at a boardroom table as on a main stage.",
+      scaleAxis: "People in the room",
+      scale: [
+        { title: "Leadership dinners", size: "8 to 20", at: 12, detail: "Around one table, with Q&A over dinner." },
+        { title: "Executive offsites", size: "20 to 50", at: 32, detail: "Strategy sessions for senior leadership teams." },
+        { title: "Company events", size: "100+", at: 100, detail: "Team days and internal events, from 100 people." },
+        { title: "Conferences and business fairs", size: "1,000+", at: 1000, detail: "Main-stage keynote for 1,000 delegates or more." },
+      ],
+      proofTitle: "Booked by",
+      proofNote: "And White & Case, Cobepa and The Merode.",
+      /** Logo heights in rem, set by eye so each carries the same visual weight. */
+      logoHeights: { ypo: 3.1, kbc: 3.4, dell: 3.1, engie: 2.3, "sd-worx": 2.2, duvel: 3.2, unizo: 2.9, warande: 3.2, garrincha: 1.35, supernova: 1.45 },
+      quotesTitle: "What organisers wrote",
+      quoteNext: "Next testimonial",
+      quotePause: "Pause the testimonials",
+      quotePlay: "Play the testimonials",
+      quoteShow: "Show testimonial {n}",
+      roomTitle: "What the room said",
+      roomNote: "Filmed straight after the keynote at Supernova, Antwerp.",
+      roomPause: "Pause the clips",
+      roomPlay: "Play the clips",
+      roomOpen: "Watch with sound, {s} seconds",
+      roomDialog: "Straight after the keynote at Supernova",
+      recording: "A full recording of the keynote exists. Ask for the private link when you enquire.",
+    },
+
+    enquiry: {
+      title: "Bring this to your team.",
+      modalTitle: "Check availability",
+      intro: "Five short questions. You get availability and a fee within two working days.",
+      steps: {
+        type: {
+          q: "What kind of event is it?",
+          options: ["Conference or business fair", "Company event", "Executive offsite", "Leadership dinner", "Something else"],
+        },
+        date: { q: "When is it?", label: "Event date", notFixed: "Not fixed yet" },
+        size: {
+          q: "Roughly how many people will be in the room?",
+          options: ["8 to 20", "20 to 50", "100 or more", "1,000 or more"],
+        },
+        language: { q: "Which language?", options: ["English", "Dutch", "French"] },
+        contact: {
+          q: "Who should I reply to?",
+          name: "Your name",
+          org: "Organisation",
+          email: "Work email",
+          message: "Anything else I should know",
+          optional: "optional",
+        },
+      },
+      next: "Next",
+      back: "Back",
+      send: "Send enquiry",
+      sending: "Sending",
+      plain: "Prefer one form?",
+      conversational: "Back to the questions",
+      stepOf: "Question {n} of {total}",
+      revisit: "Change this answer",
+      success: "Thanks. You'll hear from me within two working days.",
+      urgent: "Anything urgent: {email}",
+      error: "That didn't go through. Write to me directly at {email}.",
+      required: "I need this one to reply.",
+      invalidEmail: "That email address doesn't look complete.",
+      direct: "Or write to me directly at {email}",
+      email: "hello@johnheymans.com",
+    },
+
+    bio: {
+      title: "About John",
+      body: [
+        "I am a Belgian distance runner and a bio-engineer by training. I started running seriously late, graduated during Covid, and decided on the Olympics two years before the Games.",
+        "The keynote came out of people asking how the ranking climb actually happened. The honest answer is a mix of environment, a model most people told me to ignore, and knowing which setbacks were worth my attention. That answer turned out to be useful to teams as well.",
+      ],
+      figures: {
+        placing: "in the Olympic 5000m final",
+        pb: "5000m personal best",
+        years: "from deciding to try to the Olympic final",
+        keynotes: "keynotes so far, all booked by word of mouth",
+      },
+      years: "{n} years",
+      follow: "Follow the training",
+    },
+
+    footer: {
+      wordmark: "John Heymans",
+      contact: "Business enquiries",
+      credits: "Photography: {names}",
+      copyright: "© John Heymans {year}",
+      pace: "You scrolled {d} m at a pace of {p} per km. At that pace, 5,000 m would take you {t}.",
+      pb: "I needed {pb}.",
+      top: "Back to the top",
+    },
+
+    format: {
+      ordinal: { one: "{n}st", two: "{n}nd", few: "{n}rd", other: "{n}th" },
+      seconds: "{s} s",
+      minutes: "{m} min {s} s",
+      hours: "{h} h {m} min",
+      days: "{d} days {h} h",
+      metres: "{n}",
+    },
+
+    dev: {
+      pending: "Pending",
+      placeholder: "Placeholder",
+    },
+  },
+
   footer: {
     contact: "Business enquiries",
     credits: "Photography",

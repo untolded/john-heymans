@@ -13,7 +13,7 @@ const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth
 
 export const metadata: Metadata = {
   title: "Website concepts for John Heymans",
-  description: "Three design concepts for John's new keynote website, and how to review them.",
+  description: "The new direction for John's keynote website, and the three earlier concepts.",
 };
 
 // Internal review page, not site copy, so the text lives here rather than in lib/content.ts.
@@ -63,13 +63,27 @@ const CONCEPTS: {
   },
 ];
 
+const LEAD = {
+  href: "/signal",
+  name: "Signal",
+  poster: "final-arms" as PhotoSlug,
+  line: "One continuous story, from the film to the Olympic final, then everything an event buyer needs to book you.",
+  notice: [
+    "The film plays the moment the page opens. One button for sound.",
+    "The story never breaks into sections. The screen holds and the story moves.",
+    "You ask ChatGPT for the algorithm, on screen, and the schedule appears.",
+    "Your federation, coach and rivals say no, then the ranking answers.",
+    "The ground turns from night to paper for the keynote details and the booking.",
+  ],
+};
+
 const PICKS = [
   ["Typography", "The typefaces and how big and heavy the headlines are."],
-  ["Colour", "The background and the one accent colour."],
-  ["Photography", "Colour or black and white, full-bleed or framed."],
-  ["Opening screen", "The headline, and whether the film or the booking button leads."],
-  ["The story", "How the five parts unfold as you scroll."],
-  ["Details", "Menu, buttons, testimonials, client logos, footer."],
+  ["Colour", "The night violet ground and the orange we spend on actions."],
+  ["The five lessons", "The wording, the order, and which photo carries each one."],
+  ["The opening", "Which film plays, how long it runs, and what the two lines say."],
+  ["The algorithm", "How much of the method we show, once we have your real data."],
+  ["Details", "Buttons, testimonials, client logos, footer."],
 ];
 
 function Arrow() {
@@ -86,19 +100,43 @@ export default function Brief() {
       <div className="brief-inner">
         <div className="brief-top">
           <span><strong>John Heymans</strong>, new website</span>
-          <span>Design concepts, round 1, 17 September 2026</span>
+          <span>Design concepts, round 2, 20 September 2026</span>
         </div>
 
-        <h1 className="brief-title">Three directions for your new website</h1>
+        <h1 className="brief-title">The new direction</h1>
         <p className="brief-lede">
-          Before we build the final site, we need to agree on its look and feel. Below are three complete versions of the one-page site. They tell the same story with the same photos and text, in three very different styles.
+          You said it read as separate sections rather than one story. So the page was rebuilt around your storyline: the film opens it, and from there one screen holds while the story moves through it, from Iten to the algorithm to the final.
         </p>
         <p className="brief-lede">
-          You don’t have to choose one. Pick the parts you like from each, and we will combine them into one final design.
+          Open it on a laptop, full screen, and scroll slowly. The three earlier concepts are still below for reference.
         </p>
 
+        <section className="brief-section" aria-labelledby="lead-title">
+          <h2 id="lead-title" className="brief-h2">Start here</h2>
+          <ul className="cards cards-lead">
+            <li style={{ display: "grid" }}>
+              <Link href={LEAD.href} className="card card-lead">
+                <div className="card-media">
+                  <Image src={photo(LEAD.poster).src} alt="" fill sizes="(min-width: 900px) 60vw, 100vw" loading="eager" />
+                  <span className="card-name">
+                    <span className="card-letter">New direction</span>
+                    <b>{LEAD.name}</b>
+                  </span>
+                </div>
+                <div className="card-body">
+                  <p className="card-line">{LEAD.line}</p>
+                  <ul className="card-notice" aria-label="What changed">
+                    {LEAD.notice.map((n) => <li key={n}>{n}</li>)}
+                  </ul>
+                  <span className="card-open">Open Signal<Arrow /></span>
+                </div>
+              </Link>
+            </li>
+          </ul>
+        </section>
+
         <section className="brief-section" aria-labelledby="concepts-title">
-          <h2 id="concepts-title" className="brief-h2">Open the three concepts</h2>
+          <h2 id="concepts-title" className="brief-h2">The three earlier concepts</h2>
           <ul className="cards">
             {CONCEPTS.map((c) => {
               const p = photo(c.poster);
@@ -133,22 +171,22 @@ export default function Brief() {
           <h2 id="how-title" className="brief-h2">How to review</h2>
           <ol className="steps">
             <li className="step">
-              <strong>Use a laptop first</strong>
-              <p>Open each concept full screen and scroll slowly. Most of the animation follows your scrolling. Then have a quick look on your phone.</p>
+              <strong>Watch before you scroll</strong>
+              <p>Open Signal full screen and let the opening film run. Turn the sound on. Then scroll slowly, because most of what happens follows your scrolling.</p>
             </li>
             <li className="step">
               <strong>Click everything</strong>
-              <p>Try the booking form and the film button. The form doesn’t send anything yet, so test it freely.</p>
+              <p>Turn the sound on, open a testimonial clip, open your own story behind “Who is John”, and send yourself a test enquiry. Nothing is sent yet.</p>
             </li>
             <li className="step">
-              <strong>Note what you like, per concept</strong>
+              <strong>Tell us if the wow is there</strong>
               <p>A few words or a screenshot per point is enough. What you dislike is just as useful.</p>
             </li>
           </ol>
         </section>
 
         <section className="brief-section" aria-labelledby="picks-title">
-          <h2 id="picks-title" className="brief-h2">What you can mix and match</h2>
+          <h2 id="picks-title" className="brief-h2">What we can still change</h2>
           <ul className="picks">
             {PICKS.map(([k, v]) => (
               <li key={k} className="pick"><strong>{k}</strong><span>{v}</span></li>
@@ -160,20 +198,20 @@ export default function Brief() {
           <div>
             <h2 className="brief-h2">Questions for you</h2>
             <ol className="qs">
-              <li>Which opening screen gets your story across best in five seconds?</li>
-              <li>Should the film or the booking button come first?</li>
-              <li>Which colour feels most like you?</li>
-              <li>Is there anything that feels too much, or not like you?</li>
-              <li>Does the text sound like you? Mark anything you wouldn’t say yourself.</li>
+              <li>Does it read as one story now, rather than a set of sections?</li>
+              <li>Is the ChatGPT moment the way you would tell it?</li>
+              <li>Are the three lines from your federation, coach and rivals fair?</li>
+              <li>Is the night violet and orange right for you?</li>
+              <li>Anything still missing that a buyer needs before they enquire?</li>
             </ol>
           </div>
           <div>
             <h2 className="brief-h2">Not final yet</h2>
             <ul className="notes">
-              <li><strong>The film.</strong> The player shows a still until the 60-second film is ready.</li>
-              <li><strong>The ranking line and distances</strong> are illustrations until we add your real ranking data.</li>
-              <li><strong>Testimonials</strong> are shortened from the full versions on your current site.</li>
-              <li><strong>The text</strong> is a first draft. Look at the style first; we will fine-tune the wording afterwards.</li>
+              <li><strong>The opening film</strong> is cut from your photos for now. Send the 60-second film, or a cut of the Supernova recording, and it drops straight in.</li>
+              <li><strong>Iten</strong> is told with graphics, because there are no photos from Kenya in the library yet.</li>
+              <li><strong>The testimonial clips</strong> need subtitles, since your audience speaks Dutch.</li>
+              <li><strong>The text</strong> is a first draft in your voice. Mark anything you would not say yourself.</li>
             </ul>
           </div>
         </section>

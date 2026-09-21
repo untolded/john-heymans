@@ -1,8 +1,9 @@
 # Reference library
 
-Teardowns of two athlete personal-brand sites, recorded for the John Heymans build. Every claim here comes from inspecting the live sites: rendered DOM, computed styles, downloaded stylesheets, downloaded JS bundles, and screenshots at multiple scroll positions and viewports. Screenshots referenced below live in [reference/](reference/).
+Teardowns of six reference sites, recorded for the John Heymans build. Every claim here comes from inspecting the live sites: rendered DOM, computed styles, downloaded stylesheets, downloaded JS bundles, and screenshots at multiple scroll positions and viewports. Screenshots referenced below live in [reference/](reference/).
 
-Analysed 14 September 2026.
+- **Part 1, sections 1 to 3:** two athlete personal-brand sites, landonorris.com and nickho-motorsports.nl. Analysed 14 September 2026.
+- **Part 2, sections 4 to 10:** the four storytelling references John named after round 3: usavionix.com, seasats.com, unitedcarriers.com and lisa.locomotive.ca. Analysed 21 September 2026, with the emphasis on how each animation framework is built and how each story flows.
 
 | | landonorris.com | nickho-motorsports.nl |
 |---|---|---|
@@ -16,6 +17,8 @@ Analysed 14 September 2026.
 Both are directly relevant to us: both sell an athlete to an audience that is not primarily made of fans of the sport, both lean on sport-specific data vernacular instead of generic "inspiration" design, and both are Webflow sites carrying a lot of custom code. Neither uses a speaker-bureau visual language anywhere.
 
 ---
+
+# Part 1: athlete sites
 
 # 1. landonorris.com
 
@@ -762,3 +765,830 @@ Stylesheets and bundles were downloaded and read in full for this teardown:
 Screenshots in [reference/](reference/), named by site and scroll position in pixels:
 
 `lando-hero`, `lando-900`, `lando-1800`, `lando-2900`, `lando-4200`, `lando-5600`, `lando-6800`, `lando-7700`, `lando-9000`, `lando-10200`, `lando-footer`, `lando-menu`, `lando-loader`, `lando-mobile`, `lando-ontrack-hero`, `lando-ontrack-stats`, `lando-ontrack-stats2`, `lando-calendar`, `nick-hero`, `nick-hero-fluid`, `nick-loader1`, `nick-loader2`, `nick-1000`, `nick-2000`, `nick-3200`, `nick-4600`, `nick-6200`, `nick-7000`, `nick-8200`, `nick-9600`, `nick-footer`, `nick-menu`.
+
+---
+---
+
+# Part 2: the storytelling references
+
+John named these four sites after round 3 as his benchmark for "a big story, not a website". This pass looks at two things in depth: how each animation framework is built (what drives what, frame by frame), and how each story is paced from first screen to last.
+
+Method: each site was loaded in desktop Chrome at 1440 × 900 and stepped through with real wheel events, screenshotting after every step; the DOM, computed styles and every stylesheet were read; every JavaScript bundle and chunk was downloaded and searched; network requests were logged to see which models, frame sequences, videos and sounds each page actually loads. Each site was also opened at iPhone 13 size. LISA was walked through its conversation step by step. The walkthrough stopped at the reCAPTCHA challenge before the final submit, so no enquiry was sent to Locomotive.
+
+| | usavionix.com | seasats.com | unitedcarriers.com | lisa.locomotive.ca |
+|---|---|---|---|---|
+| Sells | Jet drone plus AI command software, defence and public safety | Autonomous surface vessels | Freight forwarding across APAC | An agency (Locomotive, Montréal) |
+| Story format | One continuous simulated mission | A guided film, then a product catalogue | One container's journey, leg by leg | A conversation |
+| Page length at 900px | 64,664px, about 72 screens | 34,130px, about 38 screens | about 28,200px, about 31 screens | One screen, no scrolling |
+| Platform | Next.js App Router, Tailwind v4 | Next.js App Router, Payload CMS, CSS Modules | Webflow plus a custom Vite bundle hosted on Netlify | Twig templates, Locomotive's modularJS, a Vue 3 app |
+| Smooth scroll | Lenis 1.3.17 | Lenis 1.3.13 | Lenis 1.3.23 | none |
+| Animation engine | Framer Motion for the DOM, React Three Fiber `useFrame` for 3D; no GSAP | GSAP 3.15 with ScrollTrigger and SplitText | GSAP 3.15 with ScrollTrigger and a home-made text splitter | Vue transitions and CSS; GSAP 3.14.2 present |
+| 3D | Three.js r180 through React Three Fiber, carries the whole story | Three.js r180, the missions globe only | Three.js r184: hero globe, ocean scene with a wake simulation | Three.js r165: the character |
+| Signature asset | Camera and drone paths authored in Blender, exported as animation clips, scrubbed by scroll | A 511-frame AVIF flythrough filmed from the bow of a vessel | Frame sequences of a reach stacker loading a container onto a truck | A voiced 3D character with a CRT television for a head |
+| The one bold element | The camera never cuts: you fly the whole mission | The ground itself, three gradient themes crossfading under everything | The container you follow from crane to ship to sky | She talks to you, and the enquiry form is the conversation |
+
+A correction to `docs/storytelling-teardown.md`, which fed the round 5 build: it describes the USAvionix aircraft as an image sequence and says Seasats uses no smooth-scroll library. Both are wrong. USAvionix is a real-time 3D scene (section 4.3), and Seasats runs Lenis with `lerp: 0.12` (section 5.3). It also describes LISA as built on Next, which it is not (section 7.2). The conclusions drawn from that document still mostly hold; the mechanics are corrected here.
+
+---
+
+# 4. usavionix.com
+
+## 4.1 Verdict first
+
+The most cinematic of the four and the most instructive for John, because it solves the exact problem he has: **how to make an invisible technology (autonomous AI) visible and dramatic.** It does not explain the AI. It shows the AI working, in real time, on one mission, from boot sequence to resolved incident, and lets you drive the playhead with your scroll wheel.
+
+Three decisions carry it:
+
+1. **The camera never cuts.** Seventy-two screens of scrolling are one continuous camera move over one landscape. There are no section boundaries at all until the story ends.
+2. **The world is scrubbed; the words are swapped.** The 3D scene follows your scroll position exactly. The copy does not. Exactly one text block is on screen at a time, and it is replaced by a short, discrete animation when you cross a threshold. This is why it reads like a film with title cards rather than a web page with parallax.
+3. **A telemetry layer makes the machine feel alive.** Monospaced status lines (`BOOT SEQUENCE…`, `THERMAL / LIDAR / RGB / IR [ONLINE]`, `COORD: [37.4419°N / 119.8772°W]`, `32 CAR / 4 TRUCK / 1 PERSON / 2 UAV`) appear bottom right as the mission progresses. They are the AI's inner voice.
+
+## 4.2 Stack (verified)
+
+```
+Framework      Next.js App Router (self.__next_f streaming payload), deployed with dpl_ ids
+Styling        Tailwind CSS v4 (@theme tokens: --text-d-h0, --color-bg, --tw-* variables)
+Smooth scroll  Lenis 1.3.17 (html class "lenis lenis-stopped" while loading)
+3D             Three.js r180 via React Three Fiber; drei helpers (useGLTF, Outlines)
+DOM motion     Framer Motion (window.MotionIsMounted; AnimatePresence mode="wait")
+State          one global store created with Zustand's create()() signature
+Decoders       Draco (gstatic draco 1.5.5 wasm)
+Fonts          Geist and Geist Mono, variable, via next/font
+```
+
+No GSAP anywhere in the bundle. No ScrollTrigger. The scroll-to-animation mapping is about fifteen lines of their own code (section 4.4).
+
+**Assets fetched during one scroll-through:**
+
+```
+/assets/models/loading-delta.glb          wireframe drone shown by the loader
+/assets/models/delta-pbr.glb              the hero drone, full PBR materials
+/assets/models/delta-lowpoly.glb          swarm copies
+/assets/models/terrain.glb                the mountain landscape
+/assets/models/city-terrain.glb, grid.glb, grid-city.glb, building.glb, power-station.glb
+/assets/models/camera-animations.glb      the camera path, authored in Blender
+/assets/models/camera-animations-mobile.glb
+/assets/models/drone-animations.glb       every drone path, authored in Blender
+/assets/models/drone-animations-mobile.glb
+/assets/textures/environment/env.exr      lighting
+/assets/textures/terrain/bnoise.png, city.webp
+/assets/textures/fx/noise.webp, wind.webp, fire.webp
+/assets/textures/globe/earth_normal.webp, earth_outline.webp
+/assets/3d-fonts/orbitron-bold.json       typeface for 3D text
+/assets/3d-fonts/Geist-SemiBold.woff      font loaded for text drawn inside the canvas
+/assets/images/landing-sequence/NNNN.avif AVIF frame sequence, matches the drone landing at the end
+```
+
+Note the two animation files. **Nothing about the camera or the drones is hand-coded in JavaScript.** A 3D artist animated the entire mission in Blender, including separate, re-framed versions for portrait phones, and the site plays those clips.
+
+## 4.3 Story flow
+
+The story is fifteen named scenes. Each has a scroll length in viewport heights, declared in one object:
+
+```js
+{ "intro-scene": 100, "delta-drone": 500, "swarm-scene": 500, "mission-preset": 500,
+  "flock-scene": 500, "real-time-detection": 500, "thermal-irregularity": 500,
+  "ignition-verified": 500, "phalanx-ai": 500, "analysis-evaluation": 500,
+  "integrated-notifications": 500, "interdrone-coordination": 500,
+  "extra-support": 500, "zone-stabilized": 100, "multi-threat-response": 500 }
+```
+
+That is 6,700vh of story: **five full screens of scrolling per idea.** It is the slowest pacing of the four sites by a wide margin, and it is deliberate. At five screens per beat, the camera has time to travel, the swarm has time to assemble, and the reader has time to read two lines.
+
+Beat by beat, with the copy as shipped ([reference/usavionix-00-loader.jpg](reference/usavionix-00-loader.jpg) onward):
+
+| Scene | Chapter label | What the camera does | Copy on screen |
+|---|---|---|---|
+| Loader | | Dark vignette, a thin wireframe drone outlined in grey, a short progress line and `LOADING ASSETS`, then `CALIBRATING`. A diagonal wipe reveals the terrain. | none |
+| intro | | Drone banks over mountains, seen from above | "Securing the skies with autonomous intelligence" / "The first agent in the air, built with the speed, range, and onboard intelligence to search vast areas on its own." |
+| delta-drone | Specs | Camera moves to directly above; thin callout lines draw out from the airframe | Spec callouts |
+| swarm-scene | Swarm | More drones fade in; each gets an ID tag (`DS4B11`); lines connect them | "Understanding the Swarm System" / a four-row spec table: Autonomy, Scalability, Collaboration, Coverage |
+| mission-preset | Mission | Three drones in formation | "Mission preset" / "Monitor a wide operational area continuously…" / a `Start Mission` pill |
+| flock-scene | Sync | Camera pulls back until the drones become nodes in a network over a grid | Boot log bottom right; "Coordinated in real time, Delta units share intelligence and respond as one synchronized system." |
+| real-time-detection | Detection | Back over terrain; dozens of yellow bounding boxes label objects (`CAMPFIRE 80%`, `ROAD OBSTRUCTION 80%`, `PERSON 80%`) | "Real-time detection" / "Real-time detection and classification of tens of thousands of objects across the battlespace." |
+| thermal-irregularity | Detection | Low angle; a sensor cone projects from the drone | "Thermal irregularity detected" / "Thermal sensors detect an abnormal heat pattern and smoke, prompting an automatic alert to authorities." |
+| ignition-verified | Detection | Drone reaches a village; smoke | "Ignition verified" / "The Delta drone reaches the anomaly and confirms active flames…" |
+| phalanx-ai | Phalanx AI | The photographic world dissolves into a dark tactical map: grid, a survey-area outline, glowing hotspots | "Phalanx AI" / "AI-powered command layer for autonomous drone operations and synchronized mission intelligence." |
+| analysis-evaluation | Sys Analysis | Hotspots turn red; drone icons trace paths | "Analysis & evaluation" |
+| integrated-notifications | Int Alerts | Callouts fly out to `FIREFIGHTERS`, `AMBULANCE`, `POLICE`, `EMERGENCY SERVICES` | "Integrated notifications" |
+| interdrone-coordination | Coordination | A second zone appears; a drone is reassigned | "Inter-drone coordination" |
+| extra-support | Coordination | Extruded building blocks turn red, `ALERT AREA` | "The swarm detects the need for extra support and deploys another drone…" |
+| zone-stabilized | Coordination | Blocks turn cyan, `AREA SECURED` | "Zone stabilized" plus a small `M-2 Completed` badge |
+| multi-threat-response | Response | Camera pulls up to show five zones at once | "Multi-threat response" |
+
+After the last scene the canvas fades and ordinary DOM sections take over on black: "One platform, many missions." with a row of use-case cards (Wildfire Cascade and others), a wireframe globe ("USAvionix covers vast areas and long distances…"), "Autonomy in real operations" with a close-up of the engine and a `Request Access` pill ("Demo access is limited, so request a slot and we will reach out."), a logo row of where the founders come from (SpaceX, Apple, Tesla, Palantir, Skycatch, Navy SEALs, Google, JPL), and a footer with a giant ghosted wordmark, the drone standing on its landing gear, and "Ready to talk to us?" See [reference/usavionix-09-use-cases.jpg](reference/usavionix-09-use-cases.jpg) and [reference/usavionix-10-footer.jpg](reference/usavionix-10-footer.jpg).
+
+**The narrative shape is a three-act film:**
+- Act 1, the hero and its powers (intro, specs, swarm, mission preset, sync).
+- Act 2, the inciting incident and escalation (detection, thermal irregularity, ignition verified, analysis, alerts).
+- Act 3, resolution and scale (coordination, extra support, zone stabilized, multi-threat response).
+- Epilogue: proof (use cases, reach, founders) and the ask (limited demo slots).
+
+The product is never described in the abstract once the mission starts. Every capability is introduced at the moment the plot needs it. Thermal cameras appear because there is a fire. Integrations appear because firefighters need to be told. That is the lesson.
+
+## 4.4 Animation framework: how it is wired
+
+Four layers, each with one job.
+
+**Layer 1: scroll to scene progress.** An invisible column of DOM spacers, one per scene, sized by the vh table above. On every Lenis scroll event, one function measures the spacers and writes four numbers per scene into the global store (reconstructed from the minified bundle):
+
+```js
+lenis.on("scroll", ({ scroll }) => {
+  for (const { id, start, height, end } of scenes) {
+    const showStart = (id === first) ? start - innerHeight : start;
+    const progress  = clamp((scroll - start) / height, 0, 1);      // 0..1 inside the scene
+    const showRatio = clamp((scroll - showStart) / innerHeight, 0, 1); // entering, over one screen
+    const hideRatio = clamp((scroll - end) / innerHeight, 0, 1);       // leaving, over one screen
+    const isActive  = showRatio > 0 && hideRatio <= 1;
+    store.getState().updateSceneData(id, { progress, isActive, showRatio, hideRatio });
+  }
+});
+```
+
+The store only notifies subscribers when a value actually changes. Everything downstream reads these four numbers. Nothing else in the site knows what `scrollY` is.
+
+**Layer 2: the 3D world reads progress every frame.** Inside React Three Fiber, each animated object has a `useFrame` hook that reads its scene's progress straight from the store (not through React state, so there are no re-renders) and scrubs a Blender clip:
+
+```js
+useFrame(() => {
+  const { progress } = store.getState()[sceneId];
+  if (progress > 0) {
+    action.time = clip.duration * progress - 1e-6;   // scrub the Blender clip
+    action.play(); action.paused = true;
+    drone.position.copy(tracker.position);            // copy the animated empty's transform
+    drone.rotation.copy(tracker.rotation);
+  }
+});
+```
+
+The clips animate invisible "tracker" empties, and the real meshes copy their transforms. That lets the same clip drive a PBR drone on desktop and a low-poly drone in the swarm. The mobile clip set is swapped in with a `(min-width: 768px)` media query.
+
+Custom shader materials receive `progress` and `hideRatio` as uniforms, so fire, smoke, map outlines and hotspots fade and grow with the scroll. A range-mapping helper converts slices of a scene's progress into effect parameters with an easing curve, for example "fade the fire in over the first half of the Phalanx scene": `mapRange(progress, 0, 0.5, 0, 1, ease)`. A post-processing pass carries a vignette, a crossfade between the photographic and tactical looks (`mixFactor` from 0.75 to 1 of the Sync scene), and a thermal-invert effect with its own position and size.
+
+**Layer 3: the copy is declared against the story, not the page.** Every headline and body block is an entry in one array with a time window expressed in scene progress:
+
+```js
+{ component: RealTimeDetectionCopy,
+  timeWindow: { startScene: REAL_TIME_DETECTION, startSceneProgress: 0.5,
+                endScene: THERMAL_IRREGULARITY,  endSceneProgress: 0.075 } }
+```
+
+One fixed overlay subscribes to the store, finds the single entry whose window contains the current state, and renders it inside `AnimatePresence mode="wait"`. The outgoing block finishes its exit before the incoming block enters. The telemetry lines work the same way:
+
+```js
+{ label: "BOOT SEQUENCE…",                        scene: "flock-scene",         progress: 0.10 },
+{ label: "THERMAL / LIDAR / RGB / IR [ONLINE]",   scene: "flock-scene",         progress: 0.15 },
+{ label: "AI: 2 AGENTS / DUAL GPU [ACTIVE]",      scene: "flock-scene",         progress: 0.20 },
+{ label: "LINK: PHALANX SYSTEM [ESTABLISHED]",    scene: "flock-scene",         progress: 0.25 },
+{ label: "SCAN MODE: ACTIVE",                     scene: "real-time-detection", progress: 0.25 },
+{ label: "COORD: [37.4419°N / 119.8772°W]",       scene: "real-time-detection", progress: 0.30 },
+{ label: "ALT 1,240M | SPEED 74 KM/H",            scene: "real-time-detection", progress: 0.35 },
+{ label: "32 CAR / 4 TRUCK / 1 PERSON / 2 UAV",   scene: "real-time-detection", progress: 0.40 },
+```
+
+This is the single most transferable idea in Part 2. The script of the story lives in data, keyed to story time. Rewriting a line, moving it later, or adding a telemetry line is a one-line edit that cannot break the layout.
+
+**Layer 4: the headline motion.** Every heading uses one component:
+
+```js
+<AnimatePresence mode="wait" propagate>
+  <motion.h2
+    initial={{ opacity: 0, y: 8,  color: "#FF2200" }}
+    animate={{ opacity: 1, y: 0,  color: "#FFFFFF" }}
+    exit=   {{ opacity: 0, y: -8, color: "#FF2200" }}
+    transition={{ duration: 0.4, ease: "easeInOut" }} />
+</AnimatePresence>
+```
+
+Eight pixels of travel and a red flash as the text arrives and leaves, like a phosphor display catching a signal. The whole block moves as one; there is no per-letter animation on headings. Restraint in the type animation is what lets the 3D be the spectacle. Map-overlay labels use `pathLength` 0 to 1 on their leader lines, then fade the label in.
+
+The chapter indicator top centre (`SPECS`, `SWARM`, `MISSION`, `SYNC`, `DETECTION`, `PHALANX AI`, `SYS ANALYSIS`, `INT ALERTS`, `COORDINATION`, `RESPONSE`) is derived from the same store: whichever scene is active names the chapter, flanked by tick marks.
+
+## 4.5 Design system
+
+**Colour.** `--color-bg: #0f0f0f`, white text, and three signal colours used only inside the simulation: `--color-yellow: #ffcb47` (detection boxes, hotspots, "sensitive"), `--color-red: #f66` (threats, alerts), and a cyan they named `--color-green: #7aebff` (secured, resolved). Colour carries plot: yellow means "noticed", red means "danger", cyan means "handled". Neutrals: `#f2f2f2`, `#ccc`.
+
+**Type.** Geist for everything readable, Geist Mono for telemetry and labels. Two scales, desktop and mobile, as Tailwind v4 tokens:
+
+```
+d-h0   5rem      / 4.75rem  / -0.04em / 600       m-h0  2.6875rem / 2.41875rem / -0.04em / 600
+d-h1   4.75rem   / 5rem     / -0.04em / 600       m-h1  2.125rem  / 2.25rem    / -0.04em / 600
+d-h2   3.125rem  / 3.25rem  / -0.03em / 600       m-h2  1.875rem  / 2rem       / -0.04em / 600
+d-h3   1.8125rem / 2rem     / -0.01em / 500       m-h3  1.1875rem / 1.25rem    / 0       / 500
+d-body-l 1.1875rem / 1.5rem / 500                 m-body-l .875rem / 1rem / 500
+d-body-s 1rem / 1.25rem / 500                     m-body-s .8125rem / 1rem / 500
+d-cta  1.0625rem / 1.25rem / 500
+d-mono .75rem / 1rem / +0.06em / 500              m-mono .6875rem / 1rem / +0.06em / 500
+```
+
+Headlines at 600 with -4% tracking; body at 500; mono at 500 with +6% tracking and uppercase. There is no display face. The drama is carried by the image, and the type is simply clear.
+
+**Frame.** The layout is a fixed frame that never changes while the content inside it does: wordmark top left, chapter label top centre, `Contact` pill and hamburger top right, headline top left, body copy bottom left, telemetry bottom right in mono, right-aligned. See [reference/usavionix-05-detection-hud.jpg](reference/usavionix-05-detection-hud.jpg). Because the frame is constant, the eye learns where to look within two scenes and the reading cost drops to almost nothing.
+
+## 4.6 Mobile
+
+Same experience, portrait. The loader is the same diagonal wipe with `LOADING ASSETS`. The hero adds a `Scroll To Explore` pill with a down arrow. The chapter indicator stays top centre next to the logomark. The camera and drone paths come from the separate `-mobile.glb` clips, re-framed so the drone sits in the upper half and copy sits at the bottom. See [reference/usavionix-11-mobile.jpg](reference/usavionix-11-mobile.jpg).
+
+## 4.7 Where it falls short
+
+- **No `prefers-reduced-motion` handling at all.** Zero occurrences across every chunk and the stylesheet. Seventy screens of scrubbed camera motion with no alternative.
+- The copy exists only inside a canvas-driven overlay that shows one block at a time. There is no readable, linear version of the story for a screen reader or a skim reader.
+- Heavy: a dozen GLB files, an EXR environment, noise and fire textures, Draco wasm, all before the first headline is useful.
+
+## 4.8 What John should take from it
+
+1. **Show the algorithm working, on one real problem, in real time.** Not a diagram of an algorithm. His schedule optimiser choosing races, the ranking responding, the doubters' advice arriving as "alerts" and being overridden. The AI becomes a character with an inner voice.
+2. **Declare the script as data keyed to story progress.** One array of `{ copy, startBeat, startProgress, endBeat, endProgress }`. One overlay renders one block at a time. This is buildable today in our Next.js stack with GSAP or with a small store like theirs.
+3. **Scrub the world, swap the words.** Our round 5 build scrubs text opacity with the timeline. Swapping text blocks with a short discrete animation (400ms, a few pixels of travel) will read more like film and far more legibly.
+4. **A telemetry layer in mono** is the cheapest possible way to make AI visible. Real values only: his ranking positions, race counts, dates, points. The pattern is established; the content must be true.
+5. **Colour as plot.** One colour for "noticed", one for "risk", one for "resolved". In the signal palette that could be lavender for the algorithm, amber for risk and the final, paper for resolution.
+6. **Pacing.** Five screens per beat is too slow for a keynote buyer, but it proves the point: give each beat far more scroll than feels natural, and the story slows down to reading speed.
+
+---
+
+# 5. seasats.com
+
+## 5.1 Verdict first
+
+The most beautiful of the four, and the one whose techniques are closest to what we already build. It is two sites in one: a **film** for the first twelve screens, then a **catalogue** that keeps the film's atmosphere. The film is carried by an image sequence shot from the bow of the vessel; the atmosphere is carried by a single fixed background that crossfades between three gradient "themes" as you scroll, so the page never has a hard section edge.
+
+What to notice first: **the copy is almost entirely one-line statements.** "The coordinates of the ghost fleet." "No matter the unknown, we will find it." "Deploy in minutes. Detect from miles. React at once." Short enough to read in the time a frame sequence plays.
+
+## 5.2 Stack (verified)
+
+```
+Framework      Next.js App Router, CSS Modules (ThemeBackground_background__xCT8k)
+CMS            Payload (twitter:creator is Payload's default @payloadcms; content fetched as .docs)
+Smooth scroll  Lenis 1.3.13 through ReactLenis, root, { lerp: 0.12, autoRaf: false }
+               ticked from gsap.ticker with lagSmoothing(0)
+Animation      GSAP 3.15 + ScrollTrigger + SplitText, via useGSAP
+3D             Three.js r180, only for the missions globe (boat-only.glb, KTX2 textures)
+Frames         AVIF image sequences drawn to <canvas> (component AnimateFrames)
+Video          26 <video autoplay muted loop preload="auto"> elements, none with a poster
+Fonts          seasonMix (400, 500), seasonSans (400), supplyMono (400)
+Root size      html { font-size: 10px }, so 1rem = 10px throughout
+```
+
+A component inventory, read from the CSS module names, is effectively their design system: `ThemeBackground`, `ThemeSwitch`, `ThemeHeaderTrigger`, `ThemeHeaderBackdrop`, `Preloader`, `HeroMedia`, `HeroText`, `FlythroughPoints`, `NarrativeHighlight`, `StoryTimeline`, `VirtuesDesktop`, `VirtuesMobile`, `Missions`, `MissionsGlobe`, `MissionsSlider`, `MissionsFilter`, `MissionsPopover`, `ModalMission`, `ProductComparison`, `ProductStory`, `ProductStoryFrames`, `ProductOverview`, `ProductOverviewHotspots`, `ProductOverviewSpecs`, `ProductOverviewTabs`, `ProductNav`, `AnimateFrames`, `AnimatedText`, `InViewText`, `InViewElement`, `LeadersSlider`, `Careers`, `Press`, `LivestreamWidget`, `ScrollStatsSpeed`, `ScrollStatsDistance`, `Nav`, `NavThumbnails`, `NavProgress`, `NavProximityOffsetter`, `ScrollOverlay`, `DevGrid`.
+
+## 5.3 Story flow
+
+([reference/seasats-00-loader.jpg](reference/seasats-00-loader.jpg) to [reference/seasats-12-footer-scroll-stats.jpg](reference/seasats-12-footer-scroll-stats.jpg).)
+
+**Loader.** The pale "aura" gradient with the wordmark centred. Nothing else. The gradient is the same one the page will use, so the loader is already the first frame of the site.
+
+**Act 1, the film (about 12 screens).**
+
+1. **Hero** ([seasats-01-hero-nav.jpg](reference/seasats-01-hero-nav.jpg)). A looping idle video of vessels on still water at dusk. "Ocean Autonomy That Works" in a light, wide serif, centred, huge. One small pill: `EXPLORE PRODUCTS`.
+2. **The flythrough** ([seasats-02-ghost-fleet.jpg](reference/seasats-02-ghost-fleet.jpg), [seasats-03-flythrough-cards.jpg](reference/seasats-03-flythrough-cards.jpg)). The hero dissolves into a first-person view from the bow: the mast and sensor dome in the centre, the deck running away from you, the sea ahead. As you scroll, the vessel moves forward (511 frames). Above, a centred list of six statements; the active one is full white, the others dimmed:
+   - The coordinates of the ghost fleet.
+   - The path of hurricanes.
+   - The location of smuggling and illegal fishing.
+   - The spread of toxic algal blooms.
+   - The signals of submarines.
+   - The status of pipelines.
+
+   Each statement brings in one or two small photographs with mono labels (`GHOST FLEET`, `SUBMARINE SIGNALS`, `THE SPREAD OF TOXIC ALGAL BLOOMS`), floating either side of the mast.
+3. **The line** ([seasats-04-no-matter.jpg](reference/seasats-04-no-matter.jpg)). The camera emerges into open, foggy sea with other vessels around. "No matter the unknown, we will find it."
+4. **Virtues** ([seasats-05-virtues.jpg](reference/seasats-05-virtues.jpg), [seasats-06-deploy-expanded.jpg](reference/seasats-06-deploy-expanded.jpg)). The ground turns to the pale aura gradient. "Deploy in minutes. Detect from miles. React at once." stacked, with a strip of three small thumbnails under it. The first thumbnail grows until it fills the screen and becomes a full-bleed video of the vessels being handled in a workshop, headline top left, four feature columns along the bottom (Deploys by hand, Ships anywhere fast, Mastered with ease, Priced for scale). Then the next virtue, then the next.
+
+**Act 2, the evidence.**
+
+5. **Mission after mission** ([seasats-07-missions-globe.jpg](reference/seasats-07-missions-globe.jpg)). Theme crossfades to "oxidised" teal. A 3D globe with mission routes and markers, filter tabs `ALL / COMMERCIAL / DEFENSE / SCIENCE`, "Click and drag to explore featured missions."
+6. **Satellites at sea.** Back to aura. The three vessels side by side, "Vessels designed to work independently, team up for coordinated maneuvers, and form vast networks for ocean-wide intelligence."
+
+**Act 3, the catalogue.**
+
+7. **Engineered for every need** ([seasats-08-comparison.jpg](reference/seasats-08-comparison.jpg)). Three product cards and a comparison table in mono (Endurance, Payload capacity, Deployment, Ideal use cases).
+8. **Lightfish, Quickfish, Heavyfish** ([seasats-09-lightfish-frames.jpg](reference/seasats-09-lightfish-frames.jpg), [seasats-10-quickfish-copper.jpg](reference/seasats-10-quickfish-copper.jpg), [seasats-11-hotspots.jpg](reference/seasats-11-hotspots.jpg)). Each vessel gets a pinned story: a 529-frame rendered turntable that rotates as you scroll, a short intro, "The vessel, in brief", six one-word virtues with a line each, "Mission-ready from the start" with payload tabs, hotspot boxes on the render, a mono spec table, `DOWNLOAD FULL STATS`, and an `X-RAY VIEW` toggle. A pill switcher (`LIGHTFISH / QUICKFISH / HEAVYFISH`) is pinned at the bottom. **The theme changes per product**: Lightfish on aura, Quickfish on copper (orange to rust), Heavyfish on oxidised (teal to deep green).
+9. **Leadership, careers, press, contact.** Back on aura. Portrait slider, "Join the crew. Build the future.", press cards, "Take action".
+
+**Footer** ([seasats-12-footer-scroll-stats.jpg](reference/seasats-12-footer-scroll-stats.jpg)). A copper sea-and-sky image with Lightfish's hydrofoil breaking the frame, a giant wide wordmark, the links, and two numbers: `DISTANCE SCROLLED 3.3 METERS` and `AV SCROLL SPEED 0.174 KNOTS`, with a caption that changes with your speed:
+
+```js
+[ { max: .15,           message: "That's like a feather floating on a glass-still tide" },
+  { min: .15, max: .3,  message: "That's like seaweed gliding on a lazy current" },
+  { min: .3,  max: .5,  message: "That's like a buoy drifting with the sway" },
+  { min: .5,            message: "That's like driftwood nudging along a quiet swell" } ]
+```
+
+A joke in the brand's own units, rewarding the visitor who reached the end. United Carriers does the same thing independently (section 6.5).
+
+## 5.4 Animation framework: how it is wired
+
+Seasats is component-first GSAP: every component owns its own ScrollTrigger, created in `useGSAP` so it is reverted on unmount. There is no central timeline. What makes it feel continuous is two shared pieces: the theme background and the Lenis instance.
+
+**Lenis and GSAP share one clock.**
+
+```js
+<ReactLenis root options={{ lerp: 0.12, autoRaf: false }}>
+// and once:
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+```
+
+**The theme background.** One fixed element, full viewport, behind everything (`z-index: -1`, `pointer-events: none`), containing one gradient layer per theme. The live values:
+
+```css
+.ThemeBackground_background { position: fixed; inset: 0 0 auto; height: 100vh; z-index: -1; }
+.ThemeBackground_gradient   { position: absolute; inset: 0; background-size: 100% 100vh;
+                              will-change: opacity; }
+[data-theme="aura"]     { opacity: var(--opacity-aura, 1);
+  background-image: linear-gradient(#eef4ef 59.27%, #ffefd2 84.29%, #e2ffdb 97.88%, #fff 112.27%); }
+[data-theme="oxidised"] { opacity: var(--opacity-oxidised, 0);
+  background-image: linear-gradient(#4e9a85, #183f34 52.82%, #2b3922 75.83%); }
+[data-theme="copper"]   { opacity: var(--opacity-copper, 0);
+  background-image: linear-gradient(#e08826 -48.83%, #eca43b -22.63%, #ca612a 33.9%,
+                                    #752210 75.45%, #370e0a 116.33%); }
+[data-theme-top="aura"] [data-theme="aura"] { z-index: 1; }   /* current theme on top */
+```
+
+Between content sections sits a dedicated spacer component, `<ThemeSwitch theme="copper" lastTheme="aura">`. Its ScrollTrigger scrubs two CSS variables on the background element, overlapping by half:
+
+```js
+gsap.timeline({ scrollTrigger: { trigger: spacer, start: "top top", end: "bottom bottom", scrub: true,
+    onEnter:     () => gsap.set(bg, { attr: { "data-theme-top": theme } }),
+    onLeaveBack: () => gsap.set(bg, { attr: { "data-theme-top": lastTheme } }) } })
+  .fromTo(bg, { [`--opacity-${theme}`]: 0 },     { [`--opacity-${theme}`]: 1,     duration: .75, ease: "sine.inOut" }, 0)
+  .fromTo(bg, { [`--opacity-${lastTheme}`]: 1 }, { [`--opacity-${lastTheme}`]: 0, duration: .75, ease: "sine.inOut" }, .25);
+```
+
+Why this is better than animating `background-color`: gradients cannot be interpolated by the browser, but stacked layers with animated opacity can, on the compositor, at no layout cost. And because the colour change is its own scroll span, a theme change is a moment in the story, not a side effect of a section boundary.
+
+The header inverts through `ThemeHeaderTrigger` elements placed inside sections, each watched by an IntersectionObserver that increments or decrements a counter of "dark triggers under the header". The header is light whenever the counter is above zero. Inset rules per section (`calc(66vh - 4rem)` and similar) decide exactly when the flip happens.
+
+**Frame sequences.** `AnimateFrames` is a tall "track" with a sticky container holding a canvas:
+
+```js
+// frame list built from a pattern
+frames = pattern("/frames/intro-25/frame_%04d", 511, "avif");      // desktop
+frames = pattern("/frames/intro-25-mobile/frame_%04d", 511, "avif"); // below 1024px
+
+gsap.timeline({ scrollTrigger: { trigger: track, start: "top top", end: "bottom bottom", scrub: true,
+  onUpdate: (st) => draw(nearestLoaded(Math.floor(st.progress * (frames.length - 1)))) } });
+
+function nearestLoaded(i, maxDistance = 20) {        // never show a blank frame
+  if (loaded[i]) return i;
+  for (let d = 1; d <= maxDistance; d++) {
+    if (loaded[i - d]) return i - d;
+    if (loaded[i + d]) return i + d;
+  }
+  return -1;
+}
+function draw(img) {                                  // object-fit: cover, in canvas
+  const s = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(img, (w - img.naturalWidth * s) / 2, (h - img.naturalHeight * s) / 2,
+                img.naturalWidth * s, img.naturalHeight * s);
+}
+```
+
+Loading is thinned in time: during one scroll-through, the Lightfish requests were every second frame and the Quickfish requests every fourth, so a sequence plays at a lower frame rate rather than stalling, and the nearest-loaded search covers the gaps. A separate invisible `loadTrigger` element starts loading before the track reaches the viewport. Product turntables are 60 fps renders (529 frames); mobile versions are 25 fps with 221 frames.
+
+**The flythrough statements.** The intro timeline maps progress to the active statement with an offset so the first and last statements get breathing room:
+
+```js
+onUpdate: (st) => {
+  const index = Math.max(0, Math.floor(st.progress * (count + 2) - 1.5));
+  setActive(index);
+  setVisible(st.progress > 0 && index < count);
+}
+```
+
+**Word reveals.** `NarrativeHighlight` pins a block, splits its rich text into words with SplitText, and scrubs each word's opacity to 1 with a 0.1 stagger, starting at 1.2 on a timeline whose visual layer (a `topography.webp` image) ramps a `--progressVisual` CSS variable from 0 to 1 and back. The heading has its own track that drives `--progressHeading` from 0 to 1 with `power2.in`. **GSAP writes a single number into a CSS variable and CSS turns it into transforms, masks or opacity.** This pattern recurs throughout Seasats and United Carriers, and it keeps the JavaScript tiny.
+
+A general `TextSplitter` component tags every split piece with `--char-index`, `--word-index` or `--line-index` so CSS can compute staggered transition delays without JavaScript.
+
+Easing vocabulary across the bundle: `none` (10, all scrubbed), `power2.inOut` (7), `power4.out` (6), `power2.in` (5), `sine.inOut` (4, the theme fades). Masked reveals use `clip-path: inset(100% 0 0 0)` to `inset(0 0 0 0)`.
+
+**The nav.** On desktop, a column of menu items slides out at the right edge when the pointer comes close (`Nav_proximity`), and the whole page frame shrinks into a rounded card to make room ([seasats-01-hero-nav.jpg](reference/seasats-01-hero-nav.jpg)). Each menu item is painted in the colour of the theme its section uses, from peach through sage to dark green, so **the menu is a colour map of the page.** A thin vertical progress rail with chapter chunks and a marker sits at the right edge, and `NavThumbnails` shows a thumbnail per section with the current one highlighted. On mobile the whole mechanism becomes one `MENU` pill.
+
+## 5.5 Design system
+
+**Colour.** No flat brand palette at all: the three theme gradients are the palette. Text is `#232323` on aura and white on oxidised and copper. Accents come from photography.
+
+**Type.** Three families, each with one job:
+- **seasonMix**, a light, wide serif with soft wedge serifs, for all headlines. Always sentence case, always light (400), never bold. "Ocean Autonomy That Works" at about 11rem.
+- **seasonSans** for body copy, small and quiet.
+- **supplyMono** for labels, tabs, spec tables and buttons, uppercase: `EXPLORE PRODUCTS`, `GHOST FLEET`, `DOWNLOAD FULL STATS`, `X-RAY VIEW`.
+
+The contrast between a light, graceful serif and hard-edged defence hardware is the whole brand. Nothing shouts; the product looks confident because the type is calm.
+
+**Buttons.** White pills with mono uppercase labels and a separate dark square icon cell holding an arrow. The arrow is never part of the label.
+
+## 5.6 Mobile
+
+The film survives intact in portrait ([seasats-13-mobile.jpg](reference/seasats-13-mobile.jpg)): the same bow flythrough (dedicated mobile frames), the six statements at the top, the labelled image cards below them. The virtues become stacked cards with an image, a rule and a short list. The proximity nav becomes a `MENU` pill.
+
+## 5.7 Where it falls short
+
+- `prefers-reduced-motion` appears once across the downloaded JavaScript and not at all in the stylesheets. The flythrough and turntables scrub regardless.
+- Twenty-six videos, every one with `preload="auto"` and none with a poster, on a single page.
+- The `og:image` URL is malformed in production (`https://www.seasats.comhttps//seasats.sfo3.cdn…`), so link previews break.
+
+## 5.8 What John should take from it
+
+1. **The theme background as stacked gradient layers with opacity variables.** This is exactly how our night-to-paper colour journey in `/signal` should work, and it allows the journey to pass through gradients (night violet into amber for the final, amber into paper for the practical part), not just flat colours.
+2. **Theme changes as their own scroll span**, placed between beats. A colour change is a story moment.
+3. **The six-statement list with the active line lit.** A strong shape for his five lessons: all five visible, the current one lit, one image card per lesson.
+4. **Frame sequences from his real footage.** If the keynote film or race footage can be cut into a 10 to 20 second continuous shot, it can be exported to AVIF frames and scrubbed exactly like the bow flythrough: nearest-loaded frame, cover-fit, progressive stride loading, a separate mobile set.
+5. **The scroll-speed joke, in his units.** Seasats converts scroll speed to knots; United Carriers puts it on a truck speedometer. Ours converts scroll speed into running pace per kilometre. Ownable, costs twenty lines, and rewards the visitor who reaches the footer.
+6. **A light, calm serif against hard subject matter.** Worth keeping in mind for the display face: the calm carries more confidence than weight does.
+
+---
+
+# 6. unitedcarriers.com
+
+## 6.1 Verdict first
+
+A logistics company, which makes the achievement more impressive: they turned "we do freight forwarding" into a story by **following one shipping container through every leg of its journey.** A reach stacker lifts it, a truck carries it, the camera rises to watch the truck drive the road, the road ends at the sea and the container is on a ship, the camera climbs through clouds and a plane wing appears. The company's claim, "Every leg of the journey", is made literal by the scroll.
+
+This is the site's lesson for John: **pick one object and let the audience follow it.** Everything else, the services, the stats, the testimonials, hangs off the object's journey.
+
+## 6.2 Stack (verified)
+
+```
+Platform       Webflow (design, CMS, e-commerce for merch via Stripe)
+Custom code    a Vite (rolldown) build hosted on Netlify: united-carriers.netlify.app/main.js
+               plus 32 lazy chunks: one per page template, one per heavy feature
+Dev workflow   an inline script loads the Vite dev client only on united-carriers.webflow.io,
+               so developers get hot reload against the real Webflow staging site
+Transitions    Barba.js (data-barba="container", data-barba-namespace)
+Smooth scroll  Lenis 1.3.23
+Animation      GSAP 3.15 + ScrollTrigger
+Text splitting their own splitter (Intl.Segmenter, canvas text metrics), no SplitText
+3D             Three.js r184 (hero globe); a Webflow <webflow-3d scene="OceanScene"> element
+               with its own WakeSimulation module for the ship's wake
+2D canvas      frame sequences (crane, truck), footer particle wordmark
+Other          Swiper, Finsweet Attributes v2, Mixpanel, CookieYes, Awwwards "Site of the Day" badge
+Fonts          BT Steinhart 500 and 700, BT Steinhart Mono 400, Helvetica Neue 400 and 500
+Root size      html { font-size: 0.5787vw }  (100 / 172.8: 1rem = 10px at a 1728px design width)
+```
+
+The chunk list is a map of the architecture: `main.js`, `layout`, `helpers`, `scroll`, `navigation`, `popup`, `vendor-gsap`, `vendor-three`, `vendor-barba`, `lenis`, `swiper`, `frame-sequence`, `globe`, `OceanScene`, `WakeSimulation`, `my-flights`, and one chunk per page: `Home`, `About`, `Service`, `Industry`, `Career`, `Community`, `Contact`, `Article`, `TpInsight`, `TpProduct`, `Merchandise`, `Checkout`, `Payment`, `Terms`.
+
+## 6.3 Story flow
+
+([reference/unitedcarriers-00-loader.jpg](reference/unitedcarriers-00-loader.jpg) to [reference/unitedcarriers-11-footer-particles.jpg](reference/unitedcarriers-11-footer-particles.jpg).)
+
+**Loader** ([unitedcarriers-00-loader.jpg](reference/unitedcarriers-00-loader.jpg)). Black. Wordmark left, a dotted world map centre with the company's offices lit in brand blue, a scrolling list of countries under the wordmark (New Zealand, Hong Kong, China, Vietnam, United States, Thailand, Germany, United Kingdom, Australia), a scrolling list of services on the right (Air freight, Ocean freight, Customs brokerage, Warehousing & 3PL, Project cargo, Domestic & linehaul transport), and a percentage counter with a small spinner. Behind it, concentric circles at 30, 45 and 75vmax pulse outward. The loader is already a summary of the company: where, what, how far.
+
+**1. Space** ([unitedcarriers-01-globe-hero.jpg](reference/unitedcarriers-01-globe-hero.jpg)). A dotted globe in black space, orange arcs flying from the office to labelled countries (Spain, Italy, UK, Germany, Turkey, Israel, Egypt, Qatar, Saudi Arabia, Kenya). "ONE OPERATOR / EVERY LEG OF THE JOURNEY". As you scroll, the camera falls through the atmosphere: black becomes ultramarine becomes white.
+
+**2. Arrival on the ground** ([unitedcarriers-02-stats.jpg](reference/unitedcarriers-02-stats.jpg)). White page. An aerial thumbnail of a motorway interchange, "WE MOVE FREIGHT. WE OWN THE OUTCOME.", "From countless journeys, clarity emerges", three counters: 2,500+ shipments per month, 98.2% on-time delivery, 8+ years in operation.
+
+**3. The container is lifted** ([unitedcarriers-03-crane.jpg](reference/unitedcarriers-03-crane.jpg)). A reach stacker, shot in profile on white, drives in, lifts a container off a stack, swings it over and lowers it onto a waiting truck. Frame sequence, scrubbed.
+
+**4. The truck** ([unitedcarriers-04-truck.jpg](reference/unitedcarriers-04-truck.jpg), [unitedcarriers-05-services.jpg](reference/unitedcarriers-05-services.jpg)). The truck sits on a black road band. Behind it, "OUR SERVICES" in giant ghost type slides past. "EVERYTHING YOUR FREIGHT NEEDS. UNDER ONE GROUP." Six services in columns: Air freight, Ocean freight, Customs brokerage, Warehousing and 3PL, Project cargo, Domestic and interstate transport. A speedometer in the truck scene shows your own scroll speed.
+
+**5. The road** ([unitedcarriers-06-road.jpg](reference/unitedcarriers-06-road.jpg)). The camera goes overhead. The truck drives along a road that turns a corner; "RELIABILITY AT EVERY MILESTONE" and three features (Real-time freight tracking, Global network coverage, 24/7 customer support) appear beside the road as it passes them. Features are placed like milestones on the route.
+
+**6. The sea** ([unitedcarriers-07-ship.jpg](reference/unitedcarriers-07-ship.jpg), [unitedcarriers-08-ship-headline.jpg](reference/unitedcarriers-08-ship-headline.jpg)). The road ends; a container ship, seen from directly above, sails up the screen through deep blue water with a simulated wake. "LOGISTICS THAT WORKS AS HARD AS YOU DO." Five features (One point of contact, Full supply chain visibility, Compliance you can trust, Competitive transparent pricing, Fast issue resolution) are arranged around the ship as it passes.
+
+**7. The sky** ([unitedcarriers-09-plane-testimonials.jpg](reference/unitedcarriers-09-plane-testimonials.jpg)). The camera rises into cloud. A plane wing cuts in from the right. "TRUSTED BY BUSINESSES ACROSS APAC", long testimonials with portraits, then logo grids of partner airlines and shipping lines on hairline cells.
+
+**8. Back to earth.** A blue gradient, "WHAT'S MOVING IN YOUR INDUSTRY" and a news list; an FAQ; "READY TO MOVE SMARTER?" on black with concentric circles.
+
+**9. Footer** ([unitedcarriers-11-footer-particles.jpg](reference/unitedcarriers-11-footer-particles.jpg)). Contact details, a map with offices, an industries marquee, payment icons for the store, and a huge wordmark made of particles that scatter from the cursor and drift back.
+
+The route is land, sea, air, and back to land, which is also the order of their services. **The information architecture and the story are the same thing.**
+
+## 6.4 Animation framework: how it is wired
+
+This is the most "engineered" framework of the four, and the easiest to learn from because every section follows the same contract.
+
+**Page lifecycle through Barba.** `main.js` maps each Barba namespace to a lazily imported page module (`Home`, `About`, `Service`…). A page module exports a registry of section classes:
+
+```js
+const Home = { Hero, Intro, Service, Why, Testi, Partners, Insight, Faq, Cta, Footer };
+```
+
+**Every section implements the same interface:**
+
+```js
+class Hero {
+  setup(data, mode)   // mode is "once" (first load, after the loader) or "enter" (after a Barba transition)
+  setupOnce(data)     // build a paused reveal timeline; play it when the loader finishes;
+                      // onStart removes [data-init-hidden]; onComplete starts animationScrub()
+  setupEnter(data)    // same reveal, but played by a once:true ScrollTrigger
+                      // (start "top bottom+=50%") after a page transition
+  animationReveal(tl) // declarative reveal: a list of reveal primitives added to one timeline
+  animationScrub()    // everything tied to scroll position (globe, crane, truck, road, ship)
+  interact()          // hover, cursor, drag
+  playOnce() / playEnter()
+  destroy()           // kill timelines, tickers, WebGL; deferred until after the leave
+                      // animation when deferDestroyUntilAfterLeave is true
+}
+```
+
+Two consequences. First, **reveal animations and scroll animations are separate methods**, so a section can finish its entrance before scrubbing starts (`onComplete: () => this.animationScrub()`). Second, the same section works whether you arrive from the loader or from another page, because "once" and "enter" are distinct paths into the same reveal.
+
+**Reveal primitives.** `animationReveal` never writes raw tweens. It assembles small objects from `layout.js`, each wrapping one element and one kind of reveal, into a helper that owns the timeline and ScrollTrigger:
+
+```js
+new RevealGroup({ timeline: tl, tweenArr: () => [
+  new LineReveal({ el: label }),          // the ink sweep, below
+  new LineReveal({ el: heading }),
+  new LineReveal({ el: description }),
+  ...buttons.map(el => new FadeUp({ el, from: { y: rem(10) } })),
+]});
+```
+
+Card lists use `ScrollTrigger.batch(items, { start: "top 85%", batchMax: 1, once: true })`, with each card's inner reveals delayed by `0.15 × index`.
+
+**The ink-sweep line reveal.** Their signature text effect. Headlines are split into lines with their own splitter, which measures line breaks with canvas text metrics and `Intl.Segmenter` (so Chinese, Japanese and Thai break correctly, which matters for an APAC business). Each line gets:
+
+```css
+.split-line-p {
+  --bg-progress: 0;
+  color: transparent;
+  background: linear-gradient(90deg,
+    var(--color-final) 0%, var(--color-final) 30%,   /* written text */
+    var(--_color---content--brand) 40%,               /* a blue leading edge */
+    transparent 50%, transparent 100%);               /* not yet written */
+  background-size: 350% 100%;
+  background-position-x: calc((100 - var(--bg-progress)) * 1%);
+  background-clip: text;
+}
+```
+
+```js
+gsap.set(lines, { "--color-final": getComputedStyle(parent).color, "--bg-progress": 30 });
+gsap.to(lines, { "--bg-progress": 100, stagger: 0.1, duration: 1.2, ease: "power1.inOut",
+                 onComplete: () => split.revert() });   // back to plain text afterwards
+```
+
+Each line is written left to right with a brand-blue nib, one line after another. It reads as handwriting or a printer head rather than a fade, it costs one CSS variable per line, and it reverts to plain text when finished so nothing is left split in the DOM. See the half-written "RELIABILITY AT EVERY MILESTONE" in [reference/unitedcarriers-06-road.jpg](reference/unitedcarriers-06-road.jpg).
+
+**Scrubbed scenes.** The crane is a `FrameSequence` of AVIF frames on Webflow's CDN (one of the sequences is exported at every second frame: `frame_66`, `frame_68`…), with separate desktop and mobile setups (`setupFrameSequenceDesktop`, `setupFrameSequenceMobile`, `animationScrubDesktop`, `animationScrubMobile`). The truck has separately animated wheel elements. The road scales with a `--scale-factor` variable and brightens with `--bright-fade`. The ship scene is Webflow's own 3D element, preloaded one section early and configured through a controls object:
+
+```js
+{ zoomFactor: 8, fov: 35, wakeCenterY: -0.5, wakeSpeed: 50, wakeIntensity: 0.4,
+  wakeWidth: 2.2, height: 1.7, overlayScale: 1 / 0.082 }   // desktop values
+```
+
+The hero globe is a Three.js sphere of dots sampled from TopoJSON country shapes, with flight arcs from a `my-flights` module, rotated on a GSAP ticker (starting at `phi = 3.8`), with country labels that arrive from `autoAlpha: 0, y: 10, filter: blur(5px)` and blue and orange glow layers that scale in from `blur(20px)`.
+
+**The speedometer.** The truck's speedometer reads your scroll:
+
+```js
+gsap.ticker.add((time, deltaMs) => {
+  const y = lenis.scroll;
+  let target = 0;
+  if (panel.active) {
+    let pxPerSec = Math.abs(y - lastY) / (deltaMs / 1000);
+    target = Math.min(95, pxPerSec / 25 + (pxPerSec > 500 ? Math.random() * 2 - 1 : 0)); // needle jitter at speed
+  }
+  const k = target > shown ? 0.1 : target === 0 ? 0.15 : 0.06;   // accelerate, coast, stop
+  shown += (target - shown) * k;
+  display.textContent = String(Math.round(shown)).padStart(2, "0");
+  lastY = y;
+});
+```
+
+Asymmetric easing (quick to rise, slow to fall) is what makes a needle feel physical.
+
+**Page transitions.** A fixed `.trans` layer with `clip-path: circle(0%)` expands over the page with concentric outline circles (`16.088vmax`) rippling out, in the same language as the loader.
+
+**Cursor.** A full-screen fixed layer with `mix-blend-mode: difference`, plus a trail of small orange (`#f50`) dots with `filter: blur(2.5px)`. 121 elements carry `data-cursor` states.
+
+**Footer particles.** The wordmark is sampled from an image into particles (`color: #111116`, `scale: 0.8`); each particle has an origin and eases back to it (`ease = 0.04 + random × 0.04`) after the cursor pushes it away.
+
+**Hover underline.** `::before` line with `transform: scaleX(0)`, origin swapping from right to left, `0.6s cubic-bezier(0.66, 0, 0.15, 1)`.
+
+Easing vocabulary in the reveal library: `power2.out` (14), `power2.in` (7), then `expo.out`, `power1.inOut`, `power3.out`, `back.out(1.5)`. Durations cluster at 0.4s and 0.2s for UI, 1.2s for the ink sweep.
+
+## 6.5 Design system
+
+**Colour.** `--_color---primary: #0016cb` (ultramarine, the leading edge of every headline, office dots, gradients), `--_color---secondary: #f50` (orange: globe arcs, cursor trail), `#111` text on `white`, a surface grey `#f4f4f4`, and text opacities as tokens (`#111111e0` sub, `#111111b8` soft, `#1116` note). The big gradients (black to ultramarine to white) are atmosphere, used at the transitions between altitudes.
+
+**Type.** BT Steinhart 700 uppercase for headlines (a squarish, wide, techno grotesque), BT Steinhart Mono for buttons and labels, Helvetica Neue for body. `h1` 9.6rem, `h2` 7.2rem, both `line-height: 1.05`. With `1rem = 10px` at 1728px wide, sizes read like pixel values in the design file.
+
+**Grid.** 16 columns, `2rem` gutter, `4rem` page padding, all as tokens (`--container--column: 16`, `--container--one-column: calc(...)`).
+
+## 6.6 Mobile
+
+The globe hero survives, with a thin utility bar on top (`CARBON CALCULATOR | LIVE TRACKING PORTAL`) and a `MENU` button with three dots ([unitedcarriers-12-mobile.jpg](reference/unitedcarriers-12-mobile.jpg)). Mobile-specific classes (`home-service-mb-crane`, `-mb-road`, `-mb-truck-stick`) show that the crane-truck-road sequence is rebuilt for portrait rather than scaled down. The cookie banner covers a third of the first mobile screen.
+
+## 6.7 Where it falls short
+
+- **No `:focus-visible` styles** in the stylesheet at all; `prefers-reduced-motion` appears twice in the JavaScript and never in CSS.
+- Counters and the ink sweep only resolve when their trigger fires; screenshots taken mid-scroll show half-written headlines and counters at 2,455 instead of 2,500.
+- A live typo in a feature title: "Global Network overage".
+
+## 6.8 What John should take from it
+
+1. **Follow one object.** United Carriers follows a container. John's story has natural candidates: the world-ranking number itself travelling through the page and changing as it goes; the race bib; the competition schedule as a physical sheet; the words on his arm. The object gives the scroll a direction and makes every section part of one journey.
+2. **Make the structure the story.** Their route (land, sea, air) is their service list. Our five lessons can be the legs of John's journey rather than a list after it.
+3. **The section contract.** `setup`, `animationReveal`, `animationScrub`, `interact`, `destroy`, with reveal and scrub kept separate. In our Next.js build this maps to one hook per section with the same four parts, and it makes the mobile and reduced-motion branches explicit instead of accidental (the bug class recorded in our round 5 notes).
+4. **The ink sweep for the five lessons.** Written left to right with an amber leading edge, then reverting to plain text. It reads as writing, it stays legible, and it is a far better fit for "Hey mom, made it" (literally written) than a fade.
+5. **The loader as a summary.** Where, what, how far, in the three seconds before the site starts. John's could be the ranking count climbing.
+
+---
+
+# 7. lisa.locomotive.ca
+
+## 7.1 Verdict first
+
+LISA is not a scrolling story at all. It is a one-screen, click-driven conversation with a 3D character, built by an agency as its own new-business front door. The page is 900px tall and never scrolls. What makes it a reference for John is not the 3D; it is that **the enquiry form has been turned into the experience.** Every question LISA asks is a field in a brief. Name, company, job title, project type, budget, deadline, the brief itself, email. By the time you reach the end you have filled in a qualified lead form, and it felt like a conversation with a character who has opinions.
+
+## 7.2 Stack (verified)
+
+```
+Server         Twig templates (console: "preloaderEnterPromise created in preloader.twig")
+Front end      Locomotive's modularJS (data-module-header, data-module-lisa,
+               data-module-lisa-visualizer, data-module-video-modal, data-module-cookie-consent)
+               with a Vue 3 app mounted inside for the conversation (data-v-app, __VUE__)
+3D             Three.js r165: lisa.glb (2.9 MB), KTX2 and Draco loaders, envmap.exr
+Video          Mux HLS streams played on the television screen as reaction clips;
+               running_code.mp4 and idea.mp4 as screen content
+Audio          ambient.mp3 (about 4 MB), plus one recorded voice line per step, per language:
+               /assets/lisa/en/lisa.intro.1.mp3, lisa.greeting.13.mp3, lisa.project.budget.5.mp3 …
+               Web Audio AnalyserNode for speech volume
+Forms          invisible reCAPTCHA; posts JSON to /api/rfp-enquiries, /api/job-enquiries
+               or /api/general-enquiries depending on the chosen path
+Analytics      gtag events flow_submit, flow_exit, page change attempts with step and audio state
+Motion         Vue <Transition> classes plus CSS; one easing everywhere
+Fonts          HelveticaNowDisplay Regular, PPLocomotiveNew Light
+Access         js-focus-visible polyfill on <html>; focus-visible appears 35 times and
+               prefers-reduced-motion 5 times in the stylesheet
+```
+
+## 7.3 Story flow
+
+([reference/lisa-00-loader.jpg](reference/lisa-00-loader.jpg) to [reference/lisa-07-mobile.jpg](reference/lisa-07-mobile.jpg).)
+
+1. **Loader.** Black screen, the Locomotive wordmark with its asterisk mark, centred. A 1.2 second promise gates the entrance.
+2. **The character** ([lisa-01-click-to-start.jpg](reference/lisa-01-click-to-start.jpg)). A studio-grey backdrop. A figure in a pale roll-neck jumper, cropped at the chest, whose head is a CRT television trailing cables. The screen shows static and `[CLICK] TO START`. Under the screen, six small LEDs; one is lit. The header is just `Locomotive®`, the asterisk mark and `Let's talk`.
+3. **The greeting** ([lisa-02-greeting.jpg](reference/lisa-02-greeting.jpg)). On click, the character turns to the right half of the screen and the conversation appears on the left. Her lines type out character by character with a blinking block cursor, and characters scramble before they settle (one capture caught "Can I ibwp?" resolving into "Can I help?"). She speaks each line aloud:
+
+   > Oh, hi! I'm L.I.S.A, your trusty (and slightly opinionated) assistant at Locomotive.
+   >
+   > I was about to log off and start a new life. But for you? I'll stay. Can I help?
+
+   Choices: Start a project, Join the team, Drop a quick word, Discover our culture, and a plain fallback, "Write us: info@locomotive.ca".
+4. **The project path.** Each question is set up or followed by a reaction line, and the television plays a matching clip:
+
+   | Step | LISA says | You give | Screen |
+   |---|---|---|---|
+   | intro | "I've pushed all my other meetings into the void. This one's got priority." | | |
+   | name | "Step one to working together: you tell me your name, I pretend not to already know it." | Your name | |
+   | reaction | "We're officially on a first-name basis. Let's go." | | |
+   | company | "Give me the name of your company, and I'll give you goosebumps." | Company, job title | |
+   | type | "Alright, let's get into the juicy stuff. What are we building together?" | Branding / Web / Branding & Web / I have custom needs | |
+   | reaction | "Ah, the brand. The foundation. The capital 'B.' Let's shape something iconic." (one line per type) | | |
+   | budget | "This is the least fun part of the conversation. Unless you're into spreadsheets. What's your budget range?" | 25k to 50k / 50k to 75k / 75k to 100k / 100k+ | found-footage glitch clip ([lisa-04-budget-step.jpg](reference/lisa-04-budget-step.jpg)) |
+   | deadline | "Let's pin down a deadline before things get too dreamy." | As soon as possible / In the next 6 months / Let's talk about it / I have an exact date | a clock face ([lisa-05-deadline-step.jpg](reference/lisa-05-deadline-step.jpg)) |
+   | reaction | "All synced up. Let's bring this thing to life." then "Think of this as the first date, minus the awkward small talk." | | |
+   | brief | "Tell us about your project, or upload a brief if you have one." | Free text, file upload, a "What's a good brief?" note | two glowing eyes ([lisa-06-brief-step.jpg](reference/lisa-06-brief-step.jpg)) |
+   | reaction | "Loving the vision so far. I'm already picturing the moodboard." | | |
+   | email | "Email, please. I'll take it from here." | Email | |
+   | processing | "Email noted. Spinning up the recap, flexing my digital muscles." | invisible reCAPTCHA, then submit | all six LEDs lit |
+
+   Progress is shown twice: the LEDs under the screen, and a 4px bar across the bottom of the viewport driven by `--progress` (0.1, 0.2, 0.25, 0.3, 0.4, 0.45, 0.5, 0.6 … 1).
+5. **Navigating away mid-flow** triggers a browser confirm with a custom message and logs a `flow_exit` event with the step and whether audio was on.
+
+LISA's lines contain em dashes in the original; per this project's no-em-dash rule they are replaced with full stops or commas in the quotes above. Wording is otherwise verbatim.
+
+**What makes the conversation work:** the reaction lines. Every question is paid for with a line of personality. The budget question admits it is the least fun part. The deadline question jokes about dreaminess. The brief question offers help ("What's a good brief?"). Voice lines have numbered variants (`lisa.intro.1` in one session, `lisa.intro.2` in another; `lisa.greeting.13`), so repeat visitors hear different takes.
+
+## 7.4 Animation framework: how it is wired
+
+**The conversation is a state machine, not a timeline.** The Vue app holds the current step; each step component renders a dialog line, an optional set of choices or inputs, and a "previous" line. Transitions are Vue `<Transition>` classes styled in CSS, with one easing for everything: `cubic-bezier(0.215, 0.61, 0.355, 1)` (ease-out cubic) at 0.3s, used 43 times in the stylesheet.
+
+**The dialog hand-off.** When a step advances, the current line becomes the previous line by moving up, shrinking and blurring:
+
+```css
+.c-lisa-step.default-leave-to .c-lisa-step_dialog {
+  transform: translate3d(0, calc(-100% - 2.667rem), 0) scale(0.8);
+  filter: blur(4px);
+  transition: transform .3s var(--ease), filter .3s var(--ease);
+}
+.c-lisa-step_previous {                      /* the line above the current one */
+  position: absolute; cursor: pointer;
+  transform: translate3d(0, calc(-100% - 2.667rem), 0) scale(0.8);
+}
+.c-lisa-step_previous:hover { filter: blur(3px); }       /* click it to go back */
+.c-lisa-step.default-leave-to .c-lisa-step_previous {    /* the older line leaves entirely */
+  transform: translate3d(0, calc(-200% - 2.667rem), 0) scale(0.5); opacity: 0;
+}
+```
+
+Going backwards runs the reverse transition set (`backwards-enter-*`, `backwards-leave-*`), so the blurred line slides back down and sharpens. The effect is a conversation receding into depth of field: the current line sharp, the last one out of focus above it, anything older gone.
+
+**Typing and choices.** The current line types out with a blinking block cursor drawn in CSS (`::after`, `0.4em × 0.5em`, `scaleY(1.75)`, `animation: lisaCursor 1s linear infinite`). When typing finishes, the step becomes `-expanded`: the dialog scales to 0.9 and the choices fade in 0.1s later from `translateY(1.333rem)`.
+
+**Voice drives the character.** An `AnalyserNode` samples the voice track on a throttled loop:
+
+```js
+analyser.getByteFrequencyData(freq);
+const volume = average(freq) / 64;
+lisa.speechVolume = volume;              // uniform on the LED materials: they pulse as she talks
+if (volume > 0.2 && !ducking) duckAmbient();      // lower the music under speech
+else if (volume < 0.2 && ducking) unduckAmbient();
+```
+
+The same scene exposes `displayCode`, `displayRunningCode`, `darkMode` and `xDecay` on the screen material, with a Tweakpane debug panel (including a "Say Yes" button) left in the build. Custom shader uniforms across the scene include `uOn`, `uDarkMode`, `uMouse`, `uScrollSpeed` and `uTime`, and the bundle registers pointer listeners, so the scene responds to the cursor.
+
+**Sound is a first-class control.** A pill toggle bottom right with a white knob that slides between speaker and muted states (`transform .3s`). Going back is a black circular button bottom left.
+
+**Mobile.** The dialog becomes a bottom sheet: `.c-lisa_main { inset: calc(50% - 8px) 0 0 0; border-radius: 8px 8px 0 0; }`, with the character in the top half ([lisa-07-mobile.jpg](reference/lisa-07-mobile.jpg)).
+
+**Design tokens.** Black text on a white-to-grey studio gradient; the menu is electric blue `#312DFB` with white. A spacing scale with explicit mobile values (`micro 14/8`, `tiny 20/20`, `small 30/30`, `medium 40/40`, `large 80/52`, `big 150/80`, `huge 200/100`, `enormous 250/140`), a 12-column grid with a 20px gutter, `--font-size-huge: 7.64vw`, `h1: 4.67rem`.
+
+## 7.5 Where it falls short
+
+- The flow is long: about twelve screens of conversation for a project enquiry. It works for an agency because a qualified brief is valuable; it would exhaust a buyer who only wants to check a date.
+- No way to see all questions at once or skip to a plain form except the email fallback on the first screen.
+- 2.9 MB model, 4 MB ambient track, several HLS streams, before the first question.
+
+## 7.6 What John should take from it
+
+1. **The booking enquiry as a short conversation in John's voice.** Four or five questions, each with one line of personality, in the direct, dry register CLAUDE.md sets: event date, audience size, format (keynote, keynote plus Q&A, workshop), city, email. A progress bar. The previous answer blurred above the current question. It turns the least exciting part of the site into something that sounds like him.
+2. **Recorded voice, optional and muted by default.** John is a speaker. His own recorded lines guiding the enquiry would be the most ownable asset on the site. It must stay optional: sound only after an explicit toggle, captions always on screen.
+3. **Keep the plain route visible.** LISA keeps "Write us: info@…" on the first screen. We keep a plain email and a one-screen form one click away.
+4. **The depth-of-field hand-off** (move up, scale 0.8, blur 4px) is a cheap, elegant transition for any sequence of statements, including the five lessons.
+5. **Log where people drop out.** LISA records the step and audio state when someone leaves. For a site whose one job is enquiries, knowing which question loses people is worth more than any visual effect.
+
+---
+
+# 8. The four animation frameworks side by side
+
+| | USAvionix | Seasats | United Carriers | LISA |
+|---|---|---|---|---|
+| Source of truth | Lenis scroll mapped to `{progress, showRatio, hideRatio, isActive}` per scene, in one store | A ScrollTrigger per component | A ScrollTrigger per section class, inside a Barba page lifecycle | The current step of a Vue state machine |
+| Who knows about `scrollY` | One fifteen-line function | Every component | Every section | Nothing |
+| Scrubbed by scroll | Camera and drone clips from Blender, shader uniforms, fire and map effects | Frame sequences, theme crossfades, word opacity, CSS progress variables | Frame sequences, globe, truck, road, ship camera, glow layers | Nothing |
+| Triggered, not scrubbed | Every headline and body block (one at a time), telemetry lines | Section reveals | Ink-sweep lines, counters, card batches | Every step change |
+| Text reveal | Whole block: 8px rise, red to white, 0.4s | SplitText words, opacity scrubbed with 0.1 stagger | Own splitter, per-line gradient sweep 30 to 100, 1.2s, 0.1 stagger, then revert | Typing with a scramble and a block cursor; previous line blurs up |
+| Copy lives in | A data array keyed to scene progress | Payload CMS blocks | Webflow CMS and markup | Step definitions in the Vue app |
+| Heavy media | GLB models (Draco), EXR, noise textures, one AVIF sequence | AVIF sequences at 25 and 60 fps, 25+ MP4 loops, KTX2 globe | AVIF sequences (every second frame), Webflow 3D ocean with wake simulation, MP4 wave | GLB character, EXR, Mux HLS on the screen, MP3 voice and ambient |
+| Mobile strategy | Separate camera and drone clips, same experience | Separate 25 fps frame sets, stacked cards, `MENU` pill | Separate mobile scrub methods and DOM | Bottom-sheet dialog |
+| `prefers-reduced-motion` | None found | 1 occurrence in JS, none in CSS | 2 in JS, none in CSS | 5 in CSS |
+| `:focus-visible` in CSS | 11 occurrences | 36 | 0 | 35, plus a polyfill |
+| Easing signature | `easeInOut` 0.4s on copy; linear scrub | `none` for scrub, `sine.inOut` for theme fades, `power4.out` for reveals | `power2.out` UI, `power1.inOut` for the sweep | ease-out cubic, 0.3s, everywhere |
+
+Four patterns recur and are worth naming, because we can use all of them:
+
+1. **One number, many consumers.** USAvionix writes `progress` to a store; Seasats and United Carriers write `--progress`, `--bg-progress`, `--progressHeading` to CSS variables. In every case, a single normalised number drives many visual properties, and the animation code stays small.
+2. **Scrub the world, trigger the words.** The two most film-like sites (USAvionix, and United Carriers in its reveals) never scrub text. Images, cameras and colour follow the scroll; words arrive as discrete events that finish on their own. Scrubbed text is the main source of the "effortful to read" complaint John made about round 3.
+3. **Media as frame sequences, loaded progressively.** Seasats and United Carriers both export motion as AVIF frames and draw them to canvas, with nearest-frame fallbacks and stride loading. It gives film quality with total scroll control and no video decoder seeking.
+4. **The loader is the first scene.** Every one of the four uses the loader as brand space: USAvionix calibrates a wireframe drone, Seasats shows the gradient the site is made of, United Carriers summarises the network, LISA shows a wordmark and then a character waiting for a click.
+
+---
+
+# 9. The four story flows side by side
+
+| | USAvionix | Seasats | United Carriers | LISA |
+|---|---|---|---|---|
+| Narrative device | The product performs one mission | A film, then evidence, then a catalogue | Follow one object through every leg | A conversation with a character |
+| Protagonist | The drone, then the swarm, then the AI | The ocean, then the vessels | The container | The visitor |
+| Structure | Three acts plus epilogue | Manifesto, virtues, proof, products, people | Space, land, road, sea, sky, earth | Greeting, qualification, brief, contact |
+| Scroll per beat | 5 screens | 2 to 4 screens | 3 to 6 screens | one click |
+| Copy per beat | A headline and one or two sentences | One line | A headline, one paragraph, or a feature list | One line from LISA, one answer from you |
+| Where the ask sits | End only: limited demo slots, then "Ready to talk to us?" | End only, "Take action" | Twice: a header button throughout, and "Ready to move smarter?" | The whole experience is the ask |
+| How it ends | Proof (use cases, reach, founders), then the drone landing | A joke about your scroll speed | Particles and a map of offices | A recap and a sent brief |
+| Interface while the story runs | Wordmark, chapter label, `Contact`, menu | Wordmark, a proximity nav that hides | Wordmark, menu, cursor | Wordmark, `Let's talk`, back, sound |
+
+What they share:
+
+- **The story is the product demonstration.** None of them explains first and shows second. USAvionix introduces thermal imaging because there is a fire. United Carriers introduces ocean freight because the road reached the sea.
+- **One continuous space.** A single landscape, a single sea, a single route, a single room. Section boundaries are hidden until the story ends, then allowed to show for the practical part.
+- **Very little text per screen.** One line, or a headline and a sentence. The longest copy in any of the four stories (Seasats' six statements) is still one line per statement.
+- **An inner voice.** USAvionix's telemetry, Seasats' labelled image cards, United Carriers' speedometer, LISA's reactions. A second, smaller channel that comments on what the main channel shows.
+- **A persistent, quiet way to contact.** Every one keeps a contact affordance in the frame at all times, and none interrupts the story to ask.
+
+---
+
+# 10. What this means for John's site
+
+Read against John's round 3 verdict (film-first hero, story not website, half the text, no menu, colour on a dark ground, AI visible, five lessons explicit, bio secondary) and the round 5 build at `/signal`:
+
+1. **Pick the object.** United Carriers' container and USAvionix's drone show that a story needs something to follow. For John, the strongest candidate is the world-ranking position itself: a number that starts far down, is acted on by the algorithm's choices, the doubters and the setbacks, and ends at the Olympic final. It can travel through every beat as a single element.
+2. **Make the algorithm a character with an inner voice.** A mono telemetry line, bottom right, declared against story progress, in the USAvionix pattern. Only true values from background.md: dates, races, ranking positions. This is the most direct answer to "AI must be visible".
+3. **Put the copy in data, keyed to beats.** One array of `{ lines, startBeat, startProgress, endBeat, endProgress }`, one overlay, one block at a time, swapped with a short discrete animation. Stop scrubbing text opacity. This addresses both "half the text" (each block must fit the window) and "readability first" (text is never half-faded).
+4. **Five screens per beat is too slow; one is too fast.** USAvionix gives 5, Seasats 2 to 4, United Carriers 3 to 6. For a buyer who has not chosen to be there, about two screens per beat, with a visible chapter label and a skip, is the right range.
+5. **Theme background as stacked gradient layers with CSS opacity variables**, crossfaded in their own scroll spans (Seasats). It is the correct mechanism for the night-violet to paper journey already in `/signal`, and it lets the final beat pass through amber.
+6. **Frame sequences from real footage** (Seasats, United Carriers): nearest-loaded frame, cover-fit canvas, stride loading, separate mobile frames. If a continuous shot exists in the keynote film or race footage, this is how it becomes scroll-driven without a 3D budget.
+7. **The ink-sweep reveal** (United Carriers) for the five lessons and for "Hey mom, made it": written left to right with an amber leading edge, then reverted to plain text.
+8. **The enquiry as a short conversation** (LISA), in John's voice, five questions, progress bar, previous answer blurred above, plain route always visible. Optional recorded voice lines, off by default.
+9. **Scroll speed as running pace** (Seasats' knots, United Carriers' speedometer): a footer or margin readout in minutes per kilometre. Small, ownable, and it rewards reaching the end.
+10. **The quality floor none of them fully meets.** USAvionix has no reduced-motion path; United Carriers has no focus styles. Our rule stays: the default CSS is the readable, stacked layout; script adds the cinema only for fine pointers with motion allowed; every element the timeline reveals must also be resolved in the mobile and reduced-motion branch.
+
+---
+
+## Appendix to Part 2: what was captured
+
+**Bundles and styles read in full:**
+
+- usavionix.com: 42 Next.js chunks (the story, scene store and overlay live in two chunks of about 186 KB and 35 KB), one Tailwind stylesheet (78 KB).
+- seasats.com: 20 Next.js chunks, 4 stylesheets (178 KB combined), the live theme-background rules read from the DOM.
+- unitedcarriers.com: `main.js` (52 KB) and 32 Vite chunks from Netlify, including `Home` (130 KB), `layout` (92 KB), `OceanScene`, `WakeSimulation`, `frame-sequence`, `globe`; the Webflow stylesheet (439 KB); the embedded style blocks read from the DOM.
+- lisa.locomotive.ca: `app.js` (2.55 MB uncompressed), `vendors.js`, `main.css` (200 KB).
+
+**Screenshots in [reference/](reference/):**
+
+- `usavionix-00-loader` to `usavionix-11-mobile`
+- `seasats-00-loader` to `seasats-13-mobile`
+- `unitedcarriers-00-loader` to `unitedcarriers-12-mobile` (a cookie banner covers the bottom right of most desktop frames)
+- `lisa-00-loader` to `lisa-07-mobile`

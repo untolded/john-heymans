@@ -1,0 +1,19 @@
+{
+  "origin": {
+    "value": { "lon": 4.35, "lat": 50.85 },
+    "status": "confirmed",
+    "source": "John is Belgian (background.md). The arc starts in Belgium, unlabelled, until the departure city is confirmed."
+  },
+  "departure": {
+    "value": { "city": "Brussels", "lon": 4.3517, "lat": 50.8503, "altitude": 76 },
+    "status": "pending",
+    "source": "Round 5 copy, not confirmed by John. Needs K3."
+  },
+  "stops": { "value": [], "status": "pending", "source": "Needs K3 (for example Nairobi, Eldoret)." },
+  "iten": {
+    "value": { "lon": 35.5, "lat": 0.67, "altitude": 2400 },
+    "status": "confirmed",
+    "source": "background.md (2,400 m). Coordinates of Iten, Elgeyo-Marakwet County."
+  },
+  "trip": { "value": null, "status": "pending", "source": "Needs K3: dates, length of stay, how often he went back." }
+}

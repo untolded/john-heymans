@@ -1,0 +1,11 @@
+{
+  "messages": {
+    "value": [
+      { "role": "federation", "text": "That is not how qualification works." },
+      { "role": "coach", "text": "You will race yourself into the ground." },
+      { "role": "competitors", "text": "Nobody qualifies like that." }
+    ],
+    "status": "pending",
+    "source": "Round 5 drafts, not quotes. Needs D1, approved by John. Until then all three say the storyline line."
+  }
+}

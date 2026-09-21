@@ -1,0 +1,456 @@
+{
+  "candidates": {
+    "value": [
+      {
+        "id": "m01",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-07-01",
+        "category": "GW"
+      },
+      {
+        "id": "m02",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-07-10",
+        "category": "B"
+      },
+      {
+        "id": "m03",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-07-21",
+        "category": "D"
+      },
+      {
+        "id": "m04",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-07-26",
+        "category": "F"
+      },
+      {
+        "id": "m05",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-08-06",
+        "category": "D"
+      },
+      {
+        "id": "m06",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-08-13",
+        "category": "E"
+      },
+      {
+        "id": "m07",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-08-22",
+        "category": "C"
+      },
+      {
+        "id": "m08",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-08-27",
+        "category": "F"
+      },
+      {
+        "id": "m09",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-09-06",
+        "category": "A"
+      },
+      {
+        "id": "m10",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-09-14",
+        "category": "D"
+      },
+      {
+        "id": "m11",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-09-23",
+        "category": "GL"
+      },
+      {
+        "id": "m12",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-09-25",
+        "category": "D"
+      },
+      {
+        "id": "m13",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-10-09",
+        "category": "F"
+      },
+      {
+        "id": "m14",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-10-15",
+        "category": "E"
+      },
+      {
+        "id": "m15",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-10-24",
+        "category": "GW"
+      },
+      {
+        "id": "m16",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-10-28",
+        "category": "C"
+      },
+      {
+        "id": "m17",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-11-09",
+        "category": "C"
+      },
+      {
+        "id": "m18",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-11-12",
+        "category": "C"
+      },
+      {
+        "id": "m19",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-11-21",
+        "category": "C"
+      },
+      {
+        "id": "m20",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-12-03",
+        "category": "E"
+      },
+      {
+        "id": "m21",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-12-09",
+        "category": "GL"
+      },
+      {
+        "id": "m22",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-12-12",
+        "category": "C"
+      },
+      {
+        "id": "m23",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-12-24",
+        "category": "D"
+      },
+      {
+        "id": "m24",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2023-12-30",
+        "category": "B"
+      },
+      {
+        "id": "m25",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-01-11",
+        "category": "A"
+      },
+      {
+        "id": "m26",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-01-15",
+        "category": "C"
+      },
+      {
+        "id": "m27",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-01-25",
+        "category": "GW"
+      },
+      {
+        "id": "m28",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-01-31",
+        "category": "B"
+      },
+      {
+        "id": "m29",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-02-07",
+        "category": "C"
+      },
+      {
+        "id": "m30",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-02-15",
+        "category": "C"
+      },
+      {
+        "id": "m31",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-02-23",
+        "category": "D"
+      },
+      {
+        "id": "m32",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-03-03",
+        "category": "C"
+      },
+      {
+        "id": "m33",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-03-13",
+        "category": "D"
+      },
+      {
+        "id": "m34",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-03-21",
+        "category": "E"
+      },
+      {
+        "id": "m35",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-03-27",
+        "category": "D"
+      },
+      {
+        "id": "m36",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-04-03",
+        "category": "F"
+      },
+      {
+        "id": "m37",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-04-14",
+        "category": "C"
+      },
+      {
+        "id": "m38",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-04-20",
+        "category": "C"
+      },
+      {
+        "id": "m39",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-04-27",
+        "category": "C"
+      },
+      {
+        "id": "m40",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-05-03",
+        "category": "C"
+      },
+      {
+        "id": "m41",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-05-14",
+        "category": "GL"
+      },
+      {
+        "id": "m42",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-05-17",
+        "category": "GL"
+      },
+      {
+        "id": "m43",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-05-25",
+        "category": "C"
+      },
+      {
+        "id": "m44",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-06-02",
+        "category": "A"
+      },
+      {
+        "id": "m45",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-06-16",
+        "category": "B"
+      },
+      {
+        "id": "m46",
+        "name": null,
+        "city": null,
+        "country": null,
+        "date": "2024-06-21",
+        "category": "B"
+      }
+    ],
+    "status": "pending",
+    "placeholder": true,
+    "source": "Shape-only placeholder: dates and categories only, no names. Needs A3."
+  },
+  "chosen": {
+    "value": [
+      {
+        "id": "m04",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m09",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m13",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m18",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m22",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m27",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m32",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m38",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      },
+      {
+        "id": "m43",
+        "result": {
+          "place": null,
+          "time": null,
+          "points": null
+        }
+      }
+    ],
+    "status": "pending",
+    "placeholder": true,
+    "source": "Placeholder. Needs A3: the races the algorithm chose, in order, with results."
+  }
+}
