@@ -4,10 +4,10 @@
 //
 //   npm i -D playwright-core        (once; uses the installed Google Chrome)
 //   npm run dev -- -p 3111          (in another terminal)
-//   node scripts/make-og.mjs [http://localhost:3111/story]
+//   node scripts/make-og.mjs [http://localhost:3111/]
 import { chromium } from "playwright-core";
 
-const url = process.argv[2] ?? "http://localhost:3111/story";
+const url = process.argv[2] ?? "http://localhost:3111/";
 const browser = await chromium.launch({ channel: "chrome" });
 const page = await (await browser.newContext({ viewport: { width: 1200, height: 630 }, reducedMotion: "reduce", deviceScaleFactor: 1 })).newPage();
 await page.goto(url, { waitUntil: "networkidle" });

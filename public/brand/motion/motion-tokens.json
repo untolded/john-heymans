@@ -1,0 +1,47 @@
+{
+  "note": "Every value here is read from the live site. Durations are seconds, staggers are seconds between elements.",
+  "easing": {
+    "out": { "css": "cubic-bezier(0.215, 0.61, 0.355, 1)", "gsap": "power3.out", "use": "Anything arriving. The default." },
+    "in": { "css": "cubic-bezier(0.55, 0.085, 0.68, 0.53)", "gsap": "power2.in", "use": "Anything leaving." },
+    "inOut": { "css": "cubic-bezier(0.65, 0, 0.35, 1)", "gsap": "power3.inOut", "use": "Anything that moves and settles in one gesture: the ink sweep, the cue line." },
+    "linear": { "css": "linear", "gsap": "none", "use": "Anything tied to the scroll. Never eased, because the hand is the ease." }
+  },
+  "reveals": {
+    "rise": { "what": "Lines rise from behind a mask.", "duration": 0.6, "stagger": 0.07, "ease": "power3.out", "from": { "yPercent": 100 } },
+    "riseSmall": { "what": "One line of interface text.", "duration": 0.45, "ease": "power3.out", "from": { "y": 12, "opacity": 0 } },
+    "words": { "what": "Title cards. Words arrive one at a time, out of focus.", "duration": 0.55, "stagger": 0.11, "ease": "power3.out", "from": { "opacity": 0, "scale": 1.12, "blur": "10px" } },
+    "ink": { "what": "Written left to right with an amber nib.", "duration": 1.1, "stagger": 0.1, "ease": "power1.inOut", "sweep": "30% to 100%" },
+    "type": { "what": "Typed into the chat.", "perCharacter": [0.038, 0.072], "pauseAfterComma": 0.22 },
+    "flash": { "what": "Notifications. In from the right with a one-frame paper border.", "duration": 0.35, "ease": "power3.out", "from": { "x": 24, "opacity": 0 }, "flashHold": 0.034 },
+    "scribble": { "what": "The handwriting, drawn like a marker.", "durationPerPhrase": 1.6, "ease": "power1.inOut" }
+  },
+  "exits": {
+    "rise": { "duration": 0.25, "ease": "power2.in", "to": { "y": -8, "opacity": 0 } },
+    "blur": { "duration": 0.3, "ease": "power2.in", "to": { "y": -24, "scale": 0.9, "blur": "4px", "opacity": 0 } },
+    "cut": { "duration": 0 }
+  },
+  "hero": {
+    "lines": { "duration": 0.8, "ease": "cubic-bezier(0.215, 0.61, 0.355, 1)", "delays": [0.6, 0.68, 0.76, 0.84] },
+    "sub": { "duration": 0.7, "delay": 0.95 },
+    "button": { "duration": 0.7, "delay": 1.05 },
+    "chrome": { "duration": 0.7, "delay": 1.3 }
+  },
+  "texture": {
+    "grain": { "file": "/brand/texture/grain.png", "tile": "256px", "opacity": 0.035, "opacityOnLowGround": 0.05, "animation": "0.72s steps(6) infinite", "note": "Never on the paper ground." }
+  },
+  "scroll": {
+    "smoothing": { "library": "Lenis", "lerp": 0.1, "desktopOnly": true },
+    "beats": [
+      { "id": "opener", "desktopVh": 140, "touchVh": 110, "ground": "night" },
+      { "id": "iten", "desktopVh": 300, "touchVh": 240, "ground": "altitude" },
+      { "id": "edge", "desktopVh": 140, "touchVh": 110, "ground": "night" },
+      { "id": "algorithm", "desktopVh": 320, "touchVh": 260, "ground": "signal" },
+      { "id": "doubt", "desktopVh": 240, "touchVh": 200, "ground": "signal" },
+      { "id": "setback", "desktopVh": 220, "touchVh": 180, "ground": "low" },
+      { "id": "village", "desktopVh": 180, "touchVh": 150, "ground": "warm" },
+      { "id": "final", "desktopVh": 300, "touchVh": 240, "ground": "stadium" },
+      { "id": "handover", "desktopVh": 100, "touchVh": 80, "ground": "night" }
+    ]
+  },
+  "reducedMotion": "prefers-reduced-motion: reduce gets the static document: every beat as a section, no scrubbing, no grain animation, no autoplay."
+}

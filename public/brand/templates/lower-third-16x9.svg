@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>John Heymans, lower third, 16:9</title>
+  <rect width="1920" height="1080" fill="#151038"/>
+  <!-- The bar is the only furniture: an amber rule, a name, a role. -->
+  <g transform="translate(72, 846)">
+    <rect x="0" y="0" width="520" height="4" fill="#ff7a2f"/>
+    <text x="0" y="74" fill="#f3f1ea" font-family="'Big Shoulders Display', 'Big Shoulders'"
+          font-size="72" font-weight="700" letter-spacing="-0.14" style="text-transform:uppercase">John Heymans</text>
+    <text x="0" y="116" fill="#f3f1ea" fill-opacity="0.85"
+          font-family="'Instrument Sans Narrow', 'Instrument Sans'" font-size="28" font-weight="500">Olympic 5000m finalist. Keynote speaker.</text>
+  </g>
+  <g stroke="#b9a8f5" stroke-opacity="0.45" stroke-dasharray="12 10" fill="none" data-guide="safe-area">
+    <rect x="72" y="72" width="1776" height="936"/>
+  </g>
+</svg>

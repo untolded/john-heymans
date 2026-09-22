@@ -1,0 +1,195 @@
+/*
+ * The two internal pages: the typeface review at /type and the archive at
+ * /archive. Plain on purpose, in the story page's own colours, one column.
+ * The specimens are set from the same tokens the real page uses
+ * (app/type/kits.css), so the review and the page it reviews cannot drift.
+ */
+
+.review {
+  --night: #070613;
+  --deep: #151038;
+  --lavender: #b9a8f5;
+  --amber: #ff7a2f;
+  --paper: #f3f1ea;
+  --paper-72: rgb(243 241 234 / 0.72);
+  --line: rgb(243 241 234 / 0.14);
+
+  min-height: 100svh;
+  padding: 5rem 1.5rem 7rem;
+  background: linear-gradient(180deg, #070613 0%, #0b0920 55%, #151038 100%);
+  color: var(--paper);
+  font-family: var(--font-text), "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.review *, .review *::before, .review *::after { box-sizing: border-box; }
+.review :where(h1, h2, p, ul, ol, dl, dd) { margin: 0; padding: 0; }
+.review :where(ul, ol) { list-style: none; }
+.review a { color: inherit; }
+.review :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.review-inner { max-width: 68rem; margin: 0 auto; }
+
+.review-top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem;
+  padding-bottom: 1.25rem; border-bottom: 1px solid var(--line);
+}
+.review-meta { font-size: 0.9375rem; color: var(--paper-72); }
+.review-meta strong { color: var(--paper); font-weight: 600; }
+
+.review-title {
+  margin-top: 3.5rem;
+  font-family: var(--font-display), "Arial Narrow", Arial, sans-serif;
+  font-weight: 800; font-variation-settings: "wdth" 85;
+  font-size: clamp(3rem, 9vw, 6rem); line-height: 0.9; letter-spacing: -0.02em; text-transform: uppercase;
+}
+.review-lede {
+  max-width: 44rem; margin-top: 1.5rem; font-size: clamp(1.125rem, 1.8vw, 1.3rem); line-height: 1.5;
+  color: var(--paper-72); text-wrap: pretty;
+}
+.review-lede + .review-lede { margin-top: 1rem; }
+.review-h2 {
+  font-family: var(--font-display), "Arial Narrow", Arial, sans-serif;
+  font-weight: 800; font-variation-settings: "wdth" 85;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem); line-height: 1; letter-spacing: -0.015em; text-transform: uppercase;
+}
+.review-note { max-width: 44rem; margin-top: 0.75rem; color: var(--paper-72); font-size: 1rem; }
+.review-note a { color: var(--amber); text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* ------------------------------------------------------------- palette */
+
+.palette { margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+.swatches {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.75rem 2rem; margin-top: 2.5rem;
+}
+.swatches li { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; gap: 0 0.9rem; align-items: center; }
+.swatch { grid-row: 1 / 3; width: 3rem; height: 3rem; border-radius: 6px; box-shadow: inset 0 0 0 1px rgb(243 241 234 / 0.16); }
+.swatches b { font-weight: 600; align-self: end; }
+.swatches code { font-family: var(--font-mono), ui-monospace, Menlo, monospace; font-size: 0.875rem; color: var(--lavender); align-self: start; }
+.swatch-role { grid-column: 2; font-size: 0.9375rem; color: var(--paper-72); line-height: 1.35; }
+.swatches-support { margin-top: 1.75rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+
+/* ---------------------------------------------------------------- kits */
+
+.kits { margin-top: 5rem; display: grid; gap: 3rem; }
+.kit { padding-top: 3rem; border-top: 1px solid var(--line); }
+.kit-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 2rem; }
+.kit-name {
+  font-family: var(--font-display), "Arial Narrow", Arial, sans-serif;
+  font-weight: 800; font-variation-settings: "wdth" 85;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem); line-height: 1; letter-spacing: -0.015em; text-transform: uppercase;
+}
+.kit-faces { font-size: 0.9375rem; color: var(--paper); }
+.kit-faces span { color: var(--paper-72); margin: 0 0.75rem 0 0.35rem; }
+.kit-faces span:last-child { margin-right: 0; }
+
+/* The specimen. Every rule here reads the kit's own tokens. */
+.spec {
+  margin-top: 2rem; padding: 3rem clamp(1.25rem, 3vw, 3rem) 2.5rem; border-radius: 12px;
+  background: radial-gradient(120% 90% at 10% 0%, #1b1443 0%, #0b0920 60%, #070613 100%);
+  box-shadow: inset 0 0 0 1px rgb(243 241 234 / 0.1);
+}
+.spec-anchor {
+  font-family: var(--d-face); font-weight: var(--d-wght-xl); font-variation-settings: var(--d-axes-xl);
+  text-transform: var(--d-case); letter-spacing: var(--d-track-xl);
+  font-size: calc(clamp(2.5rem, 7.5vw, 5.5rem) * var(--d-scale)); line-height: 0.92;
+}
+.spec-title {
+  margin-top: 1.75rem;
+  font-family: var(--d-face); font-weight: var(--d-wght); font-variation-settings: var(--d-axes);
+  text-transform: var(--d-case); letter-spacing: var(--d-track);
+  font-size: calc(clamp(1.5rem, 3.6vw, 2.75rem) * var(--d-scale)); line-height: 1.02; max-width: 20ch;
+}
+.spec-line {
+  margin-top: 0.75rem; font-family: var(--t-face); font-variation-settings: var(--t-axes);
+  letter-spacing: var(--t-track); font-size: 1.125rem; font-weight: 500; color: var(--paper-72);
+}
+.spec-figures { display: flex; flex-wrap: wrap; gap: 1.5rem 3.5rem; margin-top: 2.5rem; }
+.spec-figures dt {
+  font-family: var(--d-face); font-weight: var(--d-wght); font-variation-settings: var(--d-axes-board);
+  letter-spacing: var(--d-track-sm); font-variant-numeric: tabular-nums;
+  font-size: calc(clamp(1.75rem, 4vw, 3rem) * var(--d-scale)); line-height: 1;
+}
+.spec-figures dd { margin-top: 0.35rem; font-size: 0.9375rem; color: var(--paper-72); }
+.spec-body {
+  max-width: 38rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgb(243 241 234 / 0.12);
+  font-family: var(--t-face); font-variation-settings: var(--t-axes); letter-spacing: var(--t-track);
+  font-size: calc(1.3rem * var(--t-scale)); line-height: 1.5;
+}
+.spec-readout {
+  margin-top: 1.5rem; font-family: var(--m-face); font-size: 0.8125rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--lavender);
+}
+
+.kit-foot { display: grid; gap: 1.25rem; justify-items: start; margin-top: 2rem; }
+.kit-claim { max-width: 42rem; font-size: 1.125rem; line-height: 1.45; }
+.kit-notes { display: grid; gap: 0.6rem; max-width: 42rem; color: var(--paper-72); }
+.kit-notes li { position: relative; padding-left: 1.5rem; }
+.kit-notes li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 0.75rem; height: 2px; background: var(--amber); }
+.review .kit-open {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.5rem; border-radius: 999px;
+  background: var(--amber); color: #141019; font-weight: 600; text-decoration: none;
+  transition: background-color 0.2s;
+}
+.review .kit-open:hover { background: #ff9154; }
+
+/* --------------------------------------------------------------- close */
+
+.review-close { margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--line); }
+.review-qs { counter-reset: q; display: grid; gap: 0.9rem; max-width: 44rem; margin-top: 2rem; }
+.review-qs li { counter-increment: q; position: relative; padding-left: 2.25rem; }
+.review-qs li::before {
+  content: counter(q); position: absolute; left: 0; top: 0.1em;
+  font-family: var(--font-mono), ui-monospace, Menlo, monospace; font-size: 0.8125rem; color: var(--amber);
+}
+.review-close .review-note { margin-top: 2rem; }
+
+/* Wide screens: the figures and the paragraph sit side by side, so the panel
+   shows the display face and the reading face in one look. */
+@media (min-width: 900px) {
+  .spec { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); column-gap: 3.5rem; align-items: start; }
+  .spec-anchor, .spec-title, .spec-line { grid-column: 1 / -1; }
+  .spec-figures { grid-column: 1; grid-row: 4; }
+  .spec-readout { grid-column: 1; grid-row: 5; }
+  .spec-body {
+    grid-column: 2; grid-row: 4 / 6; align-self: stretch;
+    margin-top: 2.5rem; padding: 0 0 0 3.5rem; border-top: 0; border-left: 1px solid rgb(243 241 234 / 0.12);
+  }
+}
+
+@media (max-width: 640px) {
+  .review { padding: 3rem 1.25rem 4rem; }
+  .review-title { margin-top: 2.5rem; }
+  .spec { padding: 2rem 1.25rem; }
+}
+
+/* ------------------------------------------------------------- archive */
+
+.arch-list { display: grid; gap: 0; margin-top: 3rem; }
+.arch-item {
+  display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) auto; gap: 0.5rem 2.5rem; align-items: baseline;
+  padding: 1.75rem 0; border-top: 1px solid var(--line);
+}
+.arch-item:last-child { border-bottom: 1px solid var(--line); }
+.arch-name {
+  font-family: var(--font-display), "Arial Narrow", Arial, sans-serif;
+  font-weight: 800; font-variation-settings: "wdth" 85;
+  font-size: 1.5rem; line-height: 1.05; letter-spacing: -0.015em; text-transform: uppercase;
+}
+.arch-when { display: block; margin-top: 0.3rem; font-family: var(--font-mono), ui-monospace, Menlo, monospace; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--lavender); }
+.arch-line { color: var(--paper-72); line-height: 1.5; }
+.review .arch-open { display: inline-flex; align-items: center; min-height: 44px; color: var(--amber); font-weight: 600; text-decoration: underline; text-underline-offset: 0.25em; white-space: nowrap; }
+.review .arch-open:hover { color: #ff9154; }
+
+@media (max-width: 760px) {
+  .arch-item { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
+}
+
+/* The chosen kit, on the archived review. */
+.kit[data-chosen="true"] .spec { box-shadow: inset 0 0 0 1px rgb(255 122 47 / 0.45); }
+.kit-chosen {
+  display: inline-block; margin-left: 0.9rem; padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: var(--amber); color: #141019; vertical-align: 0.25em;
+  font-family: var(--font-text), "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600; font-size: 0.8125rem; letter-spacing: 0; text-transform: none;
+}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>John Heymans, title card, 16:9</title>
+  <defs>
+    <linearGradient id="scrim" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#070613" stop-opacity="0.85"/>
+      <stop offset="0.45" stop-color="#070613" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#070613" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Replace this rectangle with the footage. -->
+  <rect width="1920" height="1080" fill="#151038"/>
+  <!-- The scrim. Always under type that sits over footage. -->
+  <rect width="1920" height="1080" fill="url(#scrim)"/>
+  <!-- Type. Big Shoulders Display Bold, uppercase, line height 0.92. -->
+  <text x="72" y="697" fill="#f3f1ea" font-family="'Big Shoulders Display', 'Big Shoulders'"
+        font-size="120" font-weight="700" letter-spacing="-0.24"
+        style="text-transform:uppercase"><tspan x="72" dy="0">Two years.</tspan><tspan x="72" dy="110">One algorithm.</tspan><tspan x="72" dy="110">The Olympic final.</tspan></text>
+  <text x="72" y="990" fill="#f3f1ea" fill-opacity="0.85"
+        font-family="'Instrument Sans Narrow', 'Instrument Sans'" font-size="31" font-weight="500">A 30-minute keynote on strategy, risk and finding the edge.</text>
+  <!-- Safe area: nothing outside this box. Guides are not part of the frame. -->
+  <g stroke="#b9a8f5" stroke-opacity="0.45" stroke-dasharray="12 10" fill="none" data-guide="safe-area">
+    <rect x="72" y="72" width="1776" height="936"/>
+  </g>
+</svg>

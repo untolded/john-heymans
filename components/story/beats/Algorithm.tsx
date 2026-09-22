@@ -79,6 +79,14 @@ export function Algorithm() {
       tl.set(caret, { autoAlpha: 0 }, 0.077);
       tl.set(q(".chat-caret"), { autoAlpha: 1 }, 0.077);
 
+      // The two messages keep the height they have in the reading face. Half a
+      // beat later every character scrambles into noise and the window switches
+      // to the monospace, which wraps wider: without this the messages gain a
+      // line, and the thread is anchored to the bottom, so everything above it
+      // would move. Locked here, before anything is written.
+      gsap.set([you, ai], { height: "auto", minHeight: 0 });
+      gsap.set(you, { minHeight: you.offsetHeight });
+      gsap.set(ai, { minHeight: ai.offsetHeight });
       gsap.set([you, ai], { autoAlpha: 0 });
       const reply = () => q(".chat-ai .w");
       gsap.set(reply(), { opacity: 0 });

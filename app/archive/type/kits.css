@@ -1,0 +1,102 @@
+/*
+ * The two typefaces John did not choose, frozen as they were put to him on
+ * 22 September 2026. Scoreboard won and its values are now the defaults in
+ * app/story.css, so this file no longer carries it: the Scoreboard specimen
+ * on the review page reads the live values instead.
+ *
+ * Every selector in app/story.css reads these tokens, so a kit is one block
+ * and nothing else. Loaded only by the routes under /archive/type. The scales
+ * are relative to the live sizes, which grew by 1.12 when Scoreboard was
+ * baked in, so each is its original value divided by 1.12.
+ *
+ * Each block sets, in order: the faces, the display weights, the variable
+ * axes per display step, the case, the tracking, the display scale (all
+ * headline sizes are multiplied by it) and the divisor that sizes the footer
+ * wordmark to the width of the page.
+ */
+
+/* --------------------------------------------------- Ink trap. Bricolage. */
+/* One family throughout, with the optical size axis opening the traps in the
+   headlines. Sentence case: the shapes carry it, not the volume. */
+.story-root[data-type="trap"],
+.spec[data-type="trap"] {
+  --d-face: var(--font-display), "Helvetica Neue", Arial, sans-serif;
+  --t-face: var(--font-display), "Helvetica Neue", Arial, sans-serif;
+  --d-wght: 700;
+  --d-wght-xl: 800;
+  --d-wght-mid: 700;
+  --d-wght-sm: 600;
+  --d-axes: "opsz" 96, "wdth" 90;
+  --d-axes-xl: "opsz" 96, "wdth" 82;
+  --d-axes-mark: "opsz" 96, "wdth" 78;
+  --d-axes-board: "opsz" 96, "wdth" 88;
+  --d-case: none;
+  --d-track: -0.022em;
+  --d-track-xl: -0.032em;
+  --d-track-sm: -0.018em;
+  --d-scale: 0.84;
+  --d-mark-div: 4.5;
+  --t-axes: "opsz" 18;
+  --t-track: -0.006em;
+  --t-scale: 0.96;
+}
+
+/* --------------------------------------------------- Readout. Martian Mono. */
+/* Fixed pitch, so a headline is measured in characters. Set narrow and a good
+   deal smaller, because every letter takes the width of the widest one. */
+.story-root[data-type="readout"],
+.spec[data-type="readout"] {
+  --d-face: var(--font-display), ui-monospace, Menlo, monospace;
+  --t-face: var(--font-text), "Helvetica Neue", Arial, sans-serif;
+  --m-face: var(--font-mono), ui-monospace, Menlo, monospace;
+  --d-wght: 700;
+  --d-wght-xl: 700;
+  --d-wght-mid: 600;
+  --d-wght-sm: 600;
+  --d-axes: "wdth" 80;
+  --d-axes-xl: "wdth" 75;
+  --d-axes-mark: "wdth" 75;
+  --d-axes-board: "wdth" 85;
+  --d-case: uppercase;
+  --d-track: -0.03em;
+  --d-track-xl: -0.04em;
+  --d-track-sm: -0.02em;
+  --d-scale: 0.7;
+  --d-mark-div: 6.6;
+  --t-axes: normal;
+  --t-track: -0.004em;
+  --t-scale: 1;
+}
+
+/* Phones. Fixed pitch runs out of room first, so Readout comes down again.
+   The other two hold their desktop scale. */
+@media (max-width: 991px) {
+  .story-root[data-type="readout"] { --d-scale: 0.54; }
+}
+
+/* The chosen one, frozen. These values became the defaults in app/story.css
+   when Scoreboard was made live, where the display sizes absorbed the 1.12
+   scale. The block is kept here only so the specimen on this page still
+   renders; change the live setting in app/story.css, never here. */
+.spec[data-type="board"] {
+  --d-face: var(--font-display), "Arial Narrow", Arial, sans-serif;
+  --t-face: var(--font-text), "Helvetica Neue", Arial, sans-serif;
+  --m-face: var(--font-mono), ui-monospace, Menlo, monospace;
+  --d-wght: 700;
+  --d-wght-xl: 800;
+  --d-wght-mid: 650;
+  --d-wght-sm: 600;
+  --d-axes: "opsz" 72;
+  --d-axes-xl: "opsz" 72;
+  --d-axes-mark: "opsz" 72;
+  --d-axes-board: "opsz" 72;
+  --d-case: uppercase;
+  --d-track: -0.002em;
+  --d-track-xl: -0.006em;
+  --d-track-sm: 0em;
+  --d-scale: 1.12;
+  --d-mark-div: 5.4;
+  --t-axes: "wdth" 96;
+  --t-track: -0.004em;
+  --t-scale: 1;
+}

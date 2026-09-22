@@ -42,7 +42,7 @@ export function useStoryPage(): StoryPage {
  * owns the two dialogs. Until the cinema layout is ready, the page is the
  * server-rendered static document.
  */
-export function StoryRoot({ children, className, film }: { children: React.ReactNode; className: string; film: FilmAssets }) {
+export function StoryRoot({ children, className, typeKit, film }: { children: React.ReactNode; className: string; typeKit: string; film: FilmAssets }) {
   // The server renders the static layout (mode null); the client reads the real mode after hydration.
   const mode = useSyncExternalStore<Mode | null>(watchMode, detectMode, () => null);
   const [ready, setReady] = useState(false);
@@ -89,7 +89,7 @@ export function StoryRoot({ children, className, film }: { children: React.React
 
   return (
     <Ctx.Provider value={value}>
-      <div className={`story-root ${className} ${ready ? "is-cinema" : ""}`} data-mode={mode ?? "static"} data-ground="night">
+      <div className={`story-root ${className} ${ready ? "is-cinema" : ""}`} data-mode={mode ?? "static"} data-ground="night" data-type={typeKit}>
         <a className="skip-link" href="#keynote">
           {content.story.a11y.skip}
         </a>

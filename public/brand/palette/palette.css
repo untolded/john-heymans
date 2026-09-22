@@ -1,0 +1,11 @@
+/* John Heymans. The palette, as it is declared in app/story.css. */
+:root {
+  --night: #070613; /* The ground the story runs on, and the page behind everything */
+  --deep: #151038; /* Where the ground lifts: Iten upward, the top of the night gradient */
+  --violet: #3a2c91; /* Altitude, stadium light, and the multiply dim over photographs */
+  --lavender: #b9a8f5; /* The machine voice: telemetry, chart guides, axis labels */
+  --amber: #ff7a2f; /* The one accent. Every action, every line that gets drawn */
+  --paper: #f3f1ea; /* The sheet the keynote details rise on, and all text on night */
+  --ink: #141019; /* Text on paper, and text inside the amber pill */
+  --amber-deep: #a8400d; /* The accent on paper, where amber would not hold contrast */
+}

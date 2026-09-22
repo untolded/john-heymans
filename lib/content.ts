@@ -483,7 +483,8 @@ export const content = {
     },
 
     handover: {
-      line: "That's the story. Here's what your team takes from it.",
+      /* Bars are line breaks. Written in, so the card never leaves "it." alone on a line. */
+      line: "That's the story.|Here's what your team takes from it.",
     },
 
     /** One lesson per chapter, in keynote order. The practical part uses the same five. */

@@ -9,15 +9,21 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. The index lists the three concepts:
+Open http://localhost:3000.
 
-| Route | Concept |
+| Route | What it is |
 |---|---|
-| `/concept-a` | Velocity. Blue-black, motion-blur photography, Archivo condensed, Paris lavender. A race clock in the nav runs to his personal best as you scroll; the story runs sideways with the ranking line drawn across it. |
-| `/concept-b` | Made it. Warm black, full-bleed photography, Big Shoulders. Bold element: the words on his arms, written on scroll. |
-| `/concept-c` | Stadium. Black, black-and-white photography, Bodoni Moda capitals, one red line. The last lap: five frames, a finish line, and colour only when he crosses it. |
+| `/` | The live page. The approved design, described under Round 6 below |
+| `/brand/fe331dc0ae83be5b` | The brand guide. Unlisted: `noindex`, disallowed in robots, linked from nowhere |
+| `/archive` | Index of the earlier rounds. `noindex` |
+| `/archive/type` | The typeface review, with Scoreboard marked as chosen |
+| `/archive/type/trap`, `/archive/type/readout` | The two typefaces John did not choose, still running |
+| `/archive/signal`, `/archive/concept-a`, `-b`, `-c`, `/archive/brief` | The earlier designs, untouched |
 
-The design plan and the check against the brief are in `docs/concepts.md`.
+`/story`, `/signal`, `/concept-*` and `/type/*` redirect permanently to their new homes, so links
+already sent to John keep working. `docs/design-tokens.md` has the settled colours and type
+tokens, `docs/brand-guide.md` is the brand guide in writing, and the earlier design plan is in
+`docs/concepts.md`.
 
 ## Where things live
 
@@ -25,8 +31,9 @@ The design plan and the check against the brief are in `docs/concepts.md`.
 - `lib/photos.json` and `public/photos/`: the selected photographs with credits and captions. Belga Image files come only from the commercial-licence folder.
 - `public/logos/`: the ten client logos, rendered monochrome by CSS filter.
 - `components/shared/`: the booking modal, film modal, photo-with-credit component.
-- `components/a`, `components/b`, `components/c`: one folder per concept. GSAP lives in `useGSAP` hooks with `gsap.matchMedia`, so reduced motion and phones get the finished state.
-- `app/concept-*/`: route, per-concept fonts and stylesheet.
+- `components/story/` and `lib/story/`: the live page. `components/story/kits/`: one module per proposed typeface, so a kit's fonts only load on its own route.
+- `app/story.css`: the live page's stylesheet, and the type tokens every kit overrides. `app/type/kits.css`: the three kits, as values only.
+- `components/archive/{a,b,c,signal}` and `app/archive/*`: the earlier rounds. Kept working, not maintained.
 
 ## Not yet in the repo
 
@@ -35,19 +42,19 @@ The design plan and the check against the brief are in `docs/concepts.md`.
 - Client logo files. Clients are set as wordmarks in type for now.
 - A form backend. Submitting the enquiry shows the success state after a short delay.
 
-## The current build: one continuous story at `/signal`
+## Round 4 and 5, archived: one continuous story at `/archive/signal`
 
 The film opens the page, autoplaying muted with one sound control. From there a single sticky stage carries eight cross-fading beats, from "they all said it couldn't be done" through Iten, the ChatGPT conversation that produced the race schedule, the doubters, the setbacks and the Olympic final. The ground then turns from night to paper for the keynote details, audience sizes, takeaways, audience clips, logos, testimonials, bio and booking.
 
 Interface is a wordmark, one permanent enquiry button and a progress hairline.
 
-- `components/signal/Story.tsx` holds the master scrubbed timeline. Default CSS is the stacked layout; the script adds `.is-cinema` on desktop when motion is allowed. Anything the timeline reveals must also be resolved in the mobile and reduced-motion branch.
+- `components/archive/signal/Story.tsx` holds the master scrubbed timeline. Default CSS is the stacked layout; the script adds `.is-cinema` on desktop when motion is allowed. Anything the timeline reveals must also be resolved in the mobile and reduced-motion branch.
 - `public/media/hero.mp4` is an 18-second cut built from stills. Drop the real film in at that path and the hero is finished.
 - `docs/round4-plan.md` holds the plan and both build logs. `docs/storytelling-teardown.md` is the analysis of the four reference sites the storytelling is based on.
 
-## Round 6: the story site at `/story`
+## Round 6: the story site, now at `/`
 
-Built from `docs/build-brief.md`. One scrolling page that plays like a short film (nine beats on one sticky stage), then turns to paper for the keynote, proof, enquiry, bio and footer. Everything it needs lives in `components/story` and `lib/story`, so moving it to `/` at launch is one line in `app/page.tsx`: `export { default, metadata } from "./story/page";`.
+Built from `docs/build-brief.md`, approved by John, and now the live page at `/`. One scrolling page that plays like a short film (nine beats on one sticky stage), then turns to paper for the keynote, proof, enquiry, bio and footer. Everything it needs lives in `components/story` and `lib/story`.
 
 **Modes.** The server renders a readable static document (what reduced-motion visitors, visitors without JavaScript and search engines get, and what screen readers read in every mode). On mount the client picks `cinema-desktop` (Lenis, full stage) or `cinema-touch` (native scroll, portrait layouts) and only then adds `is-cinema`. In development, `?mode=static` forces a mode.
 
@@ -86,3 +93,65 @@ Built from `docs/build-brief.md`. One scrolling page that plays like a short fil
 - **About**: the vertical reel (`public/story/reel/about.mp4`), muted on screen, sound one tap away.
 - **Footer**: the scroll pace is now a results board at the top of the footer.
 - Photos marked `"free": true` in `lib/photos.json` (the Iten photo) are copyright free and carry no credit. Any other photo without a photographer is listed by `npm run build` and blocks `build:launch`.
+
+### Round 8: the live page, the archive and three typefaces (22 September 2026)
+
+John approved the round 7 page, so it moved from `/story` to `/` and everything earlier moved
+under `/archive`, which is `noindex` and linked from nowhere. Nothing in the archived designs
+was changed beyond their import paths and their own cross-links.
+
+**The colours are settled.** The six tokens and the two support values are recorded in
+`docs/design-tokens.md` and shown on `/type`. They do not change again.
+
+**The type is not.** Every typographic decision in `app/story.css` now reads a token, so a
+typeface is a block of values rather than a rewrite: `--d-face`, four display weights, four sets
+of variable axes, `--d-case`, three tracking steps, `--d-scale` (multiplies every display size,
+desktop and mobile) and `--d-mark-div` (sizes the footer wordmark to the page width). Defaults in
+`.story-root` are the live setting; `app/type/kits.css` overrides them per `[data-type]`.
+
+The live page renders `StoryDocument` with no kit; each route under `/type` passes one. Kits live
+one per module in `components/story/kits/` so their fonts never reach the live page.
+
+| Kit | Route | Display | Reading | The idea |
+|---|---|---|---|---|
+| Ink trap | `/type/trap` | Bricolage Grotesque | Bricolage Grotesque | One family. The optical size axis opens the traps at headline size and closes them at reading size. The only kit set in sentence case |
+| Scoreboard | `/type/board` | Big Shoulders | Instrument Sans | Stadium signage. Narrowest of the three, so it is set 12 percent larger |
+| Readout | `/type/readout` | Martian Mono | Host Grotesk | Fixed pitch: a results list, a split time, the schedule the model produced. Headlines and readouts are one voice |
+
+Verified: production build clean, the live page pixel-identical to the round 7 build through every
+beat, axe 0 violations on `/`, `/type`, `/archive` and all three kit routes. One warning to settle
+if Scoreboard wins: `next build` finds no font override metrics for Big Shoulders, so there is no
+size-adjusted fallback and the swap shifts layout slightly.
+
+### Round 9: Scoreboard goes live, and the brand guide (22 September 2026)
+
+John picked **Scoreboard**. Big Shoulders over Instrument Sans, with Geist Mono for readouts, is
+now the default in `.story-root`; the display sizes absorbed the 1.12 scale it was reviewed at, so
+`app/story.css` states the real sizes and `--d-scale` is back to 1. `/type` moved to
+`/archive/type` with the review page reframed as the record of the decision, and the two rejected
+kits still run there.
+
+**The reported text shift is fixed.** On "However, this wouldn't be enough" the word "this" moved
+between lines as the reveal finished. Cause: the rise and ink reveals split the text into one
+block per line and then unsplit it, and `text-wrap: balance` regrouped the words at that moment,
+because the split itself measures the plain greedy layout. Two changes, both needed:
+`.slot > .entry` now fills its slot so the max-widths resolve against a definite width, and
+nothing that gets split carries `balance` or `pretty` any more. Where greedy wrapping reads badly
+the break is written into the copy with a vertical bar. Verified with a probe that compares the
+geometry of every entry mid-reveal and settled, at 1280, 1440 and 1728: no line-grouping changes
+anywhere.
+
+Two more shifts went with it. Big Shoulders is missing from next/font's fallback metrics table, so
+`app/story.css` declares a size-adjusted `local("Arial")` stand-in measured against the real font,
+which brings a fallback headline to within 1.5% of the real width. And the chat window's two
+messages now hold the height they are measured at, because the scramble switches them to the
+monospace, which wraps wider. Scroll CLS: 0.045 desktop and 0.027 mobile, down from 0.057 and
+0.146. Load CLS is 0.
+
+**The brand guide** is at `/brand/fe331dc0ae83be5b`: `noindex`, `Disallow: /brand/` in
+`app/robots.ts` (the path itself is not named there, since a robots file is public), and nothing
+links to it. `docs/brand-guide.md` is the same document in writing. The motion demos import
+`lib/story/reveals` directly, so the guide cannot drift from the site. Assets are in
+`public/brand/`: variable and static fonts, the outlined wordmark, palette as CSS, JSON and Adobe
+`.ase`, title-card and lower-third templates, the grain tile and `motion-tokens.json`.
+`scripts/build-brand-kit.sh` zips all of it into one download.

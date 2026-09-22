@@ -1,6 +1,6 @@
 import { content } from "@/lib/content";
 import { SCRIPT } from "@/lib/story/script";
-import { fill, ordinal } from "@/lib/story/format";
+import { fill, ordinal, plain } from "@/lib/story/format";
 import { facts, show } from "@/lib/story/data";
 import { StoryPhoto } from "./StoryPhoto";
 import { Text } from "./Text";
@@ -195,8 +195,8 @@ export function StaticStory() {
         <p className="lc-meta">{fill(c.lessonOf, { n: 5, total: c.lessons.length })}</p>
       </section>
 
-      <section className="sb sb-handover" data-ground="paper" aria-label={c.handover.line}>
-        <p className="sb-title">{text("handover.line")}</p>
+      <section className="sb sb-handover" data-ground="paper" aria-label={plain(c.handover.line)}>
+        <p className="sb-title"><Text text={text("handover.line")} /></p>
       </section>
     </>
   );

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { content } from "@/lib/content";
 import { filmAssets } from "@/lib/story/assets";
-import { fontVariables } from "./fonts";
+import { liveKit } from "./fonts";
+import type { TypeKit } from "./typeKit";
 import { StoryRoot } from "./StoryRoot";
 import { Hero } from "./Hero";
 import { StoryTrack } from "./StoryTrack";
@@ -35,11 +36,14 @@ const person = {
  * The whole page, rendered on the server as a readable document. The client
  * root then decides the mode and, where motion is welcome, plays the story
  * over the same content.
+ *
+ * The kit is the typefaces it is set in. The live page takes the default;
+ * the routes under /type pass one of the three proposals instead.
  */
-export function StoryDocument() {
+export function StoryDocument({ kit = liveKit }: { kit?: TypeKit }) {
   const film = filmAssets();
   return (
-    <StoryRoot className={fontVariables} film={film}>
+    <StoryRoot className={kit.className} typeKit={kit.id} film={film}>
       <main id="main">
         <Hero film={film} />
         <StoryTrack>

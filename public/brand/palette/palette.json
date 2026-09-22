@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Night",
+    "hex": "#070613",
+    "rgb": [
+      7,
+      6,
+      19
+    ],
+    "rgbFloat": [
+      0.0275,
+      0.0235,
+      0.0745
+    ],
+    "use": "The ground the story runs on, and the page behind everything"
+  },
+  {
+    "name": "Deep",
+    "hex": "#151038",
+    "rgb": [
+      21,
+      16,
+      56
+    ],
+    "rgbFloat": [
+      0.0824,
+      0.0627,
+      0.2196
+    ],
+    "use": "Where the ground lifts: Iten upward, the top of the night gradient"
+  },
+  {
+    "name": "Violet",
+    "hex": "#3a2c91",
+    "rgb": [
+      58,
+      44,
+      145
+    ],
+    "rgbFloat": [
+      0.2275,
+      0.1725,
+      0.5686
+    ],
+    "use": "Altitude, stadium light, and the multiply dim over photographs"
+  },
+  {
+    "name": "Lavender",
+    "hex": "#b9a8f5",
+    "rgb": [
+      185,
+      168,
+      245
+    ],
+    "rgbFloat": [
+      0.7255,
+      0.6588,
+      0.9608
+    ],
+    "use": "The machine voice: telemetry, chart guides, axis labels"
+  },
+  {
+    "name": "Amber",
+    "hex": "#ff7a2f",
+    "rgb": [
+      255,
+      122,
+      47
+    ],
+    "rgbFloat": [
+      1.0,
+      0.4784,
+      0.1843
+    ],
+    "use": "The one accent. Every action, every line that gets drawn"
+  },
+  {
+    "name": "Paper",
+    "hex": "#f3f1ea",
+    "rgb": [
+      243,
+      241,
+      234
+    ],
+    "rgbFloat": [
+      0.9529,
+      0.9451,
+      0.9176
+    ],
+    "use": "The sheet the keynote details rise on, and all text on night"
+  },
+  {
+    "name": "Ink",
+    "hex": "#141019",
+    "rgb": [
+      20,
+      16,
+      25
+    ],
+    "rgbFloat": [
+      0.0784,
+      0.0627,
+      0.098
+    ],
+    "use": "Text on paper, and text inside the amber pill"
+  },
+  {
+    "name": "Amber deep",
+    "hex": "#a8400d",
+    "rgb": [
+      168,
+      64,
+      13
+    ],
+    "rgbFloat": [
+      0.6588,
+      0.251,
+      0.051
+    ],
+    "use": "The accent on paper, where amber would not hold contrast"
+  }
+]
