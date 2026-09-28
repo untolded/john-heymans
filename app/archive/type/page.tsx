@@ -15,20 +15,20 @@ export const metadata: Metadata = {
 };
 
 // A review page, not site copy, so its own wording lives here. The specimens
-// are real page copy, pulled from lib/content, so nothing is set in words the
-// page will never carry.
+// were real page copy on 22 September 2026; they are frozen as they were then,
+// since the record should not change when the live copy does.
 const s = content.story;
 const SPEC = {
   anchor: s.final.arms,
-  title: s.lessons[0].title,
-  line: s.lessons[0].line,
-  sentence: s.iten.line,
+  title: "Your environment sets your ceiling.",
+  line: "And consistency beats hard work.",
+  sentence: "So I trained with the best, and learned their ways.",
   figures: [
     { value: content.brand.pb, label: "5000 m" },
     { value: "2,400 m", label: "Iten" },
     { value: "11th", label: "Paris" },
   ],
-  readout: s.telemetry.record,
+  readout: "Fastest rise in the history of the event",
 };
 
 const KITS: (TypeKit & { href: string; chosen?: true })[] = [

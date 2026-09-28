@@ -45,7 +45,7 @@ Eight values, fixed. Everything else is one of them at an opacity.
 | Night | `#070613` | 7, 6, 19 | The ground the story runs on |
 | Deep | `#151038` | 21, 16, 56 | Where the ground lifts: Iten upward |
 | Violet | `#3a2c91` | 58, 44, 145 | Altitude, stadium light, the dim over photographs |
-| Lavender | `#b9a8f5` | 185, 168, 245 | The machine voice: telemetry, chart guides, labels |
+| Lavender | `#b9a8f5` | 185, 168, 245 | The machine voice: code keywords, chart guides, labels |
 | Amber | `#ff7a2f` | 255, 122, 47 | The one accent |
 | Paper | `#f3f1ea` | 243, 241, 234 | The sheet under the keynote details, and text on night |
 | Ink | `#141019` | 20, 16, 25 | Text on paper, and text inside the amber pill |

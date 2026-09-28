@@ -29,7 +29,7 @@ tokens, `docs/brand-guide.md` is the brand guide in writing, and the earlier des
 
 - `lib/content.ts`: every string on the site, in one dictionary, ready for Dutch and French.
 - `lib/photos.json` and `public/photos/`: the selected photographs with credits and captions. Belga Image files come only from the commercial-licence folder.
-- `public/logos/`: the ten client logos, rendered monochrome by CSS filter.
+- `public/logos/`: the client logos for the marquee, drawn as one ink silhouette by CSS filter. Logos that arrived as colour on white were converted to black on transparent first (see Round 10).
 - `components/shared/`: the booking modal, film modal, photo-with-credit component.
 - `components/story/` and `lib/story/`: the live page. `components/story/kits/`: one module per proposed typeface, so a kit's fonts only load on its own route.
 - `app/story.css`: the live page's stylesheet, and the type tokens every kit overrides. `app/type/kits.css`: the three kits, as values only.
@@ -155,3 +155,100 @@ links to it. `docs/brand-guide.md` is the same document in writing. The motion d
 `public/brand/`: variable and static fonts, the outlined wordmark, palette as CSS, JSON and Adobe
 `.ase`, title-card and lower-third templates, the grain tile and `motion-tokens.json`.
 `scripts/build-brand-kit.sh` zips all of it into one download.
+
+### Round 10: Maarten's feedback on the live page (28 September 2026)
+
+Less text, and the visuals carry more of the story. What changed:
+
+**Hero.** The line is "Two-year journey. One AI algorithm. The Olympic final." and the sub-line is
+gone. The loop now opens on John facing the camera, arms up in the Stade de France (a fresh
+1920 x 1080 crop of the 4K master at 39.20 s, the only front-facing shot in the film without
+burned-in titles), followed by the Budapest pack, the Paris pack head-on, the Supernova room, the
+stage from behind and the Paris wide shot, which runs straight back into the arms-up when it loops.
+Posters and `public/story/og.jpg` were regenerated from it (`scripts/make-og.mjs`).
+
+**A first page.** A new `prologue` beat opens the story: "How far can AI take an Olympic dream?"
+on a page that is already there as the stage slides over the film, then turns on its left edge
+like the first page of a book.
+
+**Iten.** "The day after his graduation, John booked a plane ticket to Kenya." over the globe,
+then the flight. The altitude chart is gone: the dive into Kenya lands on the top-down drone shot
+of the red road, then the pack running at the camera carries "To train with and learn from the
+best runners in the world", then John and lesson 1. The Kenya clips are in `public/story/kenya`,
+landscape crops for wide screens and the vertical originals for phones.
+
+**The algorithm.** "However, training hard wouldn't be enough." The amber underline under "edge"
+pulls into a dot and drops into a Mac dock as ChatGPT's running light; the icon bounces and the
+window zooms out of it. The prompt is "Help me build an AI-algorithm to get me to the Olympics",
+and the whole answer stays in the window: thinking, three agents, the code, then "Recommendation:
+a competition calendar that's different from everyone else" with a two-lane calendar (everyone
+else's twelve to fifteen outdoor races, John's three indoor ones). The data log and the season
+grid outside the window are gone. The thread is laid out in full from the start and scrolls by
+transform, so it never shifts the layout.
+
+**The doubters and the chart.** The window folds back into the dock; the three messages arrive
+large, in the middle, and the amber line pushes them off before "I ran it anyway." The chart
+names only its ends: 200+ and a large 31, "Olympic qualification", which is how John tells it.
+The ranking data's last milestone is now 31 (it was "top 30"), and the Boston standard mark is
+off the chart. Title: "The fastest rise up the world rankings in the history of athletics."
+
+**Removed.** The setbacks and Olympic village chapters, the chapter names in the top bar (the
+ticks stay), the telemetry lines, the ranking chip, every lesson subtitle and "n of 5" tag, the
+keynote lead and format lines, the scale's lead, axis label and detail lines, the clip durations
+and the full-recording section.
+
+**The practical part.** The keynote facts sit in three lanes drawn with hairlines, and the third
+reads "lessons with clear parallels in business". The lessons have a new title, credits in the
+corner of each photo, and titles only; lessons 3 and 4 are no longer in the story, so their frames
+do not link back. "Small room or full house, expect to feel high energy." Booked by is now a slow
+marquee of sixteen logos with a pause button (still, and wrapping, with reduced motion), De Warande
+has its name under its symbol, and two new testimonials, translated from Dutch, join the two
+there were: Andrés Jorge Buysse (Deutsche Bank) and Marina De Groof (DGI Immo), named and linked
+to LinkedIn as they were supplied.
+
+**Scroll pace.** The page counts as one kilometre and the clock pauses itself after 20 seconds
+without scrolling, like a running watch, so a normal visit lands on a runner's numbers rather
+than days.
+
+**Open.** Who filmed the Kenya footage: `lib/story/data/footage.json` is pending, development shows
+"photographer to confirm", production shows no credit, and `npm run build:launch` fails until it is
+filled in.
+
+Measured on the production build: JS 243.9 KB transferred (budget 250), scroll CLS 0.008 desktop
+and 0.006 mobile, axe 0 violations in cinema, phone and reduced-motion modes.
+
+### Round 11: first person, a cinematic prologue, tighter timing (28 September 2026)
+
+**First person everywhere.** Story, lessons title, bio heading, the enquiry chat and the photo alt
+texts now speak as John. His name stays where it is a name: the wordmark, the page title, the share
+image's alt text and the testimonials, which are other people's words.
+
+**The prologue** is John opening the story, three lines one at a time: "My story is about taking
+a different road." "Two years before Paris, I wasn't even in the world's top 200." "So I used AI to
+find a road nobody else was taking." It is shot like the start of a film: a drone following him
+alone along a red road in Iten (`public/story/kenya/road-follow`, slowed to 0.72), graded into the
+night palette with grain, letterbox bars closing in and opening again into "They all said it
+couldn't be done." The page-turn is gone.
+
+**The flight** marks both places with real dots, "Brussels, Belgium" and "Iten, Kenya", each with a
+ping. The chapter title has left before Brussels appears, and both dots stay until the dive.
+
+**Timing.** Every beat is now laid out in viewport heights of scroll (`v()` in `lib/story/beats.ts`),
+so each moment gets scroll in proportion to what is on screen. The story is 1,583 viewport heights
+on desktop, down from 1,880 with a longer prologue in it. The biggest cut is after the ChatGPT
+answer: about 35 viewport heights to read the calendar, where it was about 125.
+
+**The doubters** arrive under "My team and my peers called me crazy."
+
+**The pace board** says what it means: "Scrolling down this page counts as a 1 km run. Here's how
+fast you went." Then your time for 1 km, your 5 km at that speed, and John's fastest 5 km.
+
+Measured on the production build: JS 244.4 KB transferred, scroll CLS 0.006 desktop and mobile,
+0 in reduced motion, axe 0 violations in all three.
+
+**Follow-up (28 September 2026).** The audience clips carry a muted-speaker badge that opens into
+"Play with sound" on hover or focus (always open on touch screens). The pace board can no longer
+beat John: the clock starts from his pace per kilometre (13:03.46 over 5 km, 2:36.7) and adds the
+time spent moving down the page. Seppe Teunis is named in the footer's photography line
+(`EXTRA_PHOTOGRAPHERS` in `lib/story/photos.ts`); which images are Seppe Teunis's is not recorded yet.
+

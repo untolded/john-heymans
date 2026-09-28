@@ -2,12 +2,14 @@
 
 import { content } from "@/lib/content";
 import { gsap } from "@/lib/story/gsap";
+import { BEATS, BEAT_INDEX, v } from "@/lib/story/beats";
 import { Text } from "../Text";
 import { useBeat } from "./useBeat";
 import { useStageSize, boxOf, entryEl } from "./stage";
 
 const c = content.story;
-const LENGTH = 1.4; // the opener's scroll length in stage heights
+const LENGTH = BEATS[BEAT_INDEX.opener].length.desktop / 100; // the opener's scroll length in stage heights
+const at = (vh: number) => v("opener", vh);
 
 /**
  * The title card. The sentence fills the screen word by word (the overlay
@@ -30,17 +32,17 @@ export function Opener() {
 
       if (!size.touch) {
         const [g1, g2] = q(".ghost");
-        tl.fromTo(g1, { opacity: 0 }, { opacity: 0.06, duration: 0.08 }, 0.02);
-        tl.fromTo(g2, { opacity: 0 }, { opacity: 0.03, duration: 0.08 }, 0.02);
+        tl.fromTo(g1, { opacity: 0 }, { opacity: 0.06, duration: at(10) }, at(2));
+        tl.fromTo(g2, { opacity: 0 }, { opacity: 0.03, duration: at(10) }, at(2));
         tl.fromTo(g1, { y: 0, scale: 1.4 }, { y: -0.4 * LENGTH * size.h, scale: 1.46, duration: 1 }, 0);
         tl.fromTo(g2, { y: 0, scale: 1.8 }, { y: -0.2 * LENGTH * size.h, scale: 1.9, duration: 1 }, 0);
-        tl.to([g1, g2], { opacity: 0, duration: 0.12 }, 0.74);
+        tl.to([g1, g2], { opacity: 0, duration: at(14) }, at(86));
       }
 
       const y = b.y + b.h + Math.max(8, size.h * 0.014);
       gsap.set(line, { x: b.x, y, width: b.w, scaleX: 0 });
-      tl.to(line, { scaleX: 1, duration: 0.2, ease: "power2.inOut" }, 0.55);
-      tl.to(line, { x: 48 - b.w, duration: 0.25, ease: "power2.in" }, 0.75);
+      tl.to(line, { scaleX: 1, duration: at(24), ease: "power2.inOut" }, at(60));
+      tl.to(line, { x: 48 - b.w, duration: at(30), ease: "power2.in" }, at(90));
 
       // Iten's sweep draws straight over the stub, then the stub is no longer needed.
       return (s) => {

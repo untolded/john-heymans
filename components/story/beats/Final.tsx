@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { content } from "@/lib/content";
 import { photo } from "@/lib/photos";
 import { gsap } from "@/lib/story/gsap";
+import { v } from "@/lib/story/beats";
+import { fill } from "@/lib/story/format";
 import * as R from "@/lib/story/reveals";
 import { credits } from "@/lib/story/credits";
 import { useLoadGate } from "@/lib/story/media";
@@ -22,7 +25,9 @@ const WORDS: Word[] = HANDWRITING.phrases.flatMap((p) => p.words);
 
 type Frame = { s: number; x: number; y: number };
 
-const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
+/** A moment in this beat, in viewport heights of scroll. */
+const at = (vh: number) => v("final", vh);
 const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 const inOut = gsap.parseEase("power2.inOut");
 
@@ -40,8 +45,8 @@ function place(W: number, H: number, s: number, [fx, fy]: [number, number]): Fra
  * frame starts tight on the writing and widens to his face while the amber
  * line writes "HEY MOM" and "MADE IT" over the real ink. The photo dims, the
  * two phrases lift off his arms, straighten and take the centre, then settle
- * above "Dare to dream big.", and the start line from the opener draws under
- * it, closing the loop.
+ * above "Dare to dream big.", lesson 5, and the start line from the opener
+ * draws under it, closing the loop.
  */
 export function Final() {
   const size = useStageSize();
@@ -71,7 +76,7 @@ export function Final() {
       const wide = size.touch ? tight : place(W, H, sCover, WIDE_FOCUS);
       const frameAt = (p: number): Frame => {
         if (size.touch) return tight;
-        const u = inOut(seg(p, 0.3, 0.54));
+        const u = inOut(seg(p, at(90), at(150)));
         const s = tight.s * Math.pow(wide.s / tight.s, u);
         return place(W, H, s, [TIGHT_FOCUS[0] + (WIDE_FOCUS[0] - TIGHT_FOCUS[0]) * u, TIGHT_FOCUS[1] + (WIDE_FOCUS[1] - TIGHT_FOCUS[1]) * u]);
       };
@@ -108,15 +113,15 @@ export function Final() {
       const settled = layout(capSmall, H * 0.16, H * 0.16 + capSmall * 1.85);
 
       // The photographs.
-      tl.fromTo(heats, { opacity: 0 }, { opacity: 1, duration: 0.03 }, 0);
-      tl.fromTo(q(".ph-heats .pl-inner"), { scale: 1.08 }, { scale: 1, duration: 0.2 }, 0);
-      tl.fromTo(pan, { opacity: 0 }, { opacity: 1, duration: 0.04 }, 0.16);
-      tl.fromTo(q(".ph-pan .pl-inner"), { scale: 1.08 }, { scale: 1, duration: 0.18 }, 0.16);
-      tl.to(heats, { opacity: 0, duration: 0.01 }, 0.2);
-      tl.fromTo([frameEl, ink], { opacity: 0 }, { opacity: 1, duration: 0.03 }, 0.29);
-      tl.to(pan, { opacity: 0, duration: 0.01 }, 0.32);
-      tl.fromTo(dim, { opacity: 0 }, { opacity: 0.62, duration: 0.06 }, 0.54);
-      tl.to(frameEl, { opacity: 0.45, duration: 0.06 }, 0.54);
+      tl.fromTo(heats, { opacity: 0 }, { opacity: 1, duration: at(9) }, 0);
+      tl.fromTo(q(".ph-heats .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(60) }, 0);
+      tl.fromTo(pan, { opacity: 0 }, { opacity: 1, duration: at(12) }, at(48));
+      tl.fromTo(q(".ph-pan .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(54) }, at(48));
+      tl.to(heats, { opacity: 0, duration: at(3) }, at(60));
+      tl.fromTo([frameEl, ink], { opacity: 0 }, { opacity: 1, duration: at(9) }, at(84));
+      tl.to(pan, { opacity: 0, duration: at(3) }, at(96));
+      tl.fromTo(dim, { opacity: 0 }, { opacity: 0.62, duration: at(18) }, at(150));
+      tl.to(frameEl, { opacity: 0.45, duration: at(18) }, at(150));
 
       // The words: registered on the arms, then centred and upright, then settled above the close.
       WORDS.forEach((w) => {
@@ -125,8 +130,8 @@ export function Final() {
         const state = pose(w);
         const draw = () => g.setAttribute("transform", `translate(${state.x} ${state.y}) rotate(${state.rotation}) scale(${state.scale})`);
         draw();
-        tl.to(state, { ...big.get(w.id)!, duration: 0.08, ease: "power2.inOut", onUpdate: draw }, 0.54);
-        tl.to(state, { ...settled.get(w.id)!, duration: 0.08, ease: "power2.inOut", onUpdate: draw }, 0.62);
+        tl.to(state, { ...big.get(w.id)!, duration: at(22), ease: "power2.inOut", onUpdate: draw }, at(150));
+        tl.to(state, { ...settled.get(w.id)!, duration: at(22), ease: "power2.inOut", onUpdate: draw }, at(174));
       });
 
       // The start line from the opener, under the close.
@@ -134,25 +139,23 @@ export function Final() {
       if (last) {
         const lineY = last.y + last.h + Math.max(8, H * 0.012);
         gsap.set(closeLine, { x: last.x, y: lineY, width: last.w, scaleX: 0 });
-        // The lesson line sits clear below the start line, however tall the close sets.
-        document.querySelector<HTMLElement>(".copy-overlay")?.style.setProperty("--under-top", `${Math.round(lineY + Math.max(28, H * 0.045))}px`);
       }
-      tl.to(closeLine, { scaleX: 1, duration: 0.06, ease: "power2.inOut" }, 0.76);
+      tl.to(closeLine, { scaleX: 1, duration: at(18), ease: "power2.inOut" }, at(212));
 
       // Writing: each phrase at its own speed, finished at once if the visitor is already past it.
       let p = 0;
       const strokes = (id: string) => Array.from(ink.querySelectorAll<SVGPathElement>(`[data-phrase="${id}"] .hw-stroke`));
       gsap.set(ink.querySelectorAll(".hw-stroke"), { drawSVG: "0%" });
-      const write = (id: string, at: number) => ({
-        at,
+      const write = (id: string, when: number) => ({
+        at: when,
         on: () => {
           const t = R.scribble(strokes(id), { duration: 1.6 });
-          if (p > at + 0.16) t.progress(1);
+          if (p > when + at(40)) t.progress(1);
           return t;
         },
         off: () => void gsap.set(strokes(id), { drawSVG: "0%" }),
       });
-      const onCue = cues([write("hey-mom", 0.34), write("made-it", 0.44)]);
+      const onCue = cues([write("hey-mom", at(98)), write("made-it", at(124))]);
 
       return (b) => {
         p = b.progress;
@@ -164,7 +167,7 @@ export function Final() {
         dimOut.style.opacity = String(out);
         inkLayer.style.opacity = String(out);
         reportCredits(root, b.active && out > 0.3);
-        credits.report("final-arms@final", ARMS.credit, b.active && out > 0.3 && p > 0.3 && p < 0.58 ? 1 : 0);
+        credits.report("final-arms@final", ARMS.credit ? fill(content.story.credit, { name: ARMS.credit }) : "", b.active && out > 0.3 && p > at(84) && p < at(160) ? 1 : 0);
       };
     },
     [size.w, size.h, size.touch],

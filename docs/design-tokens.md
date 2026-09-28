@@ -18,7 +18,7 @@ should introduce a colour.
 | `--night` | `#070613` | The ground the story runs on, and the page background before paint |
 | `--deep` | `#151038` | Where the ground lifts: Iten upward, the top of the night gradient |
 | `--violet` | `#3a2c91` | Altitude, the stadium light, the multiply dim over photographs |
-| `--lavender` | `#b9a8f5` | The machine voice: telemetry, chart guides, axis labels, placeholders |
+| `--lavender` | `#b9a8f5` | The machine voice: code keywords, chart guides, the start of the climb, placeholders |
 | `--amber` | `#ff7a2f` | The one accent. Every action, every line that gets drawn, every underline |
 | `--paper` | `#f3f1ea` | The sheet that rises for the keynote details, and all text on night |
 

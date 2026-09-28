@@ -289,7 +289,7 @@ export const content = {
       ],
       takeawayTitle: "What your audience takes home",
       takeaways: [
-        { n: "01", title: "Your environment sets your ceiling", line: "People grow fastest in teams that hold a higher standard than they do." },
+        { n: "01", title: "You are the average of the 5 people you spend the most time with", line: "People grow fastest in teams that hold a higher standard than they do." },
         { n: "02", title: "Consistency beats intensity", line: "The best are not working harder on their best day. They are working every day." },
         { n: "03", title: "The edge is where the consensus isn't", line: "The advantage is in the process everyone has stopped questioning." },
         { n: "04", title: "Control what you can control", line: "Separate the two lists, then spend everything on the shorter one." },
@@ -305,7 +305,7 @@ export const content = {
     },
 
     bio: {
-      title: "About John",
+      title: "About me",
       role: "Olympic 5000m finalist. Keynote speaker.",
       body: [
         "I am a Belgian distance runner and a bio-engineer by training. I started running seriously late, graduated during Covid, and decided on the Olympics two years before Paris.",
@@ -334,9 +334,9 @@ export const content = {
   story: {
     meta: {
       title: "John Heymans, Olympic 5000m finalist and keynote speaker",
-      description: "Two years. One algorithm. The Olympic final. I built the algorithm that chose my races. A 30-minute keynote on strategy, risk and finding the edge.",
+      description: "Two-year journey. One AI algorithm. The Olympic final. I built the algorithm that chose my races. A keynote on strategy, risk and finding the edge.",
       person: "Belgian Olympic 5000m finalist and keynote speaker.",
-      imageAlt: "John Heymans on stage, with the line: Two years. One algorithm. The Olympic final.",
+      imageAlt: "John Heymans with his arms up in the Olympic stadium in Paris, with the line: Two-year journey. One AI algorithm. The Olympic final.",
     },
 
     a11y: {
@@ -356,23 +356,23 @@ export const content = {
       soundOff: "Turn story sound off",
     },
 
+    /** Headings for the static story only (screen readers, reduced motion). The film shows no chapter names. */
     chapters: {
+      prologue: "",
       opener: "",
       iten: "Iten",
       edge: "The edge",
       algorithm: "The algorithm",
       doubt: "The doubters",
-      setback: "Setbacks",
-      village: "The village",
       final: "The final",
       handover: "",
     },
 
     credit: "Photo: {name}",
+    footageCredit: "Footage: {name}",
 
     hero: {
-      line: "Two years. One algorithm. The Olympic final.",
-      sub: "A 30-minute keynote on strategy, risk and finding the edge.",
+      line: "Two-year journey. One AI algorithm. The Olympic final.",
       film: "Watch the film with sound",
       scroll: "Scroll to begin",
       pause: "Pause the film",
@@ -389,54 +389,85 @@ export const content = {
       captions: "English",
     },
 
+    /** John opens the story himself, one line at a time, over the red road in Iten. */
+    prologue: {
+      lines: [
+        "My story is about taking|a different road.",
+        "Two years before the Olympics in Paris,| I wasn't even in the world's top 200.",
+        "So I used AI to find a road|nobody else was taking.",
+      ],
+    },
+
     opener: {
       title: "They all said|it couldn't|be|done.",
     },
 
     iten: {
+      origin: "Brussels, Belgium",
       destination: "Iten, Kenya",
-      altitude: "{n} m",
-      line: "So I trained with the best, and learned their ways.",
-      mapSummary: "A flight to Iten, Kenya, and a climb to 2,400 m.",
+      title: "The day after my graduation,|I booked a plane|ticket to Kenya.",
+      line: "To train with the best|runners in the world.",
+      mapSummary: "A flight from Brussels, Belgium, to Iten, Kenya.",
+      packAlt: "A large group of Kenyan runners training on a red dirt road in Iten",
     },
 
     edge: {
-      a: "However, this wouldn't be enough.",
+      a: "However,|training hard alone|wouldn't be enough.",
       b: "I needed an *edge*.",
     },
 
+    /**
+     * The ChatGPT conversation. A reconstruction of the method in
+     * docs/john_heymans_olympic_journey_ai_strategy.md, not a transcript.
+     * The code is shown as written; only its comments are translatable.
+     */
     algorithm: {
       app: "ChatGPT",
       composer: "Ask anything",
       send: "Send",
-      prompt: "Identify the combination of world meetings that maximises ranking points while minimising total race count, physical fatigue, travel load and injury risk.",
-      reply: [
-        "Target: 1,215 ranking points. That is where the top 42 is projected to close.",
-        "Placing points are not linear. Top three at a Gold or Silver indoor meet outscores a fast time in tenth at a Diamond League.",
-        "Plan: indoors, Gold and Silver meets, three or four races instead of twelve.",
-      ],
+      prompt: "Help me build an AI-algorithm to get me to the Olympics",
       you: "I asked",
-      assistant: "ChatGPT replied",
-      caption: "Three or four races instead of twelve. Indoors, where a top-three place is worth more than a fast time.",
-      gridSummary: "Every candidate meet in the qualifying window, and the season the algorithm chose, connected in date order.",
-    },
-
-    telemetry: {
-      objective: "Target: {points} points, the projected cut for the top {quota}",
-      calendar: "Reading the international calendar",
-      scored: "Scoring each meet: odds of a top-three place",
-      projecting: "Weighing place against time, by meet category",
-      optimising: "Minimising races, travel and injury risk",
-      selected: "Season selected: indoors, Gold and Silver",
-      objections: "Objections: federation, coach, competitors",
-      unchanged: "Schedule unchanged",
-      tracking: "Tracking world ranking",
-      record: "Fastest rise in the history of the event",
-      holding: "Inside the top {quota}, by a few places",
-      sorting: "Separating what I control",
-      controllables: "Sleep. Nutrition. Training.",
-      standard: "Olympic standard: {standard}",
-      qualified: "{city}, {date}: {time}",
+      assistant: "ChatGPT answered",
+      thinking: "Thinking",
+      thought: "Finished thinking",
+      steps: [
+        "Olympic places in the 5000m go by world ranking. The quota is {quota} runners.",
+        "Ranking points are result points plus placing points.",
+        "Placing points aren't linear. A top three at a Gold or Silver indoor meet beats a fast time in tenth.",
+      ],
+      agentsHead: "Running {n} agents",
+      agentsDone: "{n} agents finished",
+      agents: [
+        { name: "Ranking agent", task: "Projecting the cut for the top {quota}", done: "{points} points" },
+        { name: "Calendar agent", task: "Scoring every meet in the window", done: "Top-three odds per meet" },
+        { name: "Load agent", task: "Weighing races, travel and injury risk", done: "Three or four races" },
+      ],
+      codeLang: "python",
+      copy: "Copy",
+      code: [
+        "# Olympic 5000m: {quota} places, decided by world ranking",
+        "TARGET = {points}  # projected cut for the top {quota}",
+        "",
+        "def meet_score(meet, me):",
+        "    podium = top3_odds(meet.field_depth, me.form)",
+        "    return result_points(me.target_time) + podium * placing_points(meet.category)",
+        "",
+        "season = optimise(",
+        "    meets=world_calendar(\"2023-07\", \"2024-06\"),",
+        "    score=meet_score,",
+        "    reach=TARGET,",
+        "    minimise=[\"races\", \"fatigue\", \"travel\", \"injury_risk\"],",
+        ")",
+      ],
+      recommendationLead: "Recommendation:",
+      recommendation: "a competition calendar that's different from everyone else.",
+      calendar: {
+        rows: [
+          { id: "usual", label: "Everyone else", note: "12 to 15 races, outdoors" },
+          { id: "chosen", label: "You", note: "3 or 4 races, indoors" },
+        ],
+        summary: "Everyone else races twelve to fifteen times a season, outdoors, from May to September. The recommended season is three or four indoor races between January and March.",
+      },
     },
 
     doubt: {
@@ -450,33 +481,16 @@ export const content = {
         coach: "C",
         competitors: "C",
       },
+      title: "My team and my peers|called me crazy.",
       fallback: "That will never work.",
       now: "now",
       answer: "I ran it anyway.",
-      record: "The fastest rise up the world rankings in the history of my event.",
-      chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}.",
-    },
-
-    setback: {
-      line: "It didn't always go to plan. Setbacks came, one after another.",
-      uncontrollable: ["Illness", "Weather", "Injury"],
-      controllable: ["Sleep", "Nutrition", "Training"],
-      cannot: "Out of my control",
-      can: "In my control",
-      focus: "So I focused on what I could control.",
-      qualified: "In the end, I qualified.",
-    },
-
-    qualifiedNote: "{date}: {how}.",
-
-    village: {
-      a: "The day I arrived in the Olympic village, I had a choice.",
-      b: "Let the pressure get to me, or enjoy every minute of it.",
-      c: "I chose to enjoy it.",
+      record: "The fastest rise|up the world rankings|in the history of athletics.",
+      chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}. That ranking was my Olympic qualification.",
     },
 
     final: {
-      a: "Nobody believed I'd make that final.",
+      a: "Nobody believed|I'd make the final.",
       b: "I was the underdog.",
       arms: "Hey mom, made it.",
       close: "Dare to|dream big.",
@@ -484,93 +498,149 @@ export const content = {
 
     handover: {
       /* Bars are line breaks. Written in, so the card never leaves "it." alone on a line. */
-      line: "That's the story.|Here's what your team takes from it.",
+      line: "That's my story.|Here's what your team takes from it.",
     },
 
-    /** One lesson per chapter, in keynote order. The practical part uses the same five. */
+    /**
+     * The five lessons of the keynote, in keynote order. The story shows 1, 2
+     * and 5 at the end of their chapters; the practical part lists all five.
+     * A bar is a line break on the story's lesson card only.
+     */
     lessons: [
-      { title: "Your environment sets your ceiling.", line: "And consistency beats hard work." },
-      { title: "The edge is where the consensus isn't.", line: "Don't be afraid to challenge the status quo." },
-      { title: "Focus on what you can control.", line: "And stop overthinking what you can't." },
-      { title: "Embrace the pressure.", line: "It comes with the moments that matter." },
-      { title: "Dare to dream big.", line: "Your dreams set your ceiling." },
+      { title: "You are the average of the 5 people you spend the most time with." },
+      { title: "Don't be afraid|to challenge|the status quo." },
+      { title: "Focus on what|you can control." },
+      { title: "Embrace|the pressure." },
+      { title: "Dare to|dream big." },
     ],
-    lessonOf: "{n} of {total}",
 
     ranking: {
-      label: "World ranking",
-      outside: "Outside the quota",
-      climbing: "Climbing",
-      inside: "Inside the quota",
-      finalLabel: "Olympic 5000m",
-      finalValue: "Final",
-      placing: "{ordinal} in the final",
       quotaLine: "The Olympic quota: {n} runners",
-      qualifiedTitle: "{time} in {city}",
-      qualifiedLine: "Under the {standard} Olympic standard",
+      /** The two ends of the climb, as big as the chart allows. */
+      startValue: "200+",
+      endNote: "Olympic qualification",
     },
 
     photoAlt: {
-      "track-lying": "John lying on a red track after a session, seen from above",
-      "lavender-race": "John racing an Olympic 5000m heat in Paris",
-      "heats-pack": "John with his fist in the air as he finishes his Olympic 5000m heat in Paris",
+      "track-lying": "Me lying on a red track after a session, seen from above",
+      "lavender-race": "Me racing an Olympic 5000m heat in Paris",
+      "heats-pack": "Me with my fist in the air as I finish my Olympic 5000m heat in Paris",
       "final-pan": "The field of an Olympic 5000m heat in Paris, in motion",
-      "final-arms": "John after the Olympic 5000m final, hands on his head, with Hey mom written on one arm and Made it on the other",
-      "outdoor-portrait": "John on a track, tense, catching his breath",
-      iten: "John on a red dirt road in Iten, Kenya, smiling",
-      "kit-portrait": "John in the Belgian kit on an indoor track, checking his watch",
-      shoes: "John tying his racing spikes on a bench before a race",
-      "track-laugh": "John sitting on a track, laughing",
-      "stage-wide": "John on stage at Supernova, Antwerp",
+      "final-arms": "Me after the Olympic 5000m final, hands on my head, with Hey mom written on one arm and Made it on the other",
+      "outdoor-portrait": "Me on a track, tense, catching my breath",
+      iten: "Me on a red dirt road in Iten, Kenya, smiling",
+      "kit-portrait": "Me in the Belgian kit on an indoor track, checking my watch",
+      shoes: "Me tying my racing spikes on a bench before a race",
+      "track-laugh": "Me sitting on a track, laughing",
+      "stage-wide": "Me on stage at Supernova, Antwerp",
     },
 
     practical: {
       title: "The keynote",
-      lead: "Thirty minutes, five lessons, one story your team can use on Monday morning.",
       facts: [
         { figure: "30", line: "minutes, plus optional Q&A" },
         { figure: "3", line: "languages: English, Dutch or French" },
-        { figure: "5", line: "lessons, one per chapter of the story" },
+        { figure: "5", line: "lessons with clear parallels in business" },
       ],
-      format: "In person, on your stage or at your table.",
-      lessonsTitle: "The five lessons",
+      lessonsTitle: "More than an AI story: the five lessons I share with anyone chasing a meaningful goal",
       lessonBack: "Back to lesson {n} in the story",
-      scaleTitle: "Where it works",
-      scaleLead: "As comfortable at a boardroom table as on a main stage.",
-      scaleAxis: "People in the room",
+      scaleTitle: "Small room or full house, expect to feel high energy",
       scale: [
-        { title: "Leadership dinners", size: "8 to 20", at: 12, detail: "Around one table, with Q&A over dinner." },
-        { title: "Executive offsites", size: "20 to 50", at: 32, detail: "Strategy sessions for senior leadership teams." },
-        { title: "Company events", size: "100+", at: 100, detail: "Team days and internal events, from 100 people." },
-        { title: "Conferences and business fairs", size: "1,000+", at: 1000, detail: "Main-stage keynote for 1,000 delegates or more." },
+        { title: "Leadership dinners", size: "8 to 20", at: 12 },
+        { title: "Executive offsites", size: "20 to 50", at: 32 },
+        { title: "Company events", size: "100+", at: 100 },
+        { title: "Conferences and business fairs", size: "1,000+", at: 1000 },
       ],
-      proofTitle: "Booked by",
-      proofNote: "And White & Case, Cobepa and The Merode.",
-      /** Logo heights in rem, set by eye so each carries the same visual weight. */
-      logoHeights: { ypo: 3.1, kbc: 3.4, dell: 3.1, engie: 2.3, "sd-worx": 2.2, duvel: 3.2, unizo: 2.9, warande: 3.2, garrincha: 1.35, supernova: 1.45 },
+      proofTitle: "I've been booked by",
+      /**
+       * The marquee, in order. Each file is prepared to read as one colour
+       * (scripts in the round 10 notes); heights in rem are set by eye so every
+       * logo carries the same visual weight. A caption sits under a symbol
+       * that does not say its own name.
+       */
+      logos: [
+        { file: "ypo.svg", name: "YPO", w: 433, h: 163, rem: 3.1 },
+        { file: "proximus.png", name: "Proximus", w: 756, h: 160, rem: 2.2 },
+        { file: "kbc.svg", name: "KBC", w: 320, h: 320, rem: 3.4 },
+        { file: "white-case.svg", name: "White & Case", w: 162, h: 12, rem: 1.3 },
+        { file: "dell.svg", name: "Dell", w: 58, h: 33, rem: 3.1 },
+        { file: "sport-vlaanderen.png", name: "Sport Vlaanderen", w: 468, h: 160, rem: 2.7 },
+        { file: "engie.svg", name: "Engie", w: 78, h: 28, rem: 2.3 },
+        { file: "cobepa.png", name: "Cobepa", w: 267, h: 200, rem: 3.6 },
+        { file: "sd-worx.svg", name: "SD Worx", w: 128, h: 41, rem: 2.2 },
+        { file: "duvel.svg", name: "Duvel", w: 676, h: 312, rem: 3.2 },
+        { file: "hr-tech.svg", name: "HR Tech", w: 954, h: 1080, rem: 3.6 },
+        { file: "unizo.svg", name: "Unizo", w: 200, h: 92, rem: 2.9 },
+        { file: "warande.svg", name: "De Warande", w: 46, h: 38, rem: 2.5, caption: "De Warande" },
+        { file: "sigma.png", name: "Sigma", w: 282, h: 200, rem: 3.4 },
+        { file: "garrincha.svg", name: "Garrincha", w: 751, h: 100, rem: 1.35 },
+        { file: "supernova.svg", name: "Supernova", w: 163, h: 25, rem: 1.45 },
+      ],
+      logosPause: "Pause the logos",
+      logosPlay: "Play the logos",
       quotesTitle: "What organisers wrote",
+      /** Translated from Dutch where the original was Dutch. Name and link only where the writer gave them. */
+      quotes: [
+        {
+          text: "I've attended plenty of keynotes lately, and take it from me, John: you stand head and shoulders above them. And I'm comparing you with the so-called top names from the business world.",
+          name: "Andrés Jorge Buysse",
+          who: "Private Banker",
+          org: "Deutsche Bank",
+          href: "https://www.linkedin.com/in/andr%C3%A9s-jorge-b-83897a83/",
+          portrait: null,
+          logo: { src: "/testimonials/deutsche-bank-logo.png", w: 120, h: 120 },
+        },
+        {
+          text: "His story of rising from amateur to Olympic finalist in just two years wasn't about self-promotion but about sharing life lessons directly applicable to business. His high energy further enhanced the experience.",
+          name: null,
+          who: "Partner, Co-Head of Global M&A",
+          org: "White & Case",
+          href: null,
+          portrait: "/testimonials/white-case-portrait.png",
+          logo: { src: "/testimonials/white-case-logo.png", w: 120, h: 40 },
+        },
+        {
+          text: "Your keynote at De Warande was a unique experience for everyone there. With your enthusiasm, your youth and your positivity, you win over your whole audience. That philosophy applies directly to the attitude a business leader needs to grow.",
+          name: "Marina De Groof",
+          who: "Founder and CEO",
+          org: "DGI Immo",
+          href: "https://www.linkedin.com/in/marinadegroof/",
+          portrait: "/testimonials/dgi-portrait.jpg",
+          logo: { src: "/testimonials/dgi-logo.png", w: 105, h: 120 },
+        },
+        {
+          text: "Sharing not only the highs of elite competition but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
+          name: null,
+          who: "Programme Manager",
+          org: "The Merode",
+          href: null,
+          portrait: "/testimonials/merode-portrait.png",
+          logo: { src: "/testimonials/merode-logo.png", w: 120, h: 40 },
+        },
+      ],
+      quoteProfile: "{name} on LinkedIn",
       roomTitle: "What the room said",
       roomNote: "Filmed straight after the keynote at Supernova, Antwerp.",
       roomPause: "Pause the clips",
       roomPlay: "Play the clips",
       roomOpen: "Watch with sound, {s} seconds",
+      roomSound: "Play with sound",
       roomDialog: "Straight after the keynote at Supernova",
-      recording: "A full recording of the keynote exists. Ask for the private link when you enquire.",
     },
 
     enquiry: {
       title: "Bring this to your team.",
-      modalTitle: "Check John's availability",
+      modalTitle: "Check my availability",
       intro: "Five short questions. You get availability and a fee within two working days.",
       /** The enquiry is styled as a ChatGPT conversation, a nod to how the season was planned. */
       chat: {
         app: "ChatGPT",
-        hello: "Let's see if John is free for your event. Five quick questions, then he replies with availability and a fee within two working days.",
+        hello: "Let's see if I'm free for your event. Five quick questions, then I'll reply with availability and a fee within two working days.",
         pick: "Choose an answer above",
         details: "Add your details above, then send",
-        disclaimer: "Not actually ChatGPT. Your answers go straight to John.",
+        disclaimer: "Not actually ChatGPT. Your answers come straight to me.",
         edit: "Change this answer",
-        sent: "Sent. John replies within two working days, usually sooner.",
+        sent: "Sent. I'll reply within two working days, usually sooner.",
       },
       steps: {
         type: {
@@ -582,13 +652,13 @@ export const content = {
           q: "Roughly how many people will be in the room?",
           options: ["8 to 20", "20 to 50", "100 or more", "1,000 or more"],
         },
-        language: { q: "Which language should John speak?", options: ["English", "Dutch", "French"] },
+        language: { q: "Which language should I speak?", options: ["English", "Dutch", "French"] },
         contact: {
-          q: "Who should John reply to?",
+          q: "Who should I reply to?",
           name: "Your name",
           org: "Organisation",
           email: "Work email",
-          message: "Anything else John should know",
+          message: "Anything else I should know",
           optional: "optional",
         },
       },
@@ -602,15 +672,15 @@ export const content = {
       revisit: "Change this answer",
       success: "Thanks. You'll hear from me within two working days.",
       urgent: "Anything urgent: {email}",
-      error: "That didn't go through. Write to John directly at {email}.",
-      required: "John needs this one to reply.",
+      error: "That didn't go through. Write to me directly at {email}.",
+      required: "I need this one to reply.",
       invalidEmail: "That email address doesn't look complete.",
       direct: "Or write directly to {email}",
       email: "hello@johnheymans.com",
     },
 
     bio: {
-      title: "About John",
+      title: "About me",
       body: [
         "I am a Belgian distance runner and a bio-engineer by training. I started running seriously late, graduated during Covid, and decided on the Olympics two years before the Games.",
         "The keynote came out of people asking how the ranking climb actually happened. The honest answer is a mix of environment, a model most people told me to ignore, and knowing which setbacks were worth my attention. That answer turned out to be useful to teams as well.",
@@ -624,7 +694,7 @@ export const content = {
       years: "{n} years",
       follow: "Follow the training",
       reel: {
-        label: "John on his road to the Olympics, in his own words",
+        label: "My road to the Olympics, in my own words",
         soundOn: "Play with sound",
         soundOff: "Sound on",
         play: "Play the video",
@@ -638,15 +708,15 @@ export const content = {
       credits: "Photography: {names}",
       copyright: "© John Heymans {year}",
       /** The easter egg: your scroll, timed like a race. */
+      /** Scrolling the page counts as a 1 km run; the clock pauses while you read, like a running watch. */
       pace: {
         title: "Your run down this page",
         waiting: "You're on the last lap.",
-        lead: "You just scrolled {d} m. Here's your split.",
-        pace: "Your pace",
-        perKm: "{p} /km",
-        five: "Your 5,000 m at that pace",
-        mine: "Mine, {city} {year}",
-        mineShort: "Mine",
+        lead: "Scrolling down this page counts as a 1 km run. Here's how fast you went.",
+        pace: "Your time for 1 km",
+        five: "Your 5 km at that speed",
+        mine: "My fastest 5 km, {city} {year}",
+        mineShort: "My fastest 5 km",
         blank: "--:--",
         days: "{d} d {h} h",
       },

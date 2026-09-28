@@ -1,13 +1,16 @@
 "use client";
 
 import { gsap } from "@/lib/story/gsap";
+import { v } from "@/lib/story/beats";
 import { useBeat } from "./useBeat";
-import { useStageSize, boxOf } from "./stage";
+import { useStageSize, boxOf, layoutBox } from "./stage";
+
+const at = (vh: number) => v("edge", vh);
 
 /**
- * The turn. Two lines, then the amber line underlines "edge", shrinks into a
- * blinking caret and slides to the centre of the stage, where the chat window
- * will open around it. That match cut carries the story into the algorithm.
+ * The turn. Two lines, then the amber line underlines "edge", pulls itself
+ * into a dot and drops to the bottom of the screen, where it becomes the
+ * running light under ChatGPT in the dock. The app then opens from there.
  */
 export function Edge() {
   const size = useStageSize();
@@ -16,30 +19,29 @@ export function Edge() {
     "edge",
     ({ tl, q }) => {
       if (!size.w) return;
-      const caret = q(".caret-el")[0];
+      const dot = q(".caret-el")[0];
       const entry = document.querySelector<HTMLElement>('[data-entry="edge.b"]');
       const mark = entry?.querySelector<HTMLElement>(".mark");
       const m = boxOf(mark ?? null);
-      if (!entry || !mark || !m) return;
+      const target = layoutBox(document.querySelector<HTMLElement>(".dock-dot"));
+      if (!entry || !mark || !m || !target) return;
 
       const em = parseFloat(getComputedStyle(mark).fontSize);
-      const caretH = Math.round(em * 0.8);
-      const underline = m.y + m.h - Math.max(3, em * 0.055);
+      const thick = Math.max(3, em * 0.055);
+      const underline = m.y + m.h - thick;
+      const d = target.w;
 
       // The underline is drawn inside the text, then handed to the line layer.
-      tl.fromTo(entry, { "--u": 0 }, { "--u": 1, duration: 0.06, ease: "power2.out" }, 0.58);
-      tl.set(entry, { "--u": 0 }, 0.7);
+      tl.fromTo(entry, { "--u": 0 }, { "--u": 1, duration: at(8), ease: "power2.out" }, at(68));
+      tl.set(entry, { "--u": 0 }, at(84));
 
-      const thick = Math.max(3, em * 0.055);
-      gsap.set(caret, { x: m.x, y: underline, width: m.w, height: thick, autoAlpha: 0 });
-      tl.set(caret, { autoAlpha: 1 }, 0.7);
-      // Collapse to the end of the word, then stand up as a caret.
-      tl.to(caret, { x: m.x + m.w - 2, width: 2, duration: 0.06, ease: "power2.in" }, 0.7);
-      tl.to(caret, { y: underline + thick - caretH, height: caretH, duration: 0.05, ease: "power2.out" }, 0.76);
-      tl.to(caret, { x: size.w / 2 - 1, y: size.h / 2 - caretH / 2, duration: 0.19, ease: "power2.inOut" }, 0.81);
-      tl.set(caret, { autoAlpha: 0 }, 0.999);
-
-      return (b) => caret.classList.toggle("is-blinking", b.progress > 0.81 && b.progress < 0.999);
+      gsap.set(dot, { x: m.x, y: underline, width: m.w, height: thick, borderRadius: thick, autoAlpha: 0 });
+      tl.set(dot, { autoAlpha: 1 }, at(84));
+      // Pulls into a dot at the middle of the word, then falls to the dock.
+      tl.to(dot, { x: m.x + m.w / 2 - d / 2, y: underline + thick / 2 - d / 2, width: d, height: d, borderRadius: d, duration: at(10), ease: "power2.inOut" }, at(84));
+      tl.to(dot, { x: target.x, duration: at(30), ease: "power1.inOut" }, at(96));
+      tl.to(dot, { y: target.y, duration: at(30), ease: "power2.in" }, at(96));
+      tl.set(dot, { autoAlpha: 0 }, 0.999);
     },
     [size.w, size.h],
   );

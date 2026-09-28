@@ -6,6 +6,7 @@ import algorithmJson from "./algorithm.json";
 import doubtersJson from "./doubters.json";
 import qualificationJson from "./qualification.json";
 import speakerJson from "./speaker.json";
+import footageJson from "./footage.json";
 import type { Sourced } from "./types";
 
 export * from "./types";
@@ -38,7 +39,7 @@ export const facts = {
     series: S<RankPoint[]> & { approximate?: boolean };
     quota: S<number>;
     window: S<{ start: string; end: string }>;
-    /** From entering the quota to the qualifying run: the stretch the setbacks chapter looks at up close. */
+    /** From entering the quota to the run in Boston: a plateau that shapes the curve. */
     hold: S<{ start: string; end: string }>;
   },
   races: racesJson as { candidates: S<Meet[]>; chosen: S<ChosenMeet[]> },
@@ -52,4 +53,6 @@ export const facts = {
   doubters: doubtersJson as { messages: S<{ role: DoubterRole; text: string }[]> },
   qualification: qualificationJson as { date: S<string | null>; how: S<string | null>; standard: S<string>; city: S<string> },
   speaker: speakerJson as { yearsToFinal: S<number>; keynotes: S<number> },
+  /** Who filmed the video footage the story plays. */
+  footage: footageJson as { kenya: S<{ credit: string } | null> },
 };

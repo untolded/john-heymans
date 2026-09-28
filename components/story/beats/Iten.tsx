@@ -5,11 +5,11 @@ import { geoInterpolate } from "d3-geo";
 import { content } from "@/lib/content";
 import { facts, show, mark } from "@/lib/story/data";
 import { gsap } from "@/lib/story/gsap";
+import { v } from "@/lib/story/beats";
 import { useLoadGate } from "@/lib/story/media";
-import { fill, num } from "@/lib/story/format";
 import { Globe } from "../set-pieces/Globe";
 import { PhotoLayer, reportCredits } from "../media/PhotoLayer";
-import { AltitudeSvg, MAX_ALT, altLayout, startAltitude } from "../set-pieces/AltitudeProfile";
+import { VideoLayer, playWhile } from "../media/VideoLayer";
 import { useBeat } from "./useBeat";
 import { useStageSize, boxOf, entryEl } from "./stage";
 
@@ -22,17 +22,26 @@ const ORIGIN: LonLat = departure ? [departure.lon, departure.lat] : [route.origi
 const ITEN: LonLat = [route.iten.value.lon, route.iten.value.lat];
 const along = geoInterpolate(ORIGIN, ITEN);
 
-const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
+/** A moment in this beat, in viewport heights of scroll. */
+const at = (vh: number) => v("iten", vh);
+// The flight: Brussels is marked once the title has gone, the globe turns, the arc draws; Iten is
+// marked when it lands, and both marks stay until the dive.
+const PINS = at(42);
+const TURN = [at(42), at(100)] as const;
+const ARC = [at(46), at(94)] as const;
+const DIVE = [at(104), at(126)] as const;
 const inOut = gsap.parseEase("power2.inOut");
 
 /**
- * Iten, in three movements. The start line sweeps in from the left and
- * becomes the flight: a great circle drawn across a dotted globe that turns
- * from Belgium to Kenya. The globe dives into western Kenya and gives way to
- * the climb: altitude lines, the amber line rising to 2,400 m, a counter
- * keeping step. At the top, John on the red road in Iten, for the line and
- * lesson 1.
+ * Iten, in four movements. The start line sweeps in from the left and the
+ * globe appears behind the chapter's title. Then the flight: Brussels marked
+ * with a dot, a great circle drawn across the globe as it turns from Belgium
+ * to Kenya, Iten marked where it lands. The globe dives
+ * into western Kenya and lands, still diving, on a red road seen straight
+ * from above. Then the pack running at the camera, for the second line, and
+ * John on the road in Iten for lesson 1.
  */
 export function Iten() {
   const size = useStageSize();
@@ -58,6 +67,8 @@ export function Iten() {
       const canvas = q("canvas.globe")[0] as unknown as HTMLCanvasElement;
       const photo = q(".ph-iten")[0];
       const photoOut = q(".iten-photo-out")[0];
+      const road = q(".vd-road")[0];
+      const pack = q(".vd-pack")[0];
       const globe = points ? new Globe(canvas, points, { touch: size.touch }) : null;
       globe?.resize(size.w, size.h);
 
@@ -66,71 +77,64 @@ export function Iten() {
       const fromLabel = q(".lbl-from")[0];
       const toLabel = q(".lbl-to")[0];
       const sweep = q(".sweep path")[0];
-      const alt = q(".alt-wrap")[0];
-      const counter = q(".counter")[0];
-      const climb = q(".alt-climb")[0] as unknown as SVGPathElement;
-      const L = altLayout(size.touch);
 
       const R = size.touch ? Math.min(size.w * 0.46, size.h * 0.3) : Math.min(size.w, size.h) * 0.42;
       const cx = size.w / 2;
-      const cy = size.touch ? size.h * 0.36 : size.h * 0.53;
+      const cy = size.touch ? size.h * 0.42 : size.h * 0.53;
 
       // The start line picks up where the opener left it, under DONE at the left edge.
       const done = boxOf(entryEl("opener.title", ".tl:last-child"));
       const y0 = done ? done.y + done.h + Math.max(8, size.h * 0.014) : size.h * 0.7;
       sweep.setAttribute("d", `M0 ${y0} C${cx * 0.45} ${y0} ${cx * 0.75} ${cy} ${cx} ${cy}`);
 
-      tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.07 }, 0);
-      tl.fromTo(sweep, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.07, ease: "power1.inOut" }, 0);
-      tl.to(sweep, { opacity: 0, duration: 0.04 }, 0.08);
-      tl.to(canvas, { opacity: 0, duration: 0.07 }, 0.42);
-
-      tl.fromTo(alt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02 }, 0.43);
-      tl.fromTo(q(".alt-level line"), { drawSVG: "0% 0%" }, { drawSVG: "0% 100%", duration: 0.05, stagger: 0.005, ease: "power2.out" }, 0.44);
-      tl.fromTo(q(".alt-level text"), { opacity: 0 }, { opacity: 1, duration: 0.03, stagger: 0.005 }, 0.47);
-      tl.fromTo(counter, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.03, ease: "power2.out" }, 0.48);
-      tl.fromTo(climb, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.12, ease: "none" }, 0.5);
-      tl.fromTo(q(".alt-top"), { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.02, ease: "back.out(3)" }, 0.62);
-      // At the top of the climb: the place itself, and the man in it.
-      tl.fromTo(photo, { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "power1.out" }, 0.65);
-      tl.fromTo(q(".ph-iten .pl-inner"), { scale: 1.08 }, { scale: 1, duration: 0.35, ease: "none" }, 0.65);
-      tl.to(alt, { autoAlpha: 0, duration: 0.04 }, 0.67);
-
-      const total = climb.getTotalLength();
-      const start = startAltitude();
-      let lastM = -1;
+      tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: at(8) }, 0);
+      tl.fromTo(sweep, { drawSVG: "0%" }, { drawSVG: "100%", duration: at(8), ease: "power1.inOut" }, 0);
+      tl.to(sweep, { opacity: 0, duration: at(4) }, at(9));
+      // The dive does not stop at the globe: the road below takes over, still falling towards it.
+      tl.to(canvas, { opacity: 0, duration: at(10) }, at(122));
+      tl.fromTo(road, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, at(114));
+      tl.fromTo(q(".vd-road .pl-inner"), { scale: 1.45 }, { scale: 1, duration: at(40), ease: "power2.out" }, at(114));
+      // The pack, coming at the camera.
+      tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(8) }, at(152));
+      tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.06 }, { scale: 1, duration: at(80) }, at(152));
+      tl.to(road, { opacity: 0, duration: at(2) }, at(160));
+      // Darkens the dust at the top while the line sits there.
+      tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(154));
+      tl.to(q(".vd-scrim"), { opacity: 0, duration: at(8) }, at(222));
+      // Me on the road in Iten, for the lesson.
+      tl.fromTo(photo, { opacity: 0 }, { opacity: 1, duration: at(8), ease: "power1.out" }, at(226));
+      tl.fromTo(q(".ph-iten .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(44), ease: "none" }, at(226));
+      tl.to(pack, { opacity: 0, duration: at(2) }, at(234));
 
       return (b) => {
         const p = b.progress;
 
-        if (globe && p < 0.5) {
-          const turn = inOut(seg(p, 0.05, 0.4));
-          const arc = seg(p, 0.08, 0.36);
-          const dive = 1 + 5 * inOut(seg(p, 0.4, 0.49));
+        if (globe && p < at(134)) {
+          const turn = inOut(seg(p, ...TURN));
+          const arc = seg(p, ...ARC);
+          const dive = 1 + 5 * inOut(seg(p, ...DIVE));
           const centre = along(turn) as LonLat;
-          globe.draw({ centre, r: R * dive, cx, cy, from: ORIGIN, to: ITEN, arc, dots: 1 - seg(p, 0.44, 0.49) });
+          globe.draw({ centre, r: R * dive, cx, cy, from: ORIGIN, to: ITEN, arc, dots: 1 - seg(p, at(112), DIVE[1]) });
 
           if (arc > 0 && arc < 1) {
             const h = globe.head(ORIGIN, ITEN, arc);
             gsap.set(plane, { x: h.x, y: h.y, rotation: h.angle, autoAlpha: 1 });
           } else gsap.set(plane, { autoAlpha: 0 });
 
+          // Both marks go together, as the dive starts.
+          const marked = p >= PINS && p < DIVE[0];
           const [fx, fy, fv] = globe.project(ORIGIN);
-          gsap.set(fromLabel, { x: fx, y: fy, autoAlpha: fv && p > 0.05 && p < 0.34 ? 1 : 0 });
+          if (fromLabel) {
+            gsap.set(fromLabel, { x: fx, y: fy });
+            fromLabel.dataset.on = String(marked && fv);
+          }
           const [tx, ty, tv] = globe.project(ITEN);
-          gsap.set(toLabel, { x: tx, y: ty, autoAlpha: tv && arc >= 0.98 && p < 0.43 ? 1 : 0 });
+          gsap.set(toLabel, { x: tx, y: ty });
+          toLabel.dataset.on = String(marked && tv && arc >= 0.98);
         } else {
           // A fast scroll can jump straight past the flight: nothing of it may linger.
-          gsap.set([plane, fromLabel, toLabel].filter(Boolean), { autoAlpha: 0 });
-        }
-
-        // The counter reads the altitude at the head of the climb.
-        const drawn = seg(p, 0.5, 0.62);
-        const pt = climb.getPointAtLength(total * drawn);
-        const m = drawn <= 0 ? start : drawn >= 1 ? MAX_ALT : Math.round(((1 - (pt.y - L.top) / (L.h - L.top - L.bottom)) * MAX_ALT) / 10) * 10;
-        if (m !== lastM) {
-          counter.textContent = fill(c.iten.altitude, { n: num(Math.max(start, m)) });
-          lastM = m;
+          gsap.set(plane, { autoAlpha: 0 });
+          [fromLabel, toLabel].forEach((el) => el && (el.dataset.on = "false"));
         }
 
         // Leaving: the last frame holds under the violet dim, then fades; the photo goes with the lesson card.
@@ -139,6 +143,9 @@ export function Iten() {
         const out = h < 0.2 ? 1 - h / 0.2 : 0;
         photoOut.style.opacity = String(out);
         reportCredits(root, b.active && out > 0.3);
+        const on = b.active ? 1 : 0;
+        playWhile(road, on * Number(gsap.getProperty(road, "opacity")), "road@iten");
+        playWhile(pack, on * Number(gsap.getProperty(pack, "opacity")), "pack@iten");
       };
     },
     [size.w, size.h, size.touch, points],
@@ -147,10 +154,15 @@ export function Iten() {
   return (
     <div className="beat" ref={scope} data-beat="iten">
       <div className="L iten-photo-out">
+        <VideoLayer name="road" beat="iten" className="vd-road" />
+        <VideoLayer name="pack" beat="iten" className="vd-pack" />
+        <div className="L L-media vd-scrim" />
         <PhotoLayer slug="iten" beat="iten" focus="50% 30%" className="ph-iten" />
       </div>
       <div className="L L-set iten-set">
-        <canvas className="globe" />
+        <div className="L globe-wrap">
+          <canvas className="globe" />
+        </div>
         <svg className="L sweep" aria-hidden="true">
           <path />
         </svg>
@@ -160,17 +172,13 @@ export function Iten() {
           </svg>
         </span>
         {departure && (
-          <span className="map-label lbl-from" data-marker={mark(route.departure) ? c.dev.pending : undefined}>
-            {departure.city}
+          <span className="map-label lbl-from" data-on="false" data-marker={mark(route.departure) ? c.dev.pending : undefined}>
+            {c.iten.origin}
           </span>
         )}
-        <span className="map-label lbl-to">{c.iten.destination}</span>
-        <div className="alt-wrap">
-          <p className="counter" aria-hidden="true">
-            {fill(c.iten.altitude, { n: num(startAltitude()) })}
-          </p>
-          <AltitudeSvg className="alt-svg" portrait={size.touch} />
-        </div>
+        <span className="map-label lbl-to" data-on="false">
+          {c.iten.destination}
+        </span>
       </div>
     </div>
   );

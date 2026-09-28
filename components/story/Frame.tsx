@@ -1,24 +1,22 @@
 "use client";
 
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { content } from "@/lib/content";
 import { CHAPTERS, RELEASE_AT, BEAT_INDEX } from "@/lib/story/beats";
 import { story, useStory } from "@/lib/story/store";
 import { credits } from "@/lib/story/credits";
 import { gsap } from "@/lib/story/gsap";
-import { fill } from "@/lib/story/format";
 import { Social } from "@/components/shared/Social";
 import { useStoryPage } from "./StoryRoot";
-import { Telemetry } from "./Telemetry";
-import { RankingChip } from "./RankingChip";
 
 const t = content.story.frame;
 
 /**
  * The interface, and the only one: a fixed frame the story plays inside.
- * Wordmark, chapter, socials and the enquiry pill on top; credit, telemetry
- * and the ranking chip at the bottom; a progress hairline along the edge.
- * It inverts to ink exactly when a paper section passes under it.
+ * Wordmark, chapter ticks, socials and the enquiry pill on top; the photo
+ * credit at the bottom; a progress hairline along the edge. Nothing else
+ * talks over the story. It inverts to ink exactly when a paper section
+ * passes under it.
  */
 export function Frame() {
   const { ready, openEnquiry } = useStoryPage();
@@ -55,10 +53,6 @@ export function Frame() {
           <Progress />
           <div className="frame-bottom" aria-hidden="true">
             <Credit />
-            <div className="frame-readouts">
-              <Telemetry />
-              <RankingChip />
-            </div>
           </div>
         </>
       )}
@@ -117,23 +111,15 @@ function useInkOverPaper() {
   }, []);
 }
 
-/** Eight ticks, one per chapter; the name travels along them like a runner. */
+/** One tick per chapter, lit up to the current one, like laps on a board. No names: the story says where it is. */
 function Chapter() {
   const current = useStory((s) => s.current);
   const index = current ? CHAPTERS.findIndex((c) => c.id === current) : -1;
-  const name = current ? content.story.chapters[current] : "";
 
   return (
     <div className="chapter" data-on={index >= 0} aria-hidden="true">
       {CHAPTERS.map((c, i) => (
-        <Fragment key={c.id}>
-          <i className="tick" data-passed={i <= index} />
-          {i === index && name && (
-            <span className="chapter-name" key={name}>
-              {name}
-            </span>
-          )}
-        </Fragment>
+        <i className="tick" key={c.id} data-passed={i <= index} />
       ))}
     </div>
   );
@@ -158,15 +144,15 @@ function Progress() {
   return <span className="progress" ref={bar} role="presentation" />;
 }
 
-/** "Photo: Jelle Jansegers" while that photographer's work is on screen. */
+/** "Photo: Jelle Jansegers" (or "Footage: ...") while that person's work is on screen. */
 function Credit() {
   const el = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     let current: string | null = null;
-    return credits.subscribe((name) => {
+    return credits.subscribe((line) => {
       const node = el.current;
-      if (!node || name === current) return;
-      current = name;
+      if (!node || line === current) return;
+      current = line;
       gsap.killTweensOf(node);
       gsap.to(node, {
         y: -6,
@@ -174,8 +160,8 @@ function Credit() {
         duration: 0.15,
         ease: "power2.in",
         onComplete: () => {
-          node.textContent = name ? fill(content.story.credit, { name }) : "";
-          if (name) gsap.fromTo(node, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
+          node.textContent = line ?? "";
+          if (line) gsap.fromTo(node, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
         },
       });
     });

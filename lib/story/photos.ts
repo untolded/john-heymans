@@ -27,8 +27,15 @@ export const PAGE_PHOTOS: PhotoSlug[] = [
   "stage-wide",
 ];
 
+/**
+ * Named in the footer's photography line without a photo of theirs in the
+ * list above: Seppe Teunis, added at Maarten's request on 28 September 2026.
+ * Which images are Seppe Teunis's work is not recorded yet.
+ */
+export const EXTRA_PHOTOGRAPHERS = ["Seppe Teunis"];
+
 /** Photographers whose work is on the page, in order of appearance, each once. */
 export function pagePhotographers(filmIsStandIn: boolean): string[] {
   const slugs = filmIsStandIn ? [...STAND_IN_STILLS, ...PAGE_PHOTOS] : PAGE_PHOTOS;
-  return Array.from(new Set(slugs.map((s) => photo(s).credit).filter(Boolean)));
+  return Array.from(new Set([...slugs.map((s) => photo(s).credit), ...EXTRA_PHOTOGRAPHERS].filter(Boolean)));
 }

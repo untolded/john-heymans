@@ -29,15 +29,11 @@ export function AudienceScale() {
           );
         })}
       </svg>
-      <p className="scale-axis" aria-hidden="true">
-        {p.scaleAxis}
-      </p>
       <ol className="scale-marks">
         {p.scale.map((s) => (
           <li key={s.title} style={{ "--at": `${x(s.at)}%` } as React.CSSProperties} data-reveal="rise">
             <p className="sm-size">{s.size}</p>
             <p className="sm-title">{s.title}</p>
-            <p className="sm-detail">{s.detail}</p>
           </li>
         ))}
       </ol>

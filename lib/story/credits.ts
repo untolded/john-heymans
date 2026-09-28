@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Photo credits in the frame. Every media layer reports its opacity and
- * credit as it changes; the frame shows the credit of the most visible layer
- * above 50 percent, so a photographer is named whenever their work is on
- * screen.
+ * Credits in the frame. Every media layer reports its opacity and its credit
+ * line ("Photo: ...", "Footage: ...") as it changes; the frame shows the line
+ * of the most visible layer above 50 percent, so whoever made an image is
+ * named whenever it is on screen.
  */
 
 type Entry = { credit: string; opacity: number };

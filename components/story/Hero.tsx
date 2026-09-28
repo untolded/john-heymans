@@ -18,9 +18,9 @@ const list = new Intl.ListFormat("en-GB", { type: "conjunction" });
 const standInPhotographers = Array.from(new Set(STAND_IN_STILLS.map((s) => photo(s).credit)));
 
 /**
- * The film opens the page. The poster paints first (it is the LCP image),
- * the muted loop fades over it when it can play, and the line, sub and film
- * button rise in from CSS alone. The film is the primary action; the enquiry
+ * The film opens the page, on John's face. The poster paints first (it is
+ * the LCP image), the muted loop fades over it when it can play, and the
+ * line and the film button rise in from CSS alone. The film is the primary action; the enquiry
  * lives in the frame's pill. Autoplay only in cinema modes; the loop always
  * has a visible pause control.
  */
@@ -40,11 +40,11 @@ export function Hero({ film }: { film: FilmAssets }) {
     v.play().catch(() => setPlaying(false));
   }, [cinema]);
 
-  // The film fades as the opener takes over, and stops once it is gone.
+  // The film fades as the first page of the story slides over it, and stops once it is gone.
   useEffect(() => {
     if (!cinema) return;
     const media = section.current?.querySelector<HTMLElement>(".hero-media");
-    return story.onBeat("opener", (b) => {
+    return story.onBeat("prologue", (b) => {
       const v = video.current;
       if (media) media.style.opacity = String(1 - b.show);
       if (!v) return;
@@ -122,7 +122,6 @@ export function Hero({ film }: { film: FilmAssets }) {
             </span>
           ))}
         </h1>
-        <p className="hero-sub">{t.sub}</p>
         <button type="button" className="pill pill-amber pill-icon hero-film" onClick={openFilm}>
           <span className="pill-glyph" aria-hidden="true">
             <PlayIcon />

@@ -37,3 +37,21 @@ export function boxOf(el: Element | null): Box | null {
 
 /** A copy entry's element in the overlay. */
 export const entryEl = (id: string, part = ".e-text") => document.querySelector<HTMLElement>(`[data-entry="${id}"] ${part}`);
+
+/**
+ * An element's box in stage coordinates from layout alone, ignoring any
+ * transform on it or its parents. For measuring where something will be
+ * while it is still animated away.
+ */
+export function layoutBox(el: HTMLElement | null): Box | null {
+  if (!el) return null;
+  let x = 0;
+  let y = 0;
+  let node: HTMLElement | null = el;
+  while (node && !node.classList.contains("stage")) {
+    x += node.offsetLeft;
+    y += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+  }
+  return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+}

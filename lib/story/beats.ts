@@ -4,15 +4,15 @@
  * per idea reads comfortably.
  *
  * Story time is one number for the whole film: the beat's index plus its
- * progress. ["iten", 0.4] is story time 1.4. Everything keyed to the story
+ * progress. ["iten", 0.4] is story time 2.4. Everything keyed to the story
  * (copy, telemetry, the ranking chip) is written in beat moments and
  * compared in story time.
  */
 
-export const BEAT_IDS = ["opener", "iten", "edge", "algorithm", "doubt", "setback", "village", "final", "handover"] as const;
+export const BEAT_IDS = ["prologue", "opener", "iten", "edge", "algorithm", "doubt", "final", "handover"] as const;
 export type BeatId = (typeof BEAT_IDS)[number];
 
-export const GROUNDS = ["night", "altitude", "signal", "low", "warm", "stadium", "paper"] as const;
+export const GROUNDS = ["night", "altitude", "signal", "stadium", "paper"] as const;
 export type Ground = (typeof GROUNDS)[number];
 
 export type BeatConfig = {
@@ -27,20 +27,30 @@ export type BeatConfig = {
 };
 
 export const BEATS: readonly BeatConfig[] = [
-  { id: "opener", length: { desktop: 140, touch: 110 }, ground: "night", chapter: true },
-  { id: "iten", length: { desktop: 300, touch: 240 }, ground: "altitude", chapter: true, lesson: 1 },
-  // Longer than the first draft's 100vh: it carries the end of lesson 1, two lines and the caret cut.
-  { id: "edge", length: { desktop: 140, touch: 110 }, ground: "night", chapter: true },
-  { id: "algorithm", length: { desktop: 320, touch: 260 }, ground: "signal", chapter: true },
-  { id: "doubt", length: { desktop: 240, touch: 200 }, ground: "signal", chapter: true, lesson: 2 },
-  { id: "setback", length: { desktop: 220, touch: 180 }, ground: "low", chapter: true, lesson: 3 },
-  { id: "village", length: { desktop: 180, touch: 150 }, ground: "warm", chapter: true, lesson: 4 },
-  { id: "final", length: { desktop: 300, touch: 240 }, ground: "stadium", chapter: true, lesson: 5 },
+  // John's prologue: three lines over the red road, letterboxed.
+  { id: "prologue", length: { desktop: 190, touch: 160 }, ground: "night", chapter: false },
+  { id: "opener", length: { desktop: 120, touch: 100 }, ground: "night", chapter: true },
+  // The flight, the red road from above, the pack, then John and lesson 1.
+  { id: "iten", length: { desktop: 270, touch: 225 }, ground: "altitude", chapter: true, lesson: 1 },
+  // Two lines and the underline dropping into the dock.
+  { id: "edge", length: { desktop: 126, touch: 105 }, ground: "night", chapter: true },
+  // The app opens, the prompt, thinking, agents, the code, the recommendation.
+  { id: "algorithm", length: { desktop: 275, touch: 230 }, ground: "signal", chapter: true },
+  { id: "doubt", length: { desktop: 262, touch: 220 }, ground: "signal", chapter: true, lesson: 2 },
+  { id: "final", length: { desktop: 240, touch: 200 }, ground: "stadium", chapter: true, lesson: 5 },
   // The story ends on the dark. The practical part then rises over it as a sheet of paper.
   { id: "handover", length: { desktop: 100, touch: 80 }, ground: "night", chapter: false },
 ];
 
 export const BEAT_INDEX = Object.fromEntries(BEATS.map((b, i) => [b.id, i])) as Record<BeatId, number>;
+
+/**
+ * A point in a beat, written as viewport heights of scroll from its start
+ * (desktop lengths). Timelines are laid out in these units so each moment
+ * gets scroll in proportion to what is on screen; touch lengths are shorter
+ * by the same ratio, so the proportions hold there too.
+ */
+export const v = (id: BeatId, vh: number) => vh / BEATS[BEAT_INDEX[id]].length.desktop;
 export const CHAPTERS = BEATS.filter((b) => b.chapter);
 
 /** A point in the story: a beat and a progress inside it. */
@@ -72,9 +82,7 @@ export const GROUND_SWITCHES: readonly GroundSwitch[] = [
   { from: "night", to: "altitude", at: ["iten", 0], length: 0.35 },
   { from: "altitude", to: "night", at: ["edge", 0.08], length: 0.5 },
   { from: "night", to: "signal", at: ["algorithm", 0], length: 0.2 },
-  { from: "signal", to: "low", at: ["setback", 0], length: 0.2 },
-  { from: "low", to: "warm", at: ["village", 0], length: 0.2 },
-  { from: "warm", to: "stadium", at: ["final", 0], length: 0.16 },
+  { from: "signal", to: "stadium", at: ["final", 0], length: 0.16 },
   { from: "stadium", to: "night", at: ["handover", 0], length: 0.3 },
 ];
 

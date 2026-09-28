@@ -2,202 +2,231 @@
 
 import Image from "next/image";
 import { content } from "@/lib/content";
-import { facts, show } from "@/lib/story/data";
 import { gsap } from "@/lib/story/gsap";
+import { v } from "@/lib/story/beats";
 import * as R from "@/lib/story/reveals";
-import { GRID, GRID_V } from "@/lib/story/layouts";
-import { SeasonGridSvg } from "../set-pieces/SeasonGrid";
+import { PROMPT } from "@/lib/story/chat";
+import { ChatAnswer } from "../set-pieces/ChatAnswer";
 import { SendIcon } from "../icons";
 import { useBeat, cues } from "./useBeat";
-import { useStageSize, boxOf } from "./stage";
+import { useStageSize, layoutBox } from "./stage";
 
 const c = content.story.algorithm;
-const PROMPT = show(facts.algorithm.prompt) ?? c.prompt;
-const REPLY = show(facts.algorithm.reply) ?? c.reply;
-const MEETS = facts.races.candidates.value ?? [];
-// The calendar is illustrative: its rows only show real names once every meet has one; until then every field is masked.
-const NAMED = MEETS.length > 0 && MEETS.every((m) => m.name);
-const NOISE = "01<>/[]=+";
 
-/** Deterministic field widths for a masked row, so the log looks like data without being any. */
-function maskWidths(i: number) {
-  let s = (i + 7) * 7919;
-  const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  return [10, 14 + Math.floor(r() * 14), 3, 2 + Math.floor(r() * 2), 4 + Math.floor(r() * 2)];
-}
-
-const noise = (text: string) =>
-  text
-    .split("")
-    .map((ch) => (ch === " " ? " " : NOISE[Math.floor(Math.random() * NOISE.length)]))
-    .join("");
+const clamp = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
+/** A moment in this beat, in viewport heights of scroll. */
+const at = (vh: number) => v("algorithm", vh);
+const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 
 /**
- * The set piece. A chat window opens around the caret; the prompt types and
- * is sent; the reply streams in. Then every character scrambles into data,
- * the window dissolves, and the calendar of candidate meets streams past a
- * scanning bar. The rows collapse into the season: rejected meets dim, the
- * chosen ones flare amber in date order, and the amber line joins them.
+ * The set piece. The dot the edge dropped becomes the running light under
+ * ChatGPT in a Mac dock; the icon bounces and the window opens out of it.
+ * The prompt types and is sent. The answer builds the way ChatGPT's does:
+ * thinking, three agents at work, the code, then the recommendation with a
+ * calendar, the thread scrolling up as it grows. Everything stays inside
+ * the window. When the doubters arrive, the window folds back into the dock.
  */
 export function Algorithm() {
   const size = useStageSize();
 
   const scope = useBeat(
     "algorithm",
-    ({ tl, q }) => {
+    ({ q }) => {
       if (!size.w) return;
-      const set = q(".algo-set")[0];
       const chat = q(".chat")[0];
-      const bg = q(".chat-bg")[0];
+      const shell = q(".chat-min")[0];
+      const view = q(".chat-view")[0];
+      const thread = q(".chat-thread")[0];
       const typed = q(".chat-typed")[0];
       const placeholder = q(".chat-placeholder")[0];
-      const you = q(".chat-you")[0];
-      const ai = q(".chat-ai")[0];
       const send = q(".chat-send")[0];
-      const caret = q(".algo-caret")[0];
-      const log = q(".data-log")[0];
-      const scan = q(".scan")[0];
-      const season = q(".season")[0];
-      const svg = season.querySelector("svg")!;
-      const dots = q(".season .sg-dot");
-      const path = q(".season .sg-path")[0];
-      const scrambles = q("[data-scramble]");
-      const originals = scrambles.map((el) => el.innerHTML);
+      const dock = q(".dock")[0];
+      const panel = q(".dock-panel")[0];
+      const app = q(".dock-app")[0];
+      const dot = q(".dock-dot")[0];
+      const blocks = {
+        you: q(".chat-you")[0],
+        avatar: q(".chat-avatar")[0],
+        think: q(".think")[0],
+        agents: q(".agents")[0],
+        code: q(".code")[0],
+        rec: q(".rec")[0],
+        cal: q(".cal-card")[0],
+      };
+      const steps = q(".think-steps li");
+      const agents = q(".agent");
+      const lines = q(".code-line");
+      const usual = q('.cal-row[data-lane="usual"] .cal-dot');
+      const chosen = q('.cal-row[data-lane="chosen"] .cal-dot');
 
-      // Movement A: the window opens around the caret the edge left at the centre.
-      const W = chat.offsetWidth;
-      const H = chat.offsetHeight;
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-      const caretH = Math.round((size.touch ? 2.6 : 6) * rem * 0.8);
-      const input = boxOf(q(".chat-input")[0])!;
-      gsap.set(chat, { clipPath: `inset(${(H - caretH) / 2}px ${(W - 2) / 2}px ${(H - caretH) / 2}px ${(W - 2) / 2}px round 2px)` });
-      tl.to(chat, { clipPath: "inset(0px 0px 0px 0px round 20px)", duration: 0.08, ease: "power3.inOut" }, 0);
-      gsap.set(caret, { x: size.w / 2 - 1, y: size.h / 2 - caretH / 2, width: 2, height: caretH, autoAlpha: 1 });
-      // The composer is tall enough for the whole prompt; the caret lands on its first line.
-      const lineH = parseFloat(getComputedStyle(q(".chat-input")[0]).lineHeight) || 24;
-      tl.to(caret, { x: input.x, y: input.y + (lineH - 22) / 2, height: 22, duration: 0.07, ease: "power2.inOut" }, 0.004);
-      tl.set(caret, { autoAlpha: 0 }, 0.077);
-      tl.set(q(".chat-caret"), { autoAlpha: 1 }, 0.077);
+      // Where the window opens from and folds back into: the icon in the dock.
+      const icon = layoutBox(app)!;
+      const win = layoutBox(chat)!;
+      const dx = icon.x + icon.w / 2 - (win.x + win.w / 2);
+      const dy = icon.y + icon.h / 2 - (win.y + win.h / 2);
 
-      // The two messages keep the height they have in the reading face. Half a
-      // beat later every character scrambles into noise and the window switches
-      // to the monospace, which wraps wider: without this the messages gain a
-      // line, and the thread is anchored to the bottom, so everything above it
-      // would move. Locked here, before anything is written.
-      gsap.set([you, ai], { height: "auto", minHeight: 0 });
-      gsap.set(you, { minHeight: you.offsetHeight });
-      gsap.set(ai, { minHeight: ai.offsetHeight });
-      gsap.set([you, ai], { autoAlpha: 0 });
-      const reply = () => q(".chat-ai .w");
-      gsap.set(reply(), { opacity: 0 });
+      const hidden = Object.values(blocks);
+      gsap.set(hidden, { autoAlpha: 0 });
+      gsap.set([...steps, ...agents, ...lines], { autoAlpha: 0 });
+      gsap.set([...usual, ...chosen], { scale: 0, autoAlpha: 0 });
+      gsap.set(chat, { x: dx, y: dy, scale: 0.05, autoAlpha: 0 });
+      gsap.set(panel, { yPercent: 160 });
+      gsap.set(dot, { autoAlpha: 1 });
+      q("[data-state]").forEach((el) => (el.dataset.state = "live"));
+      thread.style.transform = "";
 
-      // Movement B: the log streams up past the scanning bar.
-      const rowH = log.firstElementChild ? (log.firstElementChild as HTMLElement).offsetHeight : 20;
-      const logH = log.scrollHeight;
-      const logTop = boxOf(log)!.y;
-      const yStart = size.h - logTop + 20;
-      const yEnd = -logH + size.h * 0.35 - logTop;
-      tl.to(chat, { autoAlpha: 0, y: -size.h * 0.04, duration: 0.05, ease: "power1.in" }, 0.39);
-      tl.fromTo(log, { autoAlpha: 0, y: yStart }, { autoAlpha: 1, y: yEnd, duration: 0.24, ease: "none" }, 0.37);
-      tl.to(log, { autoAlpha: 0, duration: 0.04 }, 0.6);
-
-      // Movement C: every row collapses into its week in the calendar.
-      const g = boxOf(svg)!;
-      const vbW = size.touch ? GRID_V.w : GRID.w;
-      const vbH = size.touch ? GRID_V.h : GRID.h;
-      const scale = Math.min(g.w / vbW, g.h / vbH);
-      const ox = g.x + (g.w - vbW * scale) / 2;
-      const oy = g.y + (g.h - vbH * scale) / 2;
-      const logX = boxOf(log)!.x + rem * 2;
-      const yAt60 = yStart + (yEnd - yStart) * ((0.6 - 0.37) / 0.24);
-      tl.fromTo(season, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.015 }, 0.595);
-      dots.forEach((dot, i) => {
-        const fromX = (logX - ox) / scale;
-        const fromY = (logTop + yAt60 + i * rowH + rowH / 2 - oy) / scale;
-        const cx = Number(dot.getAttribute("cx"));
-        const cy = Number(dot.getAttribute("cy"));
-        tl.fromTo(dot, { attr: { cx: fromX, cy: fromY }, opacity: 0 }, { attr: { cx, cy }, opacity: 1, duration: 0.09, ease: "power3.out" }, 0.6 + (i / dots.length) * 0.03);
-      });
-      tl.fromTo(q(".season .sg-cols line"), { opacity: 0 }, { opacity: 1, duration: 0.05, stagger: 0.002 }, 0.64);
-
-      const rejected = dots.filter((d) => d.dataset.chosen !== "true");
-      const chosen = dots.filter((d) => d.dataset.chosen === "true").sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order));
-      gsap.set(dots, { fill: "#B9A8F5", fillOpacity: 0.55 });
-      tl.to(rejected, { fillOpacity: 0.15, duration: 0.04 }, 0.72);
-      chosen.forEach((dot, k) => {
-        const at = 0.73 + (k / Math.max(1, chosen.length)) * 0.11;
-        tl.to(dot, { fill: "#FF7A2F", fillOpacity: 1, duration: 0.012 }, at);
-        tl.fromTo(dot, { attr: { r: 8 } }, { attr: { r: 15 }, duration: 0.008, ease: "power2.out", yoyo: true, repeat: 1 }, at);
-      });
-      tl.fromTo(path, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.1, ease: "power1.inOut" }, 0.85);
+      // The thread keeps its newest block in view, as the app does. Everything is laid out from the
+      // start and only revealed, so this moves by transform and nothing on the page reflows.
+      const order = [blocks.you, blocks.think, blocks.agents, blocks.code, blocks.rec, blocks.cal];
+      let followed: HTMLElement | null = null;
+      const follow = (el: HTMLElement | null, instant = false) => {
+        if (el === followed) return;
+        followed = el;
+        // The thread is the offset parent of every block (see .chat-thread in the CSS); it sits below the view's padding.
+        const bottom = el ? el.offsetTop + el.offsetHeight : 0;
+        const y = Math.min(0, view.clientHeight - thread.offsetTop - bottom - 16);
+        gsap.to(thread, { y, duration: instant ? 0 : 0.7, ease: "power3.out", overwrite: true });
+      };
+      const back = (el: HTMLElement) => follow(order[Math.max(0, order.indexOf(el) - 1)] ?? null);
+      const show = (el: HTMLElement, opts: { y?: number } = {}) => gsap.fromTo(el, { autoAlpha: 0, y: opts.y ?? 14 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out" });
+      const state = (el: HTMLElement, s: "live" | "done") => void (el.dataset.state = s);
 
       const onCue = cues([
         {
-          at: 0.08,
+          // Launching: the dock slides up, the icon bounces twice, the window zooms out of it.
+          at: at(1),
+          on: () => {
+            const t = gsap.timeline();
+            t.to(panel, { yPercent: 0, duration: 0.45, ease: "power3.out" });
+            t.to(app, { y: -0.45 * icon.h, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 3, repeatDelay: 0.02 }, 0.35);
+            t.to(chat, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.55, ease: "expo.out" }, 1.05);
+            return t;
+          },
+          off: () => {
+            gsap.set(panel, { yPercent: 160 });
+            gsap.set(app, { y: 0 });
+            gsap.set(chat, { x: dx, y: dy, scale: 0.05, autoAlpha: 0 });
+          },
+        },
+        {
+          at: at(20),
           on: () => {
             placeholder.style.opacity = "0";
-            return R.type(typed, PROMPT, { maxDuration: 3.4 });
+            chat.dataset.typing = "true";
+            return R.type(typed, PROMPT, { maxDuration: 2.2 });
           },
           off: () => {
             typed.textContent = "";
             placeholder.style.opacity = "1";
+            chat.dataset.typing = "false";
           },
         },
         {
-          at: 0.2,
+          at: at(44),
           on: () => {
             const t = gsap.timeline();
             t.to(send, { scale: 1.2, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 });
             t.call(() => {
               typed.textContent = "";
               placeholder.style.opacity = "1";
+              chat.dataset.typing = "false";
             }, undefined, 0.14);
-            t.fromTo(you, { autoAlpha: 0, y: 48 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.12);
+            t.add(show(blocks.you, { y: 40 }), 0.12);
             return t;
           },
           off: () => {
-            gsap.set(you, { autoAlpha: 0 });
+            gsap.set(blocks.you, { autoAlpha: 0 });
             typed.textContent = PROMPT;
             placeholder.style.opacity = "0";
+            chat.dataset.typing = "true";
           },
         },
         {
-          at: 0.23,
+          at: at(54),
           on: () => {
-            gsap.set(ai, { autoAlpha: 1 });
-            return gsap.to(reply(), { opacity: 1, duration: 0.06, stagger: 0.032, ease: "none" });
+            gsap.set(blocks.avatar, { autoAlpha: 1 });
+            follow(blocks.think);
+            return show(blocks.think);
           },
           off: () => {
-            gsap.set(ai, { autoAlpha: 0 });
-            gsap.set(reply(), { opacity: 0 });
+            gsap.set([blocks.avatar, blocks.think], { autoAlpha: 0 });
+            back(blocks.think);
+          },
+        },
+        ...steps.map((li, i) => ({ at: at(64 + i * 10), on: () => show(li, { y: 8 }), off: () => void gsap.set(li, { autoAlpha: 0 }) })),
+        { at: at(96), on: () => state(blocks.think, "done"), off: () => state(blocks.think, "live") },
+        {
+          at: at(102),
+          on: () => {
+            follow(blocks.agents);
+            return show(blocks.agents);
+          },
+          off: () => {
+            gsap.set(blocks.agents, { autoAlpha: 0 });
+            back(blocks.agents);
+          },
+        },
+        ...agents.map((row, i) => ({ at: at(106 + i * 5), on: () => show(row, { y: 8 }), off: () => void gsap.set(row, { autoAlpha: 0 }) })),
+        ...agents.map((row, i) => ({ at: at(124 + i * 9), on: () => state(row, "done"), off: () => state(row, "live") })),
+        { at: at(150), on: () => state(blocks.agents.querySelector(".agents-head")!, "done"), off: () => state(blocks.agents.querySelector(".agents-head")!, "live") },
+        {
+          at: at(156),
+          on: () => {
+            follow(blocks.code);
+            return show(blocks.code);
+          },
+          off: () => {
+            gsap.set(blocks.code, { autoAlpha: 0 });
+            back(blocks.code);
+          },
+        },
+        // The code streams in with the scroll, a line at a time.
+        ...lines.map((line, i) => ({ at: at(160 + i * (46 / lines.length)), on: () => void gsap.set(line, { autoAlpha: 1 }), off: () => void gsap.set(line, { autoAlpha: 0 }) })),
+        {
+          at: at(214),
+          on: () => {
+            follow(blocks.rec);
+            return show(blocks.rec);
+          },
+          off: () => {
+            gsap.set(blocks.rec, { autoAlpha: 0 });
+            back(blocks.rec);
           },
         },
         {
-          at: 0.35,
+          at: at(226),
           on: () => {
-            chat.classList.add("is-data");
+            follow(blocks.cal);
             const t = gsap.timeline();
-            scrambles.forEach((el) => t.to(el, { duration: 0.8, ease: "none", scrambleText: { text: noise(el.textContent ?? ""), chars: NOISE, speed: 0.8 } }, 0));
-            t.to(bg, { opacity: 0, duration: 0.6, ease: "power1.out" }, 0.15);
+            t.add(show(blocks.cal));
+            t.to(usual, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: "back.out(2)" }, 0.3);
             return t;
           },
           off: () => {
-            chat.classList.remove("is-data");
-            scrambles.forEach((el, i) => {
-              gsap.killTweensOf(el);
-              el.innerHTML = originals[i];
-            });
-            gsap.set(bg, { opacity: 1 });
+            gsap.set(blocks.cal, { autoAlpha: 0 });
+            gsap.set(usual, { scale: 0, autoAlpha: 0 });
+            back(blocks.cal);
           },
+        },
+        {
+          at: at(240),
+          on: () => gsap.to(chosen, { scale: 1, autoAlpha: 1, duration: 0.45, stagger: 0.18, ease: "back.out(3)" }),
+          off: () => void gsap.set(chosen, { scale: 0, autoAlpha: 0 }),
         },
       ]);
 
+      // Reached the chat part-way (a jump, a reload): place the thread without animating it.
+      follow(null, true);
+
       return (b) => {
         onCue(b.progress);
-        scan.dataset.on = String(b.progress > 0.38 && b.progress < 0.6);
-        // Behind the doubters the season dims to 30 percent, then leaves.
-        const h = b.hide;
-        set.style.opacity = String(h < 0.25 ? 1 - 0.7 * (h / 0.25) : h > 0.85 ? 0.3 * (1 - (h - 0.85) / 0.15) : 0.3);
+        // Folding away as the doubters arrive: into the icon, then the dock slides down.
+        const m = seg(b.hide, 0.02, 0.18);
+        gsap.set(shell, { x: dx * m, y: dy * m, scale: 1 - 0.95 * m, autoAlpha: 1 - seg(m, 0.55, 1) });
+        const away = seg(b.hide, 0.2, 0.3);
+        gsap.set(dock, { yPercent: 160 * away, autoAlpha: 1 - away });
+        // The running light belongs to the dock from the first frame, so the edge's dot lands on it.
+        dot.style.opacity = b.progress > 0 || b.hide > 0 ? "1" : "0";
       };
     },
     [size.w, size.h, size.touch],
@@ -206,77 +235,62 @@ export function Algorithm() {
   return (
     <div className="beat" ref={scope} data-beat="algorithm">
       <div className="L L-set algo-set">
-        <div className="chat">
-          <div className="chat-bg" />
-          <p className="chat-title">
-            <Image className="chat-logo" src="/story/brand/chatgpt-white.png" alt="" width={20} height={20} unoptimized />
-            <span data-scramble>{c.app}</span>
-          </p>
-          <div className="chat-thread">
-            <div className="chat-you">
-              <p data-scramble>{PROMPT}</p>
-            </div>
-            <div className="chat-ai">
-              <span className="chat-avatar">
-                <Image src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+        <div className="chat-min">
+          <div className="chat">
+            <div className="chat-bg" />
+            <div className="chat-bar">
+              <span className="traffic" aria-hidden="true">
+                <i />
+                <i />
+                <i />
               </span>
-              <div className="chat-ai-text">
-                {REPLY.map((line) => (
-                  <p key={line} data-scramble>
-                    {line.split(" ").map((w, i) => (
-                      <span className="w" key={i}>
-                        {w}{" "}
-                      </span>
-                    ))}
-                  </p>
-                ))}
+              <p className="chat-title">
+                <Image className="chat-logo" src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+                <span>{c.app}</span>
+              </p>
+            </div>
+            <div className="chat-view">
+              <div className="chat-thread">
+                <div className="chat-you">
+                  <p>{PROMPT}</p>
+                </div>
+                <div className="chat-ai">
+                  <span className="chat-avatar">
+                    <Image src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+                  </span>
+                  <div className="chat-ai-body">
+                    <ChatAnswer />
+                  </div>
+                </div>
               </div>
             </div>
+            <div className="chat-composer">
+              <p className="chat-input">
+                {/* Invisible full prompt: the composer takes its final height up front, so typing never moves the layout. */}
+                <span className="chat-ghost" aria-hidden="true">
+                  {PROMPT}
+                </span>
+                <span className="chat-live">
+                  <span className="chat-typed" />
+                  <span className="chat-caret" />
+                </span>
+                <span className="chat-placeholder">{c.composer}</span>
+              </p>
+              <span className="chat-send">
+                <SendIcon />
+              </span>
+            </div>
           </div>
-          <div className="chat-composer">
-            <p className="chat-input">
-              {/* Invisible full prompt: the composer takes its final height up front, so typing never moves the layout. */}
-              <span className="chat-ghost" aria-hidden="true">
-                {PROMPT}
-              </span>
-              <span className="chat-live">
-                <span className="chat-typed" />
-                <span className="chat-caret" />
-              </span>
-              <span className="chat-placeholder">{c.composer}</span>
-            </p>
-            <span className="chat-send">
-              <SendIcon />
+        </div>
+
+        <div className="dock">
+          <div className="dock-panel">
+            <span className="dock-app">
+              <Image src="/story/brand/chatgpt-black.png" alt="" width={40} height={40} unoptimized />
             </span>
           </div>
+          <span className="dock-dot" />
         </div>
-
-        <div className="data-log">
-          {MEETS.map((m, i) =>
-            NAMED ? (
-              <p className="log-row" key={m.id}>
-                <span>{m.date}</span>
-                <span>{m.name}</span>
-                <span>{m.country}</span>
-                <span>{m.category}</span>
-              </p>
-            ) : (
-              <p className="log-row" key={m.id}>
-                {maskWidths(i).map((w, k) => (
-                  <span className="bar" key={k} style={{ width: `${w}ch` }} />
-                ))}
-              </p>
-            ),
-          )}
-        </div>
-        <div className="scan" data-on="false" />
-
-        <div className="season">
-          <SeasonGridSvg vertical={size.touch} />
-        </div>
-      </div>
-      <div className="L L-line">
-        <span className="caret-el algo-caret" />
       </div>
     </div>
   );

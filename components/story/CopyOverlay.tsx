@@ -10,7 +10,7 @@ import * as R from "@/lib/story/reveals";
 import { Text } from "./Text";
 
 const c = content.story;
-const SLOTS: Slot[] = ["centre", "under", "copy", "lesson"];
+const SLOTS: Slot[] = ["centre", "lesson"];
 const DEFAULT_HOLD = 700;
 
 type Live = {
@@ -29,12 +29,10 @@ type Live = {
 
 function Entry({ e }: { e: CopyEntry }) {
   return (
-    <div className={`entry k-${e.kind}${e.low ? " is-low" : ""}`} data-entry={e.id}>
+    <div className={`entry k-${e.kind}${e.low ? " is-low" : ""}${e.flow ? " is-flow" : ""}`} data-entry={e.id}>
       <p className="e-text">
         <Text text={e.text(c)} />
       </p>
-      {e.sub && <p className="e-sub">{e.sub(c)}</p>}
-      {e.meta && <p className="e-meta">{e.meta(c)}</p>}
     </div>
   );
 }
@@ -55,7 +53,7 @@ export function CopyOverlay() {
     const byId = new Map(SCRIPT.map((e) => [e.id, e]));
     const node = (id: string) => host.querySelector<HTMLElement>(`[data-entry="${CSS.escape(id)}"]`)!;
     const fresh = (): Live => ({ target: null, visible: null, seq: null, reveal: null, reverts: [], words: null, wordsOn: 0, shownAt: 0, tShown: 0 });
-    const live: Record<Slot, Live> = { centre: fresh(), under: fresh(), copy: fresh(), lesson: fresh() };
+    const live: Record<Slot, Live> = { centre: fresh(), lesson: fresh() };
     let lastT = story.get().t;
     let timer = 0;
     let started = false;
@@ -93,8 +91,6 @@ export function CopyOverlay() {
       gsap.set(el, { autoAlpha: 1, clearProps: "transform,filter" });
 
       const text = el.querySelector<HTMLElement>(".e-text")!;
-      const sub = el.querySelector<HTMLElement>(".e-sub");
-      const meta = el.querySelector<HTMLElement>(".e-meta");
       const tl = gsap.timeline();
 
       if (e.reveal === "words") {
@@ -109,12 +105,6 @@ export function CopyOverlay() {
         l.reverts.push(r.revert);
         tl.add(r.tl, 0);
       }
-      if (sub) {
-        const r = R.rise(sub);
-        l.reverts.push(r.revert);
-        tl.add(r.tl, e.reveal === "ink" ? 0.5 : 0.2);
-      }
-      if (meta) tl.add(R.rise(meta, { small: true }).tl, e.reveal === "ink" ? 0.8 : 0.35);
       l.reveal = tl;
     };
 
@@ -175,9 +165,9 @@ export function CopyOverlay() {
       }
       // Text never sits on a busy image: scrims behind the copy, and busy set pieces step back behind titles.
       host.dataset.lesson = String(live.lesson.target != null);
-      host.dataset.copy = String(live.copy.target != null);
       const centre = live.centre.target ? byId.get(live.centre.target) : null;
       host.dataset.centre = String(!!centre && centre.kind !== "record");
+      host.dataset.low = String(!!centre?.low);
       window.clearTimeout(timer);
       if (waitFor) timer = window.setTimeout(() => evaluate(lastT), waitFor + 16);
     };
@@ -201,8 +191,8 @@ export function CopyOverlay() {
   }, []);
 
   return (
-    <div className="copy-overlay" ref={root} data-lesson="false" data-copy="false" data-centre="false">
-      <div className="copy-scrim" />
+    <div className="copy-overlay" ref={root} data-lesson="false" data-centre="false" data-low="false">
+      <div className="low-scrim" />
       <div className="lesson-scrim" />
       {SLOTS.map((slot) => (
         <div className={`slot slot-${slot}`} key={slot}>

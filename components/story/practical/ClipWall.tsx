@@ -7,7 +7,7 @@ import { gsap, useGSAP } from "@/lib/story/gsap";
 import { track } from "@/lib/story/analytics";
 import { useStoryPage } from "../StoryRoot";
 import { Dialog } from "../Dialog";
-import { PauseIcon, PlayIcon } from "../icons";
+import { PauseIcon, PlayIcon, SoundOffIcon } from "../icons";
 import { sourcesFor } from "@/lib/story/video";
 
 const p = content.story.practical;
@@ -56,8 +56,10 @@ function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: num
           <source key={s.src} src={s.src} type={s.type} />
         ))}
       </video>
-      <span className="clip-time" aria-hidden="true">
-        {seconds}s
+      {/* Muted, like a feed: the speaker says there is sound behind a click. */}
+      <span className="clip-sound" aria-hidden="true">
+        <SoundOffIcon />
+        <span className="clip-sound-label">{p.roomSound}</span>
       </span>
     </button>
   );
