@@ -252,3 +252,80 @@ beat John: the clock starts from his pace per kilometre (13:03.46 over 5 km, 2:3
 time spent moving down the page. Seppe Teunis is named in the footer's photography line
 (`EXTRA_PHOTOGRAPHERS` in `lib/story/photos.ts`); which images are Seppe Teunis's is not recorded yet.
 
+### Round 12: Maarten's feedback, sharper media (29 September 2026)
+
+**The story is shorter and goes straight to the point.** The prologue is two lines, the first now
+"My story starts 2 years before the Olympics in Paris when I wasn't even in the world's top 200
+yet." "They all said it couldn't be done" is gone, so the letterbox opens straight onto the flight.
+The globe's dive lands in the pack running at the camera (the top-down road shot is gone), and
+lesson 1 and its photo are gone. The ChatGPT answer is thinking, code and the recommendation: no
+agents, no calendar. The doubters, their messages and "I ran it anyway" are gone; the window folds
+into the dock and the ranking chart comes straight up under "This led to the fastest rise up the
+world rankings in the history of athletics." Lesson 2 is gone. The beat is now called `climb`.
+
+**The chart** is a real chart: "World ranking" over a vertical axis marked 200, 100 and 50, the
+years at the two ends of the time axis, gridlines that stop short of the "200+" label, the quota
+line, and the big 200+ and 31. The line is one steady climb (`climb()` in `lib/story/ranking.ts`)
+rather than a curve through the milestones, which had a flat stretch in 2023. It is a shape, not a
+record of the months in between, so only its ends are ever labelled.
+
+**Motion after the story** is one vocabulary across the practical part, the bio and the footer
+(`PracticalMotion`): headings rise line by line in a mask, as the story's title cards do; lesson
+titles ink in; supporting text and figures fade up in staggered groups; lines draw; photos push in.
+The bio's heading was not animated before because the bio sat outside the practical part.
+
+**About me** is a dark, full-bleed panel between the paper sections: John on the Supernova stage,
+mid-sentence (Jelle Jansegers, re-exported at 3600 px from the original), the copy in the shadow
+to his left, and the four figures as a results strip under an amber finish line. The reel is gone.
+
+**The audience clips** have a play button in the middle of every clip, which fills amber on hover
+or focus.
+
+**Media.** Every video is re-encoded by a committed script, straight from the masters:
+`scripts/encode-hero.sh` for the hero loop, `scripts/encode-video.sh` for the Kenya clips, the
+audience clips and the film. The round 10 hero loop re-used five shots from earlier web encodes and
+scored VMAF 90 to 92 against a clean master; the new one scores 97 to 98. Each video ships as AV1
+(WebM), HEVC (MP4, for Safari and iPhones without AV1) and H.264 (MP4), best first; the hero adds a
+1440p cut for large and high-density screens and an art-directed poster. The Kenya band is scaled
+to 1920 with Lanczos before encoding, which beats letting the browser stretch 1080 pixels. The
+audience wall plays ten-second silent previews; the dialog loads the full clip with sound. Photos
+are served as AVIF where possible, full-bleed ones at quality 85.
+
+### Round 13: AI surfaces, icons, search, 404, legal (29 September 2026)
+
+**AI surfaces.** Everything that was filled with plain amber (the pills, the pace board's own cell, the
+chat's send button, the skip link, the clip play button on hover, checked boxes) now carries one
+gradient made from the brand colours, amber into lavender through the rose where they meet
+(`--ai` in `app/story.css`; ink text stays at 7:1 or better). It drifts slowly and a thin sheen
+crosses it every seven seconds; reduced motion keeps it still. The thin amber lines are unchanged:
+they are the story's line, not surfaces.
+
+**Icons.** `scripts/make-icons.mjs` draws "JH" in the wordmark's face on a night tile over a short
+finish line in the gradient, and writes the SVG favicon (with a light edge in dark browser themes),
+`favicon.ico`, the iOS web clip and the manifest icons. The brand guide says there is no monogram:
+these initials are for the browser tab and the home screen only.
+
+**Search and AI assistants.** One module, `lib/seo.ts`, builds the structured data (WebSite,
+ProfilePage, Person with sameAs, the keynote as a Service), `/llms.txt` (generated from the page's
+own copy and confirmed facts, so it cannot drift) and the per-page metadata. Canonical URLs,
+hreflang, large image previews, a sitemap with images, and a robots file that names the AI search
+crawlers and the training crawlers separately (both allowed; the comment says how to opt out of
+training only). The share image is the photo from the final, "Hey mom" and "Made it" on his arms
+(`scripts/make-og.mjs`).
+
+**404.** The ranking chart again: "404" where "200+" was, the climb drawing itself to the top of the
+screen, "This page didn't qualify." and the way back to the start. It returns a real 404 status.
+
+**Legal pages and cookies.** `/privacy`, `/cookies` and `/legal`, written for John to check, in his
+voice. What they say matches the code: enquiries go out as one email through Resend and nothing is
+stored, the rate limit keeps a hashed IP in memory for an hour, the site sets one cookie (the consent
+choice) and uses session storage for the scroll position, and nothing measures visits. The facts only
+John can supply (business name and form, address, enterprise and VAT numbers, host, email provider,
+court district) are pending in `lib/story/data/legal.json`: they show as "To confirm" on every build,
+and `npm run build:launch` fails until they are filled. The cookie banner asks once, with two answers
+of equal weight, remembers the choice for six months, and "Cookie settings" in the footer opens it
+again. `track()` sends nothing unless statistics are allowed. The legal and 404 copy lives in
+`lib/content-pages.ts`, so it never ships in the story page's JavaScript.
+
+Measured on the production build: JS 248.5 KB transferred (budget 250), scroll CLS 0.006, axe 0
+violations on the story, the three legal pages and the 404, with the cookie banner open.

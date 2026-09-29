@@ -12,9 +12,10 @@ const at = (vh: number) => v("prologue", vh);
  * John's prologue, shot like the opening of a film. As the stage comes up
  * over the hero, the frame is already running: a drone following him alone
  * along a red road in Iten, graded down into the night palette, with grain.
- * Letterbox bars close in, and his three lines arrive one at a time (the
- * overlay sets them, see lib/story/script). The camera keeps pushing in. On
- * the last line the bars open, the road fades, and the story starts.
+ * Letterbox bars close in, and his two lines arrive one at a time (the
+ * overlay sets them, see lib/story/script). The camera keeps pushing in.
+ * After the last line the bars open, the road fades, and the globe of the
+ * flight to Kenya comes up behind the first title.
  */
 export function Prologue() {
   const size = useStageSize();
@@ -29,8 +30,8 @@ export function Prologue() {
 
       tl.fromTo([top, bottom], { scaleY: 0 }, { scaleY: 1, duration: at(14), ease: "power2.inOut" }, 0);
       tl.fromTo(q(".vd-follow .pl-inner"), { scale: 1.04 }, { scale: 1.2, duration: 1, ease: "none" }, 0);
-      tl.to([top, bottom], { scaleY: 0, duration: at(22), ease: "power2.inOut" }, at(160));
-      tl.to(media, { opacity: 0, duration: at(22), ease: "power1.in" }, at(164));
+      tl.to([top, bottom], { scaleY: 0, duration: at(22), ease: "power2.inOut" }, at(122));
+      tl.to(media, { opacity: 0, duration: at(20), ease: "power1.in" }, at(126));
 
       return (b) => {
         // The film runs from the moment the stage starts to cover the hero.

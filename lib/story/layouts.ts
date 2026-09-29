@@ -6,13 +6,14 @@ import { SERIES, QUOTA } from "./ranking";
  * placeholders; text never does (see show()).
  */
 
-// Ranking chart: time across, world ranking up the side (better is higher, log scale).
-export const CHART = { w: 1200, h: 560, padL: 170, padR: 250, padT: 40, padB: 40 };
+// Ranking chart: time across, world ranking up the side (better is higher, log scale). The vertical
+// axis sits at axisX with its numbers to its left; the start number fits between it and padL.
+export const CHART = { w: 1200, h: 600, axisX: 56, padL: 250, padR: 250, padT: 64, baseY: 552, padB: 70 };
 
 const times = SERIES.map((p) => Date.parse(p.date));
 const logs = SERIES.map((p) => Math.log(p.rank));
 const LOG_BEST = Math.log(Math.max(1, Math.min(...SERIES.map((p) => p.rank), QUOTA ?? Infinity) * 0.8));
-const LOG_WORST = Math.log(Math.max(...SERIES.map((p) => p.rank), 1) * 1.1);
+const LOG_WORST = Math.log(Math.max(...SERIES.map((p) => p.rank), 1) * 1.12);
 
 export const chartX = (time: number) => {
   const a = times[0] ?? 0;
@@ -42,9 +43,9 @@ export function chartPath(f: number, pts = chartPoints()): string {
 
 export const quotaY = () => (QUOTA != null ? chartY(QUOTA) : null);
 
-/** Horizontal guides at round ranks inside the chart's range. */
+/** The round ranks marked on the vertical axis, inside the chart's range. The animated chart marks the same. */
 export const rankGuides = () =>
-  [500, 300, 200, 100, 50, 25, 10].filter((r) => {
+  [200, 100, 50].filter((r) => {
     const l = Math.log(r);
     return l > LOG_BEST && l < LOG_WORST;
   });

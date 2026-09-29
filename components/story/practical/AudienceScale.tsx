@@ -31,7 +31,7 @@ export function AudienceScale() {
       </svg>
       <ol className="scale-marks">
         {p.scale.map((s) => (
-          <li key={s.title} style={{ "--at": `${x(s.at)}%` } as React.CSSProperties} data-reveal="rise">
+          <li key={s.title} style={{ "--at": `${x(s.at)}%` } as React.CSSProperties} data-reveal="fade">
             <p className="sm-size">{s.size}</p>
             <p className="sm-title">{s.title}</p>
           </li>

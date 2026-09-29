@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { content } from "@/lib/content";
 import { filmAssets } from "@/lib/story/assets";
+import { SITE_URL, homeJsonLd, inline } from "@/lib/seo";
 import { liveKit } from "./fonts";
 import type { TypeKit } from "./typeKit";
 import { StoryRoot } from "./StoryRoot";
@@ -13,23 +14,26 @@ import { Footer } from "./Footer";
 
 const m = content.story.meta;
 
-const shareImage = { url: "/story/og.jpg", width: 1200, height: 630, alt: m.imageAlt };
+/** The photo from the final, "Hey mom" and "Made it" on his arms (scripts/make-og.mjs). */
+const shareImage = { url: "/story/og.jpg", width: 1200, height: 630, alt: m.imageAlt, type: "image/jpeg" };
 
 export const storyMetadata: Metadata = {
-  metadataBase: new URL("https://johnheymans.com"),
-  title: m.title,
+  metadataBase: new URL(SITE_URL),
+  title: { absolute: m.title },
   description: m.description,
-  openGraph: { title: m.title, description: m.description, type: "profile", images: [shareImage] },
+  alternates: { canonical: "/", languages: { en: "/", "x-default": "/" } },
+  openGraph: {
+    title: m.title,
+    description: m.description,
+    url: "/",
+    siteName: content.brand.name,
+    locale: "en_GB",
+    type: "profile",
+    firstName: "John",
+    lastName: "Heymans",
+    images: [shareImage],
+  },
   twitter: { card: "summary_large_image", title: m.title, description: m.description, images: [shareImage] },
-};
-
-const person = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: content.brand.name,
-  description: m.person,
-  jobTitle: "Keynote speaker",
-  sameAs: content.social.map((s) => s.href),
 };
 
 /**
@@ -53,7 +57,7 @@ export function StoryDocument({ kit = liveKit }: { kit?: TypeKit }) {
         <Bio />
       </main>
       <Footer filmIsStandIn={film.filmIsStandIn} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: inline(homeJsonLd()) }} />
     </StoryRoot>
   );
 }

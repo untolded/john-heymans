@@ -1,0 +1,29 @@
+{
+  "out": "media/premiere-overlays",
+  "formats": ["16x9", "9x16"],
+  "clips": [
+    { "name": "rise-graduation", "style": "rise", "text": "The day after my graduation,|I booked a plane|ticket to Kenya." },
+    { "name": "rise-training-alone", "style": "rise", "text": "However,|training hard alone|wouldn't be enough.", "text_9x16": "However,|training hard alone|wouldn't|be enough." },
+    { "name": "rise-edge", "style": "rise", "text": "I needed an edge." },
+    { "name": "rise-ran-it-anyway", "style": "rise", "text": "I ran it anyway." },
+    { "name": "rise-nobody-believed", "style": "rise", "text": "Nobody believed|I'd make the final." },
+    { "name": "rise-underdog", "style": "rise", "text": "I was the underdog." },
+
+    { "name": "words-two-years", "style": "words", "text": "Two years.|One algorithm." },
+    { "name": "words-different-road", "style": "words", "type": "sentence", "text": "My story is about taking|a different road." },
+    { "name": "words-top-200", "style": "words", "type": "sentence", "text": "Two years before the Olympics in Paris,|I wasn't even in the world's top 200.", "text_9x16": "Two years before|the Olympics in Paris,|I wasn't even in|the world's top 200." },
+    { "name": "words-used-ai", "style": "words", "type": "sentence", "text": "So I used AI to find a road|nobody else was taking." },
+
+    { "name": "ink-best-runners", "style": "ink", "text": "To train with the best|runners in the world." },
+    { "name": "ink-called-me-crazy", "style": "ink", "text": "My team and my peers|called me crazy." },
+    { "name": "ink-fastest-rise", "style": "ink", "text": "The fastest rise|up the world rankings|in the history of athletics.", "text_9x16": "The fastest rise|up the world rankings|in the history|of athletics." },
+    { "name": "ink-lesson-average", "style": "ink", "role": "lesson", "text": "You are the average|of the 5 people you spend|the most time with.", "text_9x16": "You are the average|of the 5 people|you spend the most|time with." },
+    { "name": "ink-lesson-status-quo", "style": "ink", "role": "lesson", "text": "Don't be afraid|to challenge|the status quo." },
+    { "name": "ink-lesson-control", "style": "ink", "role": "lesson", "text": "Focus on what|you can control." },
+    { "name": "ink-lesson-pressure", "style": "ink", "role": "lesson", "text": "Embrace|the pressure." },
+
+    { "name": "flash-federation", "style": "flash", "sender": "My federation", "initial": "F", "text": "Run fast times in the big outdoor meets.|That's the route.", "text_9x16": "Run fast times in the|big outdoor meets.|That's the route." },
+    { "name": "flash-coach", "style": "flash", "sender": "My coach", "initial": "C", "text": "Three or four races a season?|You need twelve at least.", "text_9x16": "Three or four races|a season? You need|twelve at least." },
+    { "name": "flash-competitors", "style": "flash", "sender": "My competitors", "initial": "C", "text": "Indoor meets for ranking points?|That won't get you to Paris.", "text_9x16": "Indoor meets for|ranking points? That|won't get you to Paris." }
+  ]
+}

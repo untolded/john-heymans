@@ -1,0 +1,37 @@
+{
+  "owner": {
+    "value": null,
+    "status": "pending",
+    "source": "Who publishes the site and decides what happens to enquiries: John Heymans as a self-employed person, or the company he invoices through, with its legal form. To confirm with John (round 13, 29 Sept 2026)."
+  },
+  "address": {
+    "value": null,
+    "status": "pending",
+    "source": "The registered address that goes with the owner above. To confirm with John."
+  },
+  "enterpriseNumber": {
+    "value": null,
+    "status": "pending",
+    "source": "The enterprise number (KBO/BCE), required on a Belgian business website. To confirm with John."
+  },
+  "vat": {
+    "value": null,
+    "status": "pending",
+    "source": "The VAT number, if it differs from the enterprise number (BE + the same digits, usually). To confirm with John."
+  },
+  "host": {
+    "value": null,
+    "status": "pending",
+    "source": "The company that hosts the site (for example Vercel Inc.), with its country. Not decided yet."
+  },
+  "mailbox": {
+    "value": null,
+    "status": "pending",
+    "source": "The provider behind hello@johnheymans.com (for example Google Workspace or Microsoft 365), where enquiries arrive. To confirm with John."
+  },
+  "courts": {
+    "value": null,
+    "status": "pending",
+    "source": "The judicial district whose courts handle disputes, usually the one of the registered address. To confirm with John."
+  }
+}

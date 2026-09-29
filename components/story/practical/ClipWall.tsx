@@ -7,7 +7,7 @@ import { gsap, useGSAP } from "@/lib/story/gsap";
 import { track } from "@/lib/story/analytics";
 import { useStoryPage } from "../StoryRoot";
 import { Dialog } from "../Dialog";
-import { PauseIcon, PlayIcon, SoundOffIcon } from "../icons";
+import { PauseIcon, PlayIcon } from "../icons";
 import { sourcesFor } from "@/lib/story/video";
 
 const p = content.story.practical;
@@ -52,14 +52,14 @@ function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: num
       tabIndex={copy ? -1 : undefined}
     >
       <video ref={video} poster={`/videos/testimonial-${id}.jpg`} muted loop playsInline preload="none">
-        {sourcesFor(`/videos/testimonial-${id}`, true).map((s) => (
+        {/* The wall plays a light, silent preview; the dialog loads the full clip with sound. */}
+        {sourcesFor(`/videos/testimonial-${id}-preview`, false).map((s) => (
           <source key={s.src} src={s.src} type={s.type} />
         ))}
       </video>
-      {/* Muted, like a feed: the speaker says there is sound behind a click. */}
-      <span className="clip-sound" aria-hidden="true">
-        <SoundOffIcon />
-        <span className="clip-sound-label">{p.roomSound}</span>
+      {/* Muted, like a feed: the play button says there is more behind a click, with sound. */}
+      <span className="clip-play" aria-hidden="true">
+        <PlayIcon />
       </span>
     </button>
   );
@@ -117,7 +117,9 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
         <h3 id="pr-room" className="pr-h3" data-reveal="rise">
           {p.roomTitle}
         </h3>
-        <p className="pr-note">{p.roomNote}</p>
+        <p className="pr-note" data-reveal="fade">
+          {p.roomNote}
+        </p>
         {cinema && (
           <button type="button" className="round-btn room-pause" onClick={() => setPaused((v) => !v)} aria-label={paused ? p.roomPlay : p.roomPause}>
             {paused ? <PlayIcon /> : <PauseIcon />}

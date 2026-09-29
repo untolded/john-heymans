@@ -30,7 +30,7 @@ export function Quotes() {
       <h3 className="sr-only">{p.quotesTitle}</h3>
       <div className="quotes-grid">
         {QUOTES.map((q) => (
-          <figure className="quote" key={q.org}>
+          <figure className="quote" key={q.org} data-reveal="fade">
             <blockquote className="quote-text">
               <p>{q.text}</p>
             </blockquote>

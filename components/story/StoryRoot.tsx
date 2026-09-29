@@ -11,6 +11,7 @@ import { gsap, ScrollTrigger } from "@/lib/story/gsap";
 import { track } from "@/lib/story/analytics";
 import type { FilmAssets } from "@/lib/story/assets";
 import { Frame } from "./Frame";
+import { CookieBanner } from "@/components/site/CookieBanner";
 
 const EnquiryDialog = dynamic(() => import("./EnquiryDialog"), { ssr: false });
 const FilmDialog = dynamic(() => import("./media/FilmModal"), { ssr: false });
@@ -35,6 +36,9 @@ export function useStoryPage(): StoryPage {
   if (!ctx) throw new Error("useStoryPage outside StoryRoot");
   return ctx;
 }
+
+/** For parts shared with the other pages (the footer): null outside the story page. */
+export const useStoryPageIfAny = (): StoryPage | null => useContext(Ctx);
 
 /**
  * The client root. Decides the mode once on mount (and again if a media
@@ -98,6 +102,7 @@ export function StoryRoot({ children, className, typeKit, film }: { children: Re
         {children}
         {dialog === "enquiry" && <EnquiryDialog onClose={close} />}
         {dialog === "film" && <FilmDialog onClose={close} film={film} />}
+        <CookieBanner />
       </div>
     </Ctx.Provider>
   );

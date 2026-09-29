@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { content } from "@/lib/content";
 import type { FilmAssets } from "@/lib/story/assets";
 import { story } from "@/lib/story/store";
@@ -16,6 +16,23 @@ import { PlayIcon, PauseIcon } from "./icons";
 const t = content.story.hero;
 const list = new Intl.ListFormat("en-GB", { type: "conjunction" });
 const standInPhotographers = Array.from(new Set(STAND_IN_STILLS.map((s) => photo(s).credit)));
+
+/**
+ * The poster, art-directed: the vertical frame on upright phones, the wide
+ * one everywhere else, each served at the width the screen needs.
+ */
+function Poster({ film }: { film: FilmAssets }) {
+  const common = { alt: "", fill: true, sizes: "100vw", quality: 85 } as const;
+  const { props: wide } = getImageProps({ ...common, src: film.poster });
+  const upright = film.posterPortrait ? getImageProps({ ...common, src: film.posterPortrait }).props : null;
+  return (
+    <picture>
+      {upright && <source media="(orientation: portrait)" srcSet={upright.srcSet} sizes={upright.sizes} />}
+      {/* eslint-disable-next-line jsx-a11y/alt-text -- getImageProps supplies the optimised img, alt included */}
+      <img {...wide} className="hero-poster" fetchPriority="high" loading="eager" />
+    </picture>
+  );
+}
 
 /**
  * The film opens the page, on John's face. The poster paints first (it is
@@ -89,7 +106,7 @@ export function Hero({ film }: { film: FilmAssets }) {
   return (
     <section className="hero" id="top" ref={section} aria-label={content.story.a11y.heroRegion} data-quiet={quiet}>
       <div className="hero-media">
-        <Image src={film.poster} alt="" fill preload sizes="100vw" className="hero-poster" />
+        <Poster film={film} />
         <video
           ref={video}
           className="hero-video"
@@ -97,18 +114,15 @@ export function Hero({ film }: { film: FilmAssets }) {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
           tabIndex={-1}
           onCanPlay={() => setCanPlay(true)}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
         >
-          {film.loopPortrait.map((s) => (
-            <source key={`p-${s.src}`} src={s.src} type={s.type} media="(orientation: portrait)" />
-          ))}
           {film.loop.map((s) => (
-            <source key={s.src} src={s.src} type={s.type} />
+            <source key={s.src} src={s.src} type={s.type} media={s.media} />
           ))}
         </video>
         <div className="hero-scrim" />

@@ -4,18 +4,19 @@ import { lessonEntry } from "@/lib/story/script";
 import { at } from "@/lib/story/beats";
 import { driver } from "@/lib/story/driver";
 import { scroller } from "@/lib/story/scroll";
-import { useStoryPage } from "../StoryRoot";
+import { useStoryPage, useStoryPageIfAny } from "../StoryRoot";
 
-/** "Check availability" wherever it appears: opens the enquiry. */
+/** "Check availability" wherever it appears: opens the enquiry, or on the other pages leads to it. */
 export function EnquireButton({ from, className, children }: { from: string; className?: string; children: React.ReactNode }) {
-  const { openEnquiry } = useStoryPage();
+  const page = useStoryPageIfAny();
   return (
     <a
-      href="#enquiry"
+      href={page ? "#enquiry" : "/#enquiry"}
       className={className}
       onClick={(e) => {
+        if (!page) return;
         e.preventDefault();
-        openEnquiry(from);
+        page.openEnquiry(from);
       }}
     >
       {children}

@@ -10,7 +10,7 @@ import * as R from "@/lib/story/reveals";
 import { Text } from "./Text";
 
 const c = content.story;
-const SLOTS: Slot[] = ["centre", "lesson"];
+const SLOTS: Slot[] = ["centre"];
 const DEFAULT_HOLD = 700;
 
 type Live = {
@@ -53,7 +53,7 @@ export function CopyOverlay() {
     const byId = new Map(SCRIPT.map((e) => [e.id, e]));
     const node = (id: string) => host.querySelector<HTMLElement>(`[data-entry="${CSS.escape(id)}"]`)!;
     const fresh = (): Live => ({ target: null, visible: null, seq: null, reveal: null, reverts: [], words: null, wordsOn: 0, shownAt: 0, tShown: 0 });
-    const live: Record<Slot, Live> = { centre: fresh(), lesson: fresh() };
+    const live: Record<Slot, Live> = { centre: fresh() };
     let lastT = story.get().t;
     let timer = 0;
     let started = false;
@@ -164,7 +164,6 @@ export function CopyOverlay() {
         swap(slot, next, t);
       }
       // Text never sits on a busy image: scrims behind the copy, and busy set pieces step back behind titles.
-      host.dataset.lesson = String(live.lesson.target != null);
       const centre = live.centre.target ? byId.get(live.centre.target) : null;
       host.dataset.centre = String(!!centre && centre.kind !== "record");
       host.dataset.low = String(!!centre?.low);
@@ -191,9 +190,8 @@ export function CopyOverlay() {
   }, []);
 
   return (
-    <div className="copy-overlay" ref={root} data-lesson="false" data-centre="false" data-low="false">
+    <div className="copy-overlay" ref={root} data-centre="false" data-low="false">
       <div className="low-scrim" />
-      <div className="lesson-scrim" />
       {SLOTS.map((slot) => (
         <div className={`slot slot-${slot}`} key={slot}>
           {SCRIPT.filter((e) => e.slot === slot).map((e) => (

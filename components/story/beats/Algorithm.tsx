@@ -22,9 +22,9 @@ const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
  * The set piece. The dot the edge dropped becomes the running light under
  * ChatGPT in a Mac dock; the icon bounces and the window opens out of it.
  * The prompt types and is sent. The answer builds the way ChatGPT's does:
- * thinking, three agents at work, the code, then the recommendation with a
- * calendar, the thread scrolling up as it grows. Everything stays inside
- * the window. When the doubters arrive, the window folds back into the dock.
+ * thinking, the code, then the recommendation, the thread scrolling up as it
+ * grows. Everything stays inside the window. When the ranking chart arrives,
+ * the window folds back into the dock.
  */
 export function Algorithm() {
   const size = useStageSize();
@@ -48,16 +48,11 @@ export function Algorithm() {
         you: q(".chat-you")[0],
         avatar: q(".chat-avatar")[0],
         think: q(".think")[0],
-        agents: q(".agents")[0],
         code: q(".code")[0],
         rec: q(".rec")[0],
-        cal: q(".cal-card")[0],
       };
       const steps = q(".think-steps li");
-      const agents = q(".agent");
       const lines = q(".code-line");
-      const usual = q('.cal-row[data-lane="usual"] .cal-dot');
-      const chosen = q('.cal-row[data-lane="chosen"] .cal-dot');
 
       // Where the window opens from and folds back into: the icon in the dock.
       const icon = layoutBox(app)!;
@@ -67,8 +62,7 @@ export function Algorithm() {
 
       const hidden = Object.values(blocks);
       gsap.set(hidden, { autoAlpha: 0 });
-      gsap.set([...steps, ...agents, ...lines], { autoAlpha: 0 });
-      gsap.set([...usual, ...chosen], { scale: 0, autoAlpha: 0 });
+      gsap.set([...steps, ...lines], { autoAlpha: 0 });
       gsap.set(chat, { x: dx, y: dy, scale: 0.05, autoAlpha: 0 });
       gsap.set(panel, { yPercent: 160 });
       gsap.set(dot, { autoAlpha: 1 });
@@ -77,7 +71,7 @@ export function Algorithm() {
 
       // The thread keeps its newest block in view, as the app does. Everything is laid out from the
       // start and only revealed, so this moves by transform and nothing on the page reflows.
-      const order = [blocks.you, blocks.think, blocks.agents, blocks.code, blocks.rec, blocks.cal];
+      const order = [blocks.you, blocks.think, blocks.code, blocks.rec];
       let followed: HTMLElement | null = null;
       const follow = (el: HTMLElement | null, instant = false) => {
         if (el === followed) return;
@@ -109,7 +103,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(20),
+          at: at(18),
           on: () => {
             placeholder.style.opacity = "0";
             chat.dataset.typing = "true";
@@ -122,7 +116,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(44),
+          at: at(38),
           on: () => {
             const t = gsap.timeline();
             t.to(send, { scale: 1.2, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 });
@@ -142,7 +136,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(54),
+          at: at(46),
           on: () => {
             gsap.set(blocks.avatar, { autoAlpha: 1 });
             follow(blocks.think);
@@ -153,24 +147,10 @@ export function Algorithm() {
             back(blocks.think);
           },
         },
-        ...steps.map((li, i) => ({ at: at(64 + i * 10), on: () => show(li, { y: 8 }), off: () => void gsap.set(li, { autoAlpha: 0 }) })),
-        { at: at(96), on: () => state(blocks.think, "done"), off: () => state(blocks.think, "live") },
+        ...steps.map((li, i) => ({ at: at(54 + i * 9), on: () => show(li, { y: 8 }), off: () => void gsap.set(li, { autoAlpha: 0 }) })),
+        { at: at(76), on: () => state(blocks.think, "done"), off: () => state(blocks.think, "live") },
         {
-          at: at(102),
-          on: () => {
-            follow(blocks.agents);
-            return show(blocks.agents);
-          },
-          off: () => {
-            gsap.set(blocks.agents, { autoAlpha: 0 });
-            back(blocks.agents);
-          },
-        },
-        ...agents.map((row, i) => ({ at: at(106 + i * 5), on: () => show(row, { y: 8 }), off: () => void gsap.set(row, { autoAlpha: 0 }) })),
-        ...agents.map((row, i) => ({ at: at(124 + i * 9), on: () => state(row, "done"), off: () => state(row, "live") })),
-        { at: at(150), on: () => state(blocks.agents.querySelector(".agents-head")!, "done"), off: () => state(blocks.agents.querySelector(".agents-head")!, "live") },
-        {
-          at: at(156),
+          at: at(80),
           on: () => {
             follow(blocks.code);
             return show(blocks.code);
@@ -181,9 +161,9 @@ export function Algorithm() {
           },
         },
         // The code streams in with the scroll, a line at a time.
-        ...lines.map((line, i) => ({ at: at(160 + i * (46 / lines.length)), on: () => void gsap.set(line, { autoAlpha: 1 }), off: () => void gsap.set(line, { autoAlpha: 0 }) })),
+        ...lines.map((line, i) => ({ at: at(84 + i * (46 / lines.length)), on: () => void gsap.set(line, { autoAlpha: 1 }), off: () => void gsap.set(line, { autoAlpha: 0 }) })),
         {
-          at: at(214),
+          at: at(136),
           on: () => {
             follow(blocks.rec);
             return show(blocks.rec);
@@ -193,26 +173,6 @@ export function Algorithm() {
             back(blocks.rec);
           },
         },
-        {
-          at: at(226),
-          on: () => {
-            follow(blocks.cal);
-            const t = gsap.timeline();
-            t.add(show(blocks.cal));
-            t.to(usual, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: "back.out(2)" }, 0.3);
-            return t;
-          },
-          off: () => {
-            gsap.set(blocks.cal, { autoAlpha: 0 });
-            gsap.set(usual, { scale: 0, autoAlpha: 0 });
-            back(blocks.cal);
-          },
-        },
-        {
-          at: at(240),
-          on: () => gsap.to(chosen, { scale: 1, autoAlpha: 1, duration: 0.45, stagger: 0.18, ease: "back.out(3)" }),
-          off: () => void gsap.set(chosen, { scale: 0, autoAlpha: 0 }),
-        },
       ]);
 
       // Reached the chat part-way (a jump, a reload): place the thread without animating it.
@@ -220,7 +180,7 @@ export function Algorithm() {
 
       return (b) => {
         onCue(b.progress);
-        // Folding away as the doubters arrive: into the icon, then the dock slides down.
+        // Folding away as the chart arrives: into the icon, then the dock slides down.
         const m = seg(b.hide, 0.02, 0.18);
         gsap.set(shell, { x: dx * m, y: dy * m, scale: 1 - 0.95 * m, autoAlpha: 1 - seg(m, 0.55, 1) });
         const away = seg(b.hide, 0.2, 0.3);

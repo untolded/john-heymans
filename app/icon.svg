@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>@media (prefers-color-scheme: dark) { .tile { stroke: rgb(243 241 234 / 0.22); stroke-width: 1; } }</style>
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1548"/><stop offset="1" stop-color="#070613"/></linearGradient>
+    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff7a2f"/><stop offset="0.5" stop-color="#ee9aa6"/><stop offset="1" stop-color="#b9a8f5"/></linearGradient>
+  </defs>
+  <rect class="tile" x="0.5" y="0.5" width="63" height="63" rx="14" fill="url(#night)"/>
+  <g fill="#f3f1ea"><path d="M397 -18Q267 -18 190.5 18.5Q114 55 79.5 134.0Q45 213 42 342Q41 401 41.0 467.5Q41 534 42 594H277Q276 552 275.5 498.5Q275 445 275.5 392.0Q276 339 277 297Q279 242 307.5 214.5Q336 187 397 187Q458 187 484.5 214.5Q511 242 511 297V1600H761V342Q761 149 679.5 65.5Q598 -18 397 -18Z" transform="translate(14.118 44.000) scale(0.02125 -0.02125)"/><path d="M88 0V1600H337V922H561V1600H811V0H561V701H337V0Z" transform="translate(31.777 44.000) scale(0.02125 -0.02125)"/></g>
+  <rect x="14.989" y="49.000" width="34.021" height="4.000" rx="2.000" fill="url(#ai)"/>
+</svg>

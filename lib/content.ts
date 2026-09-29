@@ -334,9 +334,9 @@ export const content = {
   story: {
     meta: {
       title: "John Heymans, Olympic 5000m finalist and keynote speaker",
-      description: "Two-year journey. One AI algorithm. The Olympic final. I built the algorithm that chose my races. A keynote on strategy, risk and finding the edge.",
-      person: "Belgian Olympic 5000m finalist and keynote speaker.",
-      imageAlt: "John Heymans with his arms up in the Olympic stadium in Paris, with the line: Two-year journey. One AI algorithm. The Olympic final.",
+      /* About 155 characters: what search results show before cutting it off. */
+      description: "Olympic 5000m finalist and keynote speaker from Belgium. I used AI to plan my races and rose from outside the world's top 200 to the Paris final in two years.",
+      imageAlt: "John Heymans after the Olympic 5000m final in Paris, hands on his head, with Hey mom written on one arm and Made it on the other",
     },
 
     a11y: {
@@ -359,11 +359,10 @@ export const content = {
     /** Headings for the static story only (screen readers, reduced motion). The film shows no chapter names. */
     chapters: {
       prologue: "",
-      opener: "",
       iten: "Iten",
       edge: "The edge",
       algorithm: "The algorithm",
-      doubt: "The doubters",
+      climb: "The world ranking",
       final: "The final",
       handover: "",
     },
@@ -392,14 +391,9 @@ export const content = {
     /** John opens the story himself, one line at a time, over the red road in Iten. */
     prologue: {
       lines: [
-        "My story is about taking|a different road.",
-        "Two years before the Olympics in Paris,| I wasn't even in the world's top 200.",
+        "My story starts 2 years before|the Olympics in Paris. I wasn't even in the world's top 200 yet.",
         "So I used AI to find a road|nobody else was taking.",
       ],
-    },
-
-    opener: {
-      title: "They all said|it couldn't|be|done.",
     },
 
     iten: {
@@ -431,16 +425,8 @@ export const content = {
       thinking: "Thinking",
       thought: "Finished thinking",
       steps: [
-        "Olympic places in the 5000m go by world ranking. The quota is {quota} runners.",
-        "Ranking points are result points plus placing points.",
-        "Placing points aren't linear. A top three at a Gold or Silver indoor meet beats a fast time in tenth.",
-      ],
-      agentsHead: "Running {n} agents",
-      agentsDone: "{n} agents finished",
-      agents: [
-        { name: "Ranking agent", task: "Projecting the cut for the top {quota}", done: "{points} points" },
-        { name: "Calendar agent", task: "Scoring every meet in the window", done: "Top-three odds per meet" },
-        { name: "Load agent", task: "Weighing races, travel and injury risk", done: "Three or four races" },
+        "{quota} runners can qualify for the Olympics in the 5000m.",
+        "John needs to rise to the top 42 in the world rankings.",
       ],
       codeLang: "python",
       copy: "Copy",
@@ -461,37 +447,16 @@ export const content = {
       ],
       recommendationLead: "Recommendation:",
       recommendation: "a competition calendar that's different from everyone else.",
-      calendar: {
-        rows: [
-          { id: "usual", label: "Everyone else", note: "12 to 15 races, outdoors" },
-          { id: "chosen", label: "You", note: "3 or 4 races, indoors" },
-        ],
-        summary: "Everyone else races twelve to fifteen times a season, outdoors, from May to September. The recommended season is three or four indoor races between January and March.",
-      },
     },
 
-    doubt: {
-      roles: {
-        federation: "My federation",
-        coach: "My coach",
-        competitors: "My competitors",
-      },
-      initials: {
-        federation: "F",
-        coach: "C",
-        competitors: "C",
-      },
-      title: "My team and my peers|called me crazy.",
-      fallback: "That will never work.",
-      now: "now",
-      answer: "I ran it anyway.",
-      record: "The fastest rise|up the world rankings|in the history of athletics.",
+    climb: {
+      record: "This led to the fastest rise|up the world rankings|in the history of athletics.",
       chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}. That ranking was my Olympic qualification.",
     },
 
     final: {
       a: "Nobody believed|I'd make the final.",
-      b: "I was the underdog.",
+      b: "They all said|it was impossible.",
       arms: "Hey mom, made it.",
       close: "Dare to|dream big.",
     },
@@ -502,19 +467,20 @@ export const content = {
     },
 
     /**
-     * The five lessons of the keynote, in keynote order. The story shows 1, 2
-     * and 5 at the end of their chapters; the practical part lists all five.
-     * A bar is a line break on the story's lesson card only.
+     * The five lessons of the keynote, in keynote order. The story closes on
+     * the fifth; the practical part lists all five.
      */
     lessons: [
       { title: "You are the average of the 5 people you spend the most time with." },
       { title: "Don't be afraid|to challenge|the status quo." },
-      { title: "Focus on what|you can control." },
+      { title: "Consistency beats|hard work" },
       { title: "Embrace|the pressure." },
       { title: "Dare to|dream big." },
     ],
 
     ranking: {
+      /** The chart's own title, over its vertical axis. */
+      axis: "World ranking",
       quotaLine: "The Olympic quota: {n} runners",
       /** The two ends of the climb, as big as the chart allows. */
       startValue: "200+",
@@ -533,6 +499,7 @@ export const content = {
       shoes: "Me tying my racing spikes on a bench before a race",
       "track-laugh": "Me sitting on a track, laughing",
       "stage-wide": "Me on stage at Supernova, Antwerp",
+      "stage-lookup": "Me on stage at Supernova, Antwerp, mid-sentence with one finger raised",
     },
 
     practical: {
@@ -542,7 +509,7 @@ export const content = {
         { figure: "3", line: "languages: English, Dutch or French" },
         { figure: "5", line: "lessons with clear parallels in business" },
       ],
-      lessonsTitle: "More than an AI story: the five lessons I share with anyone chasing a meaningful goal",
+      lessonsTitle: "More than an AI story: 5 lessons with clear parallels in business and entrepreneurship",
       lessonBack: "Back to lesson {n} in the story",
       scaleTitle: "Small room or full house, expect to feel high energy",
       scale: [
@@ -587,15 +554,15 @@ export const content = {
           who: "Private Banker",
           org: "Deutsche Bank",
           href: "https://www.linkedin.com/in/andr%C3%A9s-jorge-b-83897a83/",
-          portrait: null,
+          portrait: "/testimonials/deutsche-bank-portrait.jpg",
           logo: { src: "/testimonials/deutsche-bank-logo.png", w: 120, h: 120 },
         },
         {
           text: "His story of rising from amateur to Olympic finalist in just two years wasn't about self-promotion but about sharing life lessons directly applicable to business. His high energy further enhanced the experience.",
-          name: null,
+          name: "Thierry Bosly",
           who: "Partner, Co-Head of Global M&A",
           org: "White & Case",
-          href: null,
+          href: "https://www.linkedin.com/in/thierrybosly/",
           portrait: "/testimonials/white-case-portrait.png",
           logo: { src: "/testimonials/white-case-logo.png", w: 120, h: 40 },
         },
@@ -610,10 +577,10 @@ export const content = {
         },
         {
           text: "Sharing not only the highs of elite competition but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
-          name: null,
+          name: "Julien Gryp",
           who: "Programme Manager",
           org: "The Merode",
-          href: null,
+          href: "https://www.linkedin.com/in/juliengryp/",
           portrait: "/testimonials/merode-portrait.png",
           logo: { src: "/testimonials/merode-logo.png", w: 120, h: 40 },
         },
@@ -624,7 +591,6 @@ export const content = {
       roomPause: "Pause the clips",
       roomPlay: "Play the clips",
       roomOpen: "Watch with sound, {s} seconds",
-      roomSound: "Play with sound",
       roomDialog: "Straight after the keynote at Supernova",
     },
 
@@ -686,20 +652,14 @@ export const content = {
         "The keynote came out of people asking how the ranking climb actually happened. The honest answer is a mix of environment, a model most people told me to ignore, and knowing which setbacks were worth my attention. That answer turned out to be useful to teams as well.",
       ],
       figures: {
-        placing: "in the Olympic 5000m final",
+        placing: "in the Paris Olympic final",
         pb: "5000m personal best",
-        years: "from deciding to try to the Olympic final",
-        keynotes: "keynotes so far, all booked by word of mouth",
+        years: "amateur to the Olympic final",
+        keynotes: "keynotes",
       },
       years: "{n} years",
-      follow: "Follow the training",
-      reel: {
-        label: "My road to the Olympics, in my own words",
-        soundOn: "Play with sound",
-        soundOff: "Sound on",
-        play: "Play the video",
-        pause: "Pause the video",
-      },
+      follow: "Follow the training:",
+      photo: "stage-lookup",
     },
 
     footer: {
@@ -721,6 +681,7 @@ export const content = {
         days: "{d} d {h} h",
       },
       top: "Back to the top",
+      legal: { label: "Legal", privacy: "Privacy", cookies: "Cookies", notice: "Legal notice", settings: "Cookie settings" },
     },
 
     format: {
@@ -730,6 +691,17 @@ export const content = {
       hours: "{h} h {m} min",
       days: "{d} days {h} h",
       metres: "{n}",
+    },
+
+    /** The cookie banner. It asks once, remembers for six months, and the footer can open it again. */
+    cookies: {
+      label: "Cookie choices",
+      title: "Cookies",
+      text: "The site only stores what it needs to work. Allow statistics, and I may count visits anonymously to see which parts of the story land. No ads, no tracking.",
+      necessary: "Only necessary",
+      allow: "Allow statistics",
+      policy: "Cookie policy",
+      saved: { necessary: "Saved: only what the site needs.", statistics: "Saved: statistics allowed." },
     },
 
     dev: {

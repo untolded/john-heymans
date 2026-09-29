@@ -40,7 +40,7 @@ export function PhotoLayer({
       style={{ "--focus": focus, "--focus-m": focusMobile ?? focus } as React.CSSProperties}
     >
       <div className="pl-inner">
-        {gate.load && <Image src={p.src} alt="" fill sizes="100vw" quality={75} fetchPriority={gate.priority} className="pl-img" />}
+        {gate.load && <Image src={p.src} alt="" fill sizes="100vw" quality={85} fetchPriority={gate.priority} className="pl-img" />}
       </div>
       {children}
     </div>

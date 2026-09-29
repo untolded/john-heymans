@@ -8,7 +8,6 @@ import { StoryPhoto } from "./StoryPhoto";
 import { Text } from "./Text";
 import { ItenMapSvg } from "./set-pieces/ItenMap";
 import { RankingChartSvg } from "./set-pieces/RankingChart";
-import { NotificationCard, doubterMessages } from "./set-pieces/Notification";
 import { HandwritingSvg } from "./set-pieces/Handwriting";
 import { ChatAnswer } from "./set-pieces/ChatAnswer";
 import { footageCredit } from "@/lib/story/footage";
@@ -16,16 +15,6 @@ import { footageCredit } from "@/lib/story/footage";
 const c = content.story;
 const entry = (id: string) => SCRIPT.find((e) => e.id === id)!;
 const text = (id: string) => entry(id).text(c);
-
-function Lesson({ n }: { n: 1 | 2 }) {
-  return (
-    <div className="lesson-card" id={`lesson-${n}`}>
-      <h3 className="lc-title">
-        <Text text={c.lessons[n - 1].title} />
-      </h3>
-    </div>
-  );
-}
 
 const monthYear = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
 
@@ -37,7 +26,7 @@ function rankingSummary(): string | null {
   const a = series[0];
   const b = series[series.length - 1];
   const phrase = (label: string) => (/^\d+$/.test(label) ? ordinal(Number(label)) : label.charAt(0).toLowerCase() + label.slice(1));
-  return fill(c.doubt.chartSummary, { a: phrase(a.label), from: monthYear.format(new Date(a.date)), b: phrase(b.label), to: monthYear.format(new Date(b.date)), quota });
+  return fill(c.climb.chartSummary, { a: phrase(a.label), from: monthYear.format(new Date(a.date)), b: phrase(b.label), to: monthYear.format(new Date(b.date)), quota });
 }
 
 /**
@@ -48,7 +37,6 @@ function rankingSummary(): string | null {
  * Chapter names are headings for screen readers only; the film has none.
  */
 export function StaticStory() {
-  const messages = doubterMessages();
   const chartSummary = rankingSummary();
   const packCredit = footageCredit();
 
@@ -60,13 +48,6 @@ export function StaticStory() {
             <Text text={line} />
           </p>
         ))}
-      </section>
-
-      <section className="sb sb-opener" data-ground="night" aria-labelledby="sb-opener">
-        <h2 id="sb-opener" className="sb-opener-title">
-          <Text text={text("opener.title")} />
-        </h2>
-        <span className="sb-startline" aria-hidden="true" />
       </section>
 
       <section className="sb sb-iten" data-ground="altitude" aria-labelledby="sb-iten">
@@ -89,8 +70,6 @@ export function StaticStory() {
         <p className="sb-record">
           <Text text={text("iten.line")} />
         </p>
-        <StoryPhoto slug="iten" sizes="(min-width: 992px) 40vw, 100vw" className="sb-photo" focus="50% 30%" />
-        <Lesson n={1} />
       </section>
 
       <section className="sb sb-edge" data-ground="night" aria-labelledby="sb-edge">
@@ -124,29 +103,17 @@ export function StaticStory() {
         </div>
       </section>
 
-      <section className="sb sb-doubt" data-ground="signal" aria-labelledby="sb-doubt">
-        <h2 id="sb-doubt" className="sr-only">
-          {c.chapters.doubt}
+      <section className="sb sb-climb" data-ground="signal" aria-labelledby="sb-climb">
+        <h2 id="sb-climb" className="sr-only">
+          {c.chapters.climb}
         </h2>
         <p className="sb-record">
-          <Text text={text("doubt.title")} />
-        </p>
-        <ul className="sb-notifs">
-          {messages.map((m) => (
-            <li key={m.role}>
-              <NotificationCard m={m} />
-            </li>
-          ))}
-        </ul>
-        <p className="sb-title">{text("doubt.answer")}</p>
-        <p className="sb-record">
-          <Text text={text("doubt.record")} />
+          <Text text={text("climb.record")} />
         </p>
         <figure className="sb-figure sb-chart">
           <RankingChartSvg />
           {chartSummary && <figcaption className="sr-only">{chartSummary}</figcaption>}
         </figure>
-        <Lesson n={2} />
       </section>
 
       <section className="sb sb-final" data-ground="stadium" aria-labelledby="sb-final">
@@ -162,7 +129,7 @@ export function StaticStory() {
           <HandwritingSvg className="sb-hand" />
         </StoryPhoto>
         <p className="sr-only">{c.final.arms}</p>
-        <p className="sb-opener-title sb-close" id="lesson-5">
+        <p className="sb-close" id="lesson-5">
           <Text text={text("final.close")} />
         </p>
       </section>

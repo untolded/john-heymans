@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* The site's faces, variable, at the settings the site uses. */
+  @font-face { font-family: "BS"; src: url(fonts/BigShoulders[opsz,wght].ttf) format("truetype"); font-weight: 100 900; }
+  @font-face { font-family: "IS"; src: url(fonts/InstrumentSans[wdth,wght].ttf) format("truetype"); font-weight: 400 700; font-stretch: 75% 100%; }
+
+  /* Colours and type settings from app/story.css. Sizes arrive in pixels from build-mogrts.jsx. */
+  :root {
+    --night: #070613; --violet: #3a2c91; --paper: #f3f1ea; --amber: #ff7a2f;
+  }
+  html, body { margin: 0; background: transparent; }
+  #frame {
+    position: relative; overflow: hidden; display: grid; box-sizing: border-box;
+    width: var(--w); height: var(--h); padding: var(--m);
+    color: var(--paper); --ink-text: var(--paper); --ink-nib: var(--amber);
+    -webkit-font-smoothing: antialiased;
+  }
+  #frame[data-bg="scrim"] { background: linear-gradient(to top, rgb(7 6 19 / 0.85) 0%, rgb(7 6 19 / 0.35) 45%, rgb(7 6 19 / 0) 100%); }
+  #frame[data-bg="night"] { background: linear-gradient(180deg, #070613 0%, #0b0920 60%, #151038 100%); }
+  #frame[data-bg="paper"] { background: #f3f1ea; color: #141019; --ink-text: #141019; --ink-nib: #a8400d; }
+  #frame[data-place="centre"] { place-items: center; text-align: center; }
+  #frame[data-place="bottom-left"] { align-items: end; justify-items: start; text-align: left; }
+
+  .e-text {
+    margin: 0; visibility: hidden;
+    font-size: var(--size); line-height: var(--lh);
+    max-width: min(var(--measure), calc(var(--w) - 2 * var(--m)));
+  }
+  .display { font-family: "BS", sans-serif; font-weight: 700; font-variation-settings: "opsz" 72; letter-spacing: -0.002em; text-transform: uppercase; }
+  .sentence { font-family: "IS", sans-serif; font-weight: 500; font-variation-settings: "wdth" 96; letter-spacing: -0.018em; }
+  .tl { display: block; width: fit-content; }
+  [data-place="centre"] .tl, [data-place="centre"] .ink-line { margin-inline: auto; }
+  .sl { padding-bottom: 0.06em; margin-bottom: -0.06em; }
+  .ink-line {
+    width: fit-content; color: transparent;
+    background-image: linear-gradient(90deg, var(--ink-text) 0%, var(--ink-text) 30%, var(--ink-nib) 40%, transparent 50%, transparent 100%);
+    background-size: 350% 100%; background-position-x: calc((100 - var(--sweep, 100)) * 1%);
+    -webkit-background-clip: text; background-clip: text;
+  }
+
+  /* The notification as the doubt beat shows it (.notif-stack), measured in JH.CARDS for the format. */
+  .notif {
+    position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: start; visibility: hidden; text-align: left;
+    width: min(var(--card-w), calc(var(--w) - 2 * var(--m))); box-sizing: border-box;
+    padding: var(--pad-y) var(--pad-x); border-radius: var(--radius); gap: var(--gap);
+    background: rgb(21 16 56 / 0.94); border: 1px solid rgb(185 168 245 / 0.2); color: var(--paper);
+    box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.8);
+    font-family: "IS", sans-serif; font-variation-settings: "wdth" 96; letter-spacing: -0.004em;
+  }
+  .notif.is-flash { border-color: var(--paper); }
+  .notif-icon { display: grid; place-items: center; width: var(--icon); height: var(--icon); border-radius: 50%; background: var(--violet); font-weight: 600; font-size: var(--initial); }
+  .notif-body { display: grid; gap: var(--body-gap); margin: 0; }
+  .notif-role { font-weight: 600; font-size: var(--sender); line-height: 1.3; }
+  .notif-text { font-weight: 400; font-size: var(--message); line-height: 1.25; letter-spacing: -0.01em; }
+  .notif-time { font-size: var(--time); color: rgb(243 241 234 / 0.72); }
+</style>
+</head>
+<body>
+<div id="frame"></div>
+<script src="bundle.js"></script>
+<script>
+  const frame = document.getElementById("frame");
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  // Lines break at a vertical bar or a newline, as Text.tsx does: each line a block with a trailing space.
+  const lines = (s) => s.split(/\||\n/).map((l, i, a) => `<span class="tl">${esc(l.trim())}${i < a.length - 1 ? " " : ""}</span>`).join("");
+  let el, reveal, exitTween, spec;
+
+  // Build one clip. Nothing animates until seek() is called.
+  window.setup = async (s) => {
+    spec = s;
+    const set = (k, v) => frame.style.setProperty(k, v);
+    set("--w", `${s.width}px`); set("--h", `${s.height}px`); set("--m", `${s.margin}px`);
+    set("--size", `${s.size}px`); set("--lh", s.lh); set("--measure", `${s.measure}ch`);
+    if (s.card) {
+      const c = s.card;
+      for (const [k, v] of [["--card-w", c.minW], ["--pad-x", c.padX], ["--pad-y", c.padY], ["--gap", c.gap], ["--radius", c.radius], ["--icon", c.icon],
+        ["--initial", c.initial], ["--sender", c.sender], ["--body-gap", c.bodyGap], ["--message", c.message], ["--time", c.time]]) set(k, `${v}px`);
+    }
+    frame.dataset.bg = s.background;
+    frame.dataset.place = s.placement;
+    if (s.kind === "flash") {
+      frame.innerHTML = `<div class="notif"><span class="notif-icon">${esc(s.initial)}</span>
+        <p class="notif-body"><span class="notif-role">${esc(s.sender)}</span><span class="notif-text">${s.text.split(/\||\n/).map(esc).join("<br>")}</span></p>
+        <span class="notif-time">${esc(s.time)}</span></div>`;
+      el = frame.querySelector(".notif");
+    } else if (s.kind === "none") {
+      frame.innerHTML = "";
+      el = null;
+    } else {
+      frame.innerHTML = `<p class="e-text ${s.face}">${lines(s.text)}</p>`;
+      el = frame.querySelector(".e-text");
+    }
+    await document.fonts.load("700 100px BS");
+    await document.fonts.load("500 30px IS");
+    await document.fonts.load("600 30px IS");
+    await document.fonts.ready;
+    reveal = null; exitTween = null;
+  };
+
+  // Put the clip at time t (seconds), calling the site's reveal and exit exactly as the story does.
+  window.seek = (t) => {
+    if (!el) return;
+    const local = t - spec.start;
+    if (local >= 0 && !reveal) {
+      reveal = spec.kind === "flash" ? { tl: window.R.flash(el) } : window.R[spec.kind](el);
+      reveal.tl.pause();
+    }
+    if (reveal) reveal.tl.time(Math.max(local, 0) + 1e-6, false);
+    if (spec.exitAt == null) return;
+    const out = t - spec.exitAt;
+    if (out >= 0 && !exitTween) {
+      exitTween = window.R.exit(el, spec.exit);
+      exitTween?.pause();
+    }
+    if (exitTween) exitTween.time(out + 1e-6, false);
+  };
+
+  // How long the reveal takes, which depends on the number of lines or words.
+  window.revealLength = () => {
+    window.seek(spec.start);
+    return reveal ? reveal.tl.duration() : 0;
+  };
+</script>
+</body>
+</html>

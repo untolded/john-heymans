@@ -41,7 +41,8 @@ function Frame({ n }: { n: number }) {
 
 /**
  * The practical part. The story is over and the spell breaks on purpose:
- * paper ground, calm motion, facts. The keynote, the five lessons, where it
+ * paper ground, calm motion, facts. Its motion (PracticalMotion) also plays
+ * the bio and the footer. The keynote, the five lessons, where it
  * works, who booked it, what the room said, and the enquiry.
  */
 export function Practical() {
@@ -61,7 +62,7 @@ export function Practical() {
                 <dt className="pr-figure" data-reveal="rise">
                   {f.figure}
                 </dt>
-                <dd data-reveal="rise">{f.line}</dd>
+                <dd data-reveal="fade">{f.line}</dd>
               </div>
             ))}
           </dl>
@@ -115,10 +116,12 @@ export function Practical() {
 
       <section className="pr pr-enquiry" id="enquiry" aria-labelledby="pr-enquiry">
         <div className="pr-enquiry-copy">
-          <h2 id="pr-enquiry" className="pr-h2" data-reveal="ink">
+          <h2 id="pr-enquiry" className="pr-h2" data-reveal="rise">
             {c.enquiry.title}
           </h2>
-          <p className="pr-lead">{c.enquiry.intro}</p>
+          <p className="pr-lead" data-reveal="fade">
+            {c.enquiry.intro}
+          </p>
         </div>
         <Enquiry context="inline" />
       </section>

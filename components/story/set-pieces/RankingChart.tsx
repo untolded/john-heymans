@@ -1,15 +1,17 @@
 import { CHART, chartPoints, chartPath, chartY, quotaY, rankGuides } from "@/lib/story/layouts";
-import { MILESTONES } from "@/lib/story/ranking";
+import { MILESTONES, SERIES } from "@/lib/story/ranking";
 import { facts, show, SHOW_PENDING } from "@/lib/story/data";
 import { content } from "@/lib/content";
 
 const copy = content.story.ranking;
+const year = (d: string) => String(new Date(d).getUTCFullYear());
 
 /**
- * World ranking across the two years: time across, position up the side with
- * better higher, the Olympic quota as a dashed line. Only the two ends are
- * named: outside the top 200, and the 31st place that qualified John. They
- * only appear when the ranking may be shown.
+ * World ranking across the two years, as a chart: the world ranking up the
+ * side with better higher, time across with its two years, the Olympic quota
+ * as a dashed line. Only the two ends are named: outside the top 200, and the
+ * 31st place that qualified John. The numbers only appear when the ranking
+ * may be shown.
  */
 export function RankingChartSvg({ className }: { className?: string }) {
   const pts = chartPoints();
@@ -18,15 +20,54 @@ export function RankingChartSvg({ className }: { className?: string }) {
   const placeholder = SHOW_PENDING && facts.ranking.series.placeholder;
   const first = pts[0];
   const last = pts[pts.length - 1];
+  // The plot ends where the climb does; the end number has the margin to itself.
+  const right = CHART.w - CHART.padR;
+  // Room kept clear of gridlines around the start number (about 4 characters at 64px).
+  const hole = first ? { x: first.x - 20 - 150, y: first.y - 12, w: 160, h: 76 } : null;
 
   return (
     <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className={`ranking-chart ${className ?? ""}`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-      <g className="rc-guides">
-        {rankGuides().map((r) => (
-          <line key={r} x1={CHART.padL} x2={CHART.w - CHART.padR} y1={chartY(r)} y2={chartY(r)} />
-        ))}
+      {hole && (
+        <defs>
+          <mask id="rc-knockout-static" maskUnits="userSpaceOnUse" x="0" y="0" width={CHART.w} height={CHART.h}>
+            <rect width={CHART.w} height={CHART.h} fill="#fff" />
+            <rect x={hole.x} y={hole.y} width={hole.w} height={hole.h} rx={6} fill="#000" />
+          </mask>
+        </defs>
+      )}
+      <g mask={hole ? "url(#rc-knockout-static)" : undefined}>
+        <g className="rc-guides">
+          {rankGuides().map((r) => (
+            <line key={r} x1={CHART.axisX} x2={right} y1={chartY(r)} y2={chartY(r)} />
+          ))}
+        </g>
+        {qy != null && <line className="rc-quota" x1={CHART.axisX} x2={right} y1={qy} y2={qy} />}
       </g>
-      {qy != null && <line className="rc-quota" x1={CHART.padL} x2={CHART.w - CHART.padR} y1={qy} y2={qy} />}
+      <g className="rc-axes">
+        <line className="rc-axis" x1={CHART.axisX} x2={CHART.axisX} y1={CHART.padT - 12} y2={CHART.baseY} />
+        <line className="rc-axis" x1={CHART.axisX} x2={right} y1={CHART.baseY} y2={CHART.baseY} />
+        {rankGuides().map((r) => (
+          <text key={r} className="rc-tick" x={CHART.axisX - 12} y={chartY(r)} textAnchor="end" dominantBaseline="middle">
+            {r}
+          </text>
+        ))}
+        <text className="rc-title-svg" x={CHART.axisX} y={CHART.padT - 30}>
+          {copy.axis}
+        </text>
+        {labels && first && last && SERIES.length > 1 && (
+          <>
+            {[first.x, last.x].map((x) => (
+              <line key={x} className="rc-axis" x1={x} x2={x} y1={CHART.baseY} y2={CHART.baseY + 6} />
+            ))}
+            <text className="rc-tick" x={first.x} y={CHART.baseY + 30} textAnchor="middle">
+              {year(SERIES[0].date)}
+            </text>
+            <text className="rc-tick" x={last.x} y={CHART.baseY + 30} textAnchor="middle">
+              {year(SERIES[SERIES.length - 1].date)}
+            </text>
+          </>
+        )}
+      </g>
       <path className="rc-line" d={chartPath(pts.length - 1, pts)} />
       {labels && first && last && (
         <>

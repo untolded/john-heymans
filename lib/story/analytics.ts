@@ -1,5 +1,7 @@
 "use client";
 
+import { statisticsAllowed } from "@/lib/consent";
+
 /**
  * Analytics events, whichever provider is chosen (Plausible and Vercel
  * Analytics are both cookie-free). Until one is installed this only logs in
@@ -14,8 +16,7 @@ export type StoryEvent =
   | "cta_clicked"
   | "enquiry_step"
   | "enquiry_sent"
-  | "clip_opened"
-  | "bio_reel_sound";
+  | "clip_opened";
 
 type Props = Record<string, string | number | boolean>;
 
@@ -28,7 +29,9 @@ declare global {
 
 export function track(event: StoryEvent, props: Props = {}) {
   if (typeof window === "undefined") return;
+  if (process.env.NODE_ENV === "development") console.debug("[track]", event, props);
+  // Nothing leaves the browser unless the visitor allowed statistics in the cookie banner.
+  if (!statisticsAllowed()) return;
   window.plausible?.(event, { props });
   window.va?.("event", { name: event, data: props });
-  if (process.env.NODE_ENV === "development") console.debug("[track]", event, props);
 }

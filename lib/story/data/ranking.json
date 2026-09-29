@@ -34,27 +34,11 @@
     ],
     "status": "confirmed",
     "approximate": true,
-    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 3. Milestones only, several of them ranges: Sept 2022 unranked or outside the top 200, March 2023 about 80 to 100, July 2023 37th with about 1,205 points, December 2023 about 35 to 40, June 2024 top 30. The rank values give the line its shape; visitors only ever see the labels. Round 10 (Maarten, 28 Sept 2026): the climb ends at 31st, 'from outside the top 200 to 31', which is how John tells his Olympic qualification in the keynote; it replaces the doc's 'top 30'."
+    "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026), section 3. Milestones only, several of them ranges: Sept 2022 unranked or outside the top 200, March 2023 about 80 to 100, July 2023 37th with about 1,205 points, December 2023 about 35 to 40, June 2024 top 30. The rank values give the line its shape; visitors only ever see the labels. Round 10 (Maarten, 28 Sept 2026): the climb ends at 31st, 'from outside the top 200 to 31', which is how John tells his Olympic qualification in the keynote; it replaces the doc's 'top 30'. Round 12 (Maarten, 29 Sept 2026): the chart draws one steady climb from the first milestone to the last, without the 2023 plateau; the milestones between them no longer shape the line."
   },
   "quota": {
     "value": 42,
     "status": "confirmed",
     "source": "docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026): World Athletics allowed 42 runners in the Olympic 5000m."
-  },
-  "window": {
-    "value": {
-      "start": "2023-07-01",
-      "end": "2024-06-30"
-    },
-    "status": "confirmed",
-    "source": "The twelve months shown in the season grid: the last season before Paris. A layout choice, not a claim."
-  },
-  "hold": {
-    "value": {
-      "start": "2023-07-01",
-      "end": "2024-01-26"
-    },
-    "status": "confirmed",
-    "source": "From entering the top 42 (July 2023) to the qualifying run in Boston, docs/john_heymans_olympic_journey_ai_strategy.md (supplied by Maarten, 21 Sept 2026) Round 10: the setbacks chapter that zoomed in on this stretch was removed; the hold only shapes the curve now."
   }
 }

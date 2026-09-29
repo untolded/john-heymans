@@ -9,7 +9,7 @@
  * compared in story time.
  */
 
-export const BEAT_IDS = ["prologue", "opener", "iten", "edge", "algorithm", "doubt", "final", "handover"] as const;
+export const BEAT_IDS = ["prologue", "iten", "edge", "algorithm", "climb", "final", "handover"] as const;
 export type BeatId = (typeof BEAT_IDS)[number];
 
 export const GROUNDS = ["night", "altitude", "signal", "stadium", "paper"] as const;
@@ -22,22 +22,20 @@ export type BeatConfig = {
   ground: Ground;
   /** Named in the frame's chapter indicator. */
   chapter: boolean;
-  /** The lesson card this chapter ends on. */
-  lesson?: 1 | 2 | 3 | 4 | 5;
 };
 
 export const BEATS: readonly BeatConfig[] = [
-  // John's prologue: three lines over the red road, letterboxed.
-  { id: "prologue", length: { desktop: 190, touch: 160 }, ground: "night", chapter: false },
-  { id: "opener", length: { desktop: 120, touch: 100 }, ground: "night", chapter: true },
-  // The flight, the red road from above, the pack, then John and lesson 1.
-  { id: "iten", length: { desktop: 270, touch: 225 }, ground: "altitude", chapter: true, lesson: 1 },
+  // John's prologue: two lines over the red road, letterboxed.
+  { id: "prologue", length: { desktop: 150, touch: 125 }, ground: "night", chapter: false },
+  // The flight, then the globe dives straight into the pack on the red road.
+  { id: "iten", length: { desktop: 200, touch: 165 }, ground: "altitude", chapter: true },
   // Two lines and the underline dropping into the dock.
   { id: "edge", length: { desktop: 126, touch: 105 }, ground: "night", chapter: true },
-  // The app opens, the prompt, thinking, agents, the code, the recommendation.
-  { id: "algorithm", length: { desktop: 275, touch: 230 }, ground: "signal", chapter: true },
-  { id: "doubt", length: { desktop: 262, touch: 220 }, ground: "signal", chapter: true, lesson: 2 },
-  { id: "final", length: { desktop: 240, touch: 200 }, ground: "stadium", chapter: true, lesson: 5 },
+  // The app opens, the prompt, thinking, the code, the recommendation.
+  { id: "algorithm", length: { desktop: 172, touch: 146 }, ground: "signal", chapter: true },
+  // The world ranking, from outside the top 200 to 31st, drawn as the reader scrolls.
+  { id: "climb", length: { desktop: 160, touch: 135 }, ground: "signal", chapter: true },
+  { id: "final", length: { desktop: 240, touch: 200 }, ground: "stadium", chapter: true },
   // The story ends on the dark. The practical part then rises over it as a sheet of paper.
   { id: "handover", length: { desktop: 100, touch: 80 }, ground: "night", chapter: false },
 ];
@@ -81,7 +79,7 @@ export const GROUND_START: Ground = "night";
 export const GROUND_SWITCHES: readonly GroundSwitch[] = [
   { from: "night", to: "altitude", at: ["iten", 0], length: 0.35 },
   { from: "altitude", to: "night", at: ["edge", 0.08], length: 0.5 },
-  { from: "night", to: "signal", at: ["algorithm", 0], length: 0.2 },
+  { from: "night", to: "signal", at: ["algorithm", 0], length: 0.3 },
   { from: "signal", to: "stadium", at: ["final", 0], length: 0.16 },
   { from: "stadium", to: "night", at: ["handover", 0], length: 0.3 },
 ];

@@ -12,20 +12,8 @@ export const creditFor = (slug: PhotoSlug) => photo(slug).credit || (SHOW_PENDIN
 /** The six stills the stand-in hero film was cut from (public/media/hero.mp4). */
 export const STAND_IN_STILLS: PhotoSlug[] = ["stage-point", "heats-pack", "watch", "final-arms", "stage-wide", "audience"];
 
-/** Every photograph the story page itself shows. */
-export const PAGE_PHOTOS: PhotoSlug[] = [
-  "iten",
-  "track-lying",
-  "outdoor-portrait",
-  "track-laugh",
-  "heats-pack",
-  "final-pan",
-  "final-arms",
-  "kit-portrait",
-  "shoes",
-  "lavender-race",
-  "stage-wide",
-];
+/** Every photograph the page itself shows, in order of appearance: the final, the lessons, the bio. */
+export const PAGE_PHOTOS: PhotoSlug[] = ["heats-pack", "final-pan", "final-arms", "iten", "kit-portrait", "shoes", "lavender-race", "stage-lookup"];
 
 /**
  * Named in the footer's photography line without a photo of theirs in the

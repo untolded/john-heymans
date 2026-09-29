@@ -91,7 +91,7 @@ function useInkOverPaper() {
         },
         { rootMargin: `-${mid}px 0px -${Math.max(0, window.innerHeight - mid - 1)}px 0px` },
       );
-      document.querySelectorAll('.practical, .bio, .footer, .sb[data-ground="paper"]').forEach((n) => io!.observe(n));
+      document.querySelectorAll('.practical, .footer, .sb[data-ground="paper"]').forEach((n) => io!.observe(n));
     };
 
     watch();

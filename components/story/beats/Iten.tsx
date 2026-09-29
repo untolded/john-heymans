@@ -8,10 +8,9 @@ import { gsap } from "@/lib/story/gsap";
 import { v } from "@/lib/story/beats";
 import { useLoadGate } from "@/lib/story/media";
 import { Globe } from "../set-pieces/Globe";
-import { PhotoLayer, reportCredits } from "../media/PhotoLayer";
 import { VideoLayer, playWhile } from "../media/VideoLayer";
 import { useBeat } from "./useBeat";
-import { useStageSize, boxOf, entryEl } from "./stage";
+import { useStageSize } from "./stage";
 
 type LonLat = [number, number];
 
@@ -35,13 +34,11 @@ const DIVE = [at(104), at(126)] as const;
 const inOut = gsap.parseEase("power2.inOut");
 
 /**
- * Iten, in four movements. The start line sweeps in from the left and the
- * globe appears behind the chapter's title. Then the flight: Brussels marked
- * with a dot, a great circle drawn across the globe as it turns from Belgium
- * to Kenya, Iten marked where it lands. The globe dives
- * into western Kenya and lands, still diving, on a red road seen straight
- * from above. Then the pack running at the camera, for the second line, and
- * John on the road in Iten for lesson 1.
+ * Iten, in three movements. The globe appears behind the chapter's title.
+ * Then the flight: Brussels marked with a dot, a great circle drawn across
+ * the globe as it turns from Belgium to Kenya, Iten marked where it lands.
+ * The globe dives into western Kenya and lands, still diving, in the pack
+ * running at the camera on the red road, for the second line.
  */
 export function Iten() {
   const size = useStageSize();
@@ -62,12 +59,10 @@ export function Iten() {
 
   const scope = useBeat(
     "iten",
-    ({ tl, q, root }) => {
+    ({ tl, q }) => {
       if (!size.w) return;
       const canvas = q("canvas.globe")[0] as unknown as HTMLCanvasElement;
-      const photo = q(".ph-iten")[0];
-      const photoOut = q(".iten-photo-out")[0];
-      const road = q(".vd-road")[0];
+      const mediaOut = q(".iten-media-out")[0];
       const pack = q(".vd-pack")[0];
       const globe = points ? new Globe(canvas, points, { touch: size.touch }) : null;
       globe?.resize(size.w, size.h);
@@ -76,35 +71,18 @@ export function Iten() {
       const plane = q(".plane")[0];
       const fromLabel = q(".lbl-from")[0];
       const toLabel = q(".lbl-to")[0];
-      const sweep = q(".sweep path")[0];
 
       const R = size.touch ? Math.min(size.w * 0.46, size.h * 0.3) : Math.min(size.w, size.h) * 0.42;
       const cx = size.w / 2;
       const cy = size.touch ? size.h * 0.42 : size.h * 0.53;
 
-      // The start line picks up where the opener left it, under DONE at the left edge.
-      const done = boxOf(entryEl("opener.title", ".tl:last-child"));
-      const y0 = done ? done.y + done.h + Math.max(8, size.h * 0.014) : size.h * 0.7;
-      sweep.setAttribute("d", `M0 ${y0} C${cx * 0.45} ${y0} ${cx * 0.75} ${cy} ${cx} ${cy}`);
-
       tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: at(8) }, 0);
-      tl.fromTo(sweep, { drawSVG: "0%" }, { drawSVG: "100%", duration: at(8), ease: "power1.inOut" }, 0);
-      tl.to(sweep, { opacity: 0, duration: at(4) }, at(9));
-      // The dive does not stop at the globe: the road below takes over, still falling towards it.
+      // The dive does not stop at the globe: the pack on the red road takes over, still falling towards it.
       tl.to(canvas, { opacity: 0, duration: at(10) }, at(122));
-      tl.fromTo(road, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, at(114));
-      tl.fromTo(q(".vd-road .pl-inner"), { scale: 1.45 }, { scale: 1, duration: at(40), ease: "power2.out" }, at(114));
-      // The pack, coming at the camera.
-      tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(8) }, at(152));
-      tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.06 }, { scale: 1, duration: at(80) }, at(152));
-      tl.to(road, { opacity: 0, duration: at(2) }, at(160));
+      tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, at(114));
+      tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.4 }, { scale: 1, duration: at(50), ease: "power2.out" }, at(114));
       // Darkens the dust at the top while the line sits there.
-      tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(154));
-      tl.to(q(".vd-scrim"), { opacity: 0, duration: at(8) }, at(222));
-      // Me on the road in Iten, for the lesson.
-      tl.fromTo(photo, { opacity: 0 }, { opacity: 1, duration: at(8), ease: "power1.out" }, at(226));
-      tl.fromTo(q(".ph-iten .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(44), ease: "none" }, at(226));
-      tl.to(pack, { opacity: 0, duration: at(2) }, at(234));
+      tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(124));
 
       return (b) => {
         const p = b.progress;
@@ -137,15 +115,12 @@ export function Iten() {
           [fromLabel, toLabel].forEach((el) => el && (el.dataset.on = "false"));
         }
 
-        // Leaving: the last frame holds under the violet dim, then fades; the photo goes with the lesson card.
+        // Leaving: the pack fades as the edge's first line arrives.
         const h = b.hide;
         set.style.opacity = String(h < 0.6 ? 1 - 0.7 * (h / 0.6) : 0.3 * (1 - (h - 0.6) / 0.4));
         const out = h < 0.2 ? 1 - h / 0.2 : 0;
-        photoOut.style.opacity = String(out);
-        reportCredits(root, b.active && out > 0.3);
-        const on = b.active ? 1 : 0;
-        playWhile(road, on * Number(gsap.getProperty(road, "opacity")), "road@iten");
-        playWhile(pack, on * Number(gsap.getProperty(pack, "opacity")), "pack@iten");
+        mediaOut.style.opacity = String(out);
+        playWhile(pack, (b.active ? 1 : 0) * out * Number(gsap.getProperty(pack, "opacity")), "pack@iten");
       };
     },
     [size.w, size.h, size.touch, points],
@@ -153,19 +128,14 @@ export function Iten() {
 
   return (
     <div className="beat" ref={scope} data-beat="iten">
-      <div className="L iten-photo-out">
-        <VideoLayer name="road" beat="iten" className="vd-road" />
+      <div className="L iten-media-out">
         <VideoLayer name="pack" beat="iten" className="vd-pack" />
         <div className="L L-media vd-scrim" />
-        <PhotoLayer slug="iten" beat="iten" focus="50% 30%" className="ph-iten" />
       </div>
       <div className="L L-set iten-set">
         <div className="L globe-wrap">
           <canvas className="globe" />
         </div>
-        <svg className="L sweep" aria-hidden="true">
-          <path />
-        </svg>
         <span className="plane" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 18 18">
             <path d="M17 9 7.5 3.2v4L2 6.5 1 3.8H0l.6 5.2L0 14.2h1l1-2.7 5.5-.7v4L17 9Z" fill="currentColor" />

@@ -2,6 +2,8 @@ import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
 import { pagePhotographers } from "@/lib/story/photos";
 import { Social } from "@/components/shared/Social";
+import { LEGAL } from "@/lib/seo";
+import { CookieSettings } from "@/components/site/CookieBanner";
 import { EnquireButton } from "./practical/Actions";
 import { ScrollPace } from "./ScrollPace";
 
@@ -10,19 +12,20 @@ const e = content.story.enquiry;
 
 /**
  * A footer that looks like one: the name across the full width, the email
- * large, the enquiry pill, socials with handles, every photographer. It
- * opens on the scroll pace board, for whoever made it all the way down.
+ * large, the enquiry pill, socials with handles, every photographer, and the
+ * legal links. On the story page it opens on the scroll pace board, for
+ * whoever made it all the way down; the other pages leave the board out.
  */
-export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
+export function Footer({ filmIsStandIn, pace = true }: { filmIsStandIn: boolean; pace?: boolean }) {
   const photographers = pagePhotographers(filmIsStandIn);
   return (
     <footer className="footer" data-ground="paper">
-      <ScrollPace />
-      <p className="footer-mark" aria-hidden="true">
+      {pace && <ScrollPace />}
+      <p className="footer-mark" aria-hidden="true" data-reveal="rise">
         {f.wordmark}
       </p>
       <div className="footer-grid">
-        <div className="footer-contact">
+        <div className="footer-contact" data-reveal="fade">
           <p className="footer-label">{f.contact}</p>
           <a className="footer-mail" href={`mailto:${e.email}`}>
             {e.email}
@@ -36,7 +39,15 @@ export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
       <div className="footer-base">
         <p>{fill(f.credits, { names: photographers.join(", ") })}</p>
         <p>{fill(f.copyright, { year: new Date().getFullYear() })}</p>
-        <a href="#top">{f.top}</a>
+        <nav className="footer-legal" aria-label={f.legal.label}>
+          {LEGAL.map(({ path, key }) => (
+            <a key={path} href={path}>
+              {f.legal[key]}
+            </a>
+          ))}
+          <CookieSettings label={f.legal.settings} />
+        </nav>
+        {pace && <a href="#top">{f.top}</a>}
       </div>
     </footer>
   );

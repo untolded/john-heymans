@@ -45,8 +45,8 @@ function place(W: number, H: number, s: number, [fx, fy]: [number, number]): Fra
  * frame starts tight on the writing and widens to his face while the amber
  * line writes "HEY MOM" and "MADE IT" over the real ink. The photo dims, the
  * two phrases lift off his arms, straighten and take the centre, then settle
- * above "Dare to dream big.", lesson 5, and the start line from the opener
- * draws under it, closing the loop.
+ * above "Dare to dream big.", lesson 5, and an amber line draws under it
+ * like a finish line.
  */
 export function Final() {
   const size = useStageSize();
@@ -134,7 +134,7 @@ export function Final() {
         tl.to(state, { ...settled.get(w.id)!, duration: at(22), ease: "power2.inOut", onUpdate: draw }, at(174));
       });
 
-      // The start line from the opener, under the close.
+      // The finish line, under the close.
       const last = boxOf(entryEl("final.close", ".tl:last-child") ?? entryEl("final.close"));
       if (last) {
         const lineY = last.y + last.h + Math.max(8, H * 0.012);
@@ -179,7 +179,7 @@ export function Final() {
         <PhotoLayer slug="heats-pack" beat="final" focus="70% 38%" focusMobile="76% 38%" className="ph-heats" />
         <PhotoLayer slug="final-pan" beat="final" focus="50% 55%" focusMobile="46% 55%" className="ph-pan" />
         <div className="arms-frame" style={{ width: IW, height: IH }}>
-          {gate.load && <Image src={ARMS.src} alt="" fill sizes="2400px" fetchPriority={gate.priority} />}
+          {gate.load && <Image src={ARMS.src} alt="" fill sizes="2400px" quality={85} fetchPriority={gate.priority} />}
         </div>
       </div>
       {/* The wrapper fades the dim out with the stadium; the timeline owns the dim's own opacity. */}
