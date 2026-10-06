@@ -31,14 +31,18 @@ export function Dialog({ title, onClose, closeLabel, size = "form", brand, child
   useEffect(() => {
     const d = ref.current!;
     opener.current = document.activeElement;
-    d.showModal();
+    // Where the page was, to put it back exactly on close. Focus moves without scrolling,
+    // so neither opening nor closing can move the page behind.
+    const y = scroller.y();
+    if (!d.open) d.showModal();
     scroller.lock(true);
     const first = Array.from(d.querySelectorAll<HTMLElement>(FOCUSABLE)).find((n) => !n.classList.contains("dlg-close"));
-    first?.focus();
+    first?.focus({ preventScroll: true });
     return () => {
       scroller.lock(false);
       if (d.open) d.close();
-      (opener.current as HTMLElement | null)?.focus?.();
+      if (Math.abs(scroller.y() - y) > 0.5) scroller.to(y, { immediate: true });
+      (opener.current as HTMLElement | null)?.focus?.({ preventScroll: true });
     };
   }, []);
 

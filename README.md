@@ -300,10 +300,10 @@ gradient made from the brand colours, amber into lavender through the rose where
 crosses it every seven seconds; reduced motion keeps it still. The thin amber lines are unchanged:
 they are the story's line, not surfaces.
 
-**Icons.** `scripts/make-icons.mjs` draws "JH" in the wordmark's face on a night tile over a short
-finish line in the gradient, and writes the SVG favicon (with a light edge in dark browser themes),
-`favicon.ico`, the iOS web clip and the manifest icons. The brand guide says there is no monogram:
-these initials are for the browser tab and the home screen only.
+**Icons.** Since round 13 the icons are John himself, from the licensed `final-arms` photo:
+`node scripts/make-icons.mjs` writes a face crop for the tab sizes (`app/icon.png`, `favicon.ico`
+at 16, 32 and 48), and face plus the "MADE IT" arm for the iOS web clip and the manifest icons.
+The writing on the arm cannot be read at 32 px, so the small sizes leave it out.
 
 **Search and AI assistants.** One module, `lib/seo.ts`, builds the structured data (WebSite,
 ProfilePage, Person with sameAs, the keynote as a Service), `/llms.txt` (generated from the page's
@@ -329,3 +329,69 @@ again. `track()` sends nothing unless statistics are allowed. The legal and 404 
 
 Measured on the production build: JS 248.5 KB transferred (budget 250), scroll CLS 0.006, axe 0
 violations on the story, the three legal pages and the 404, with the cookie banner open.
+
+## Round 13: John's review and the film playbook
+
+John's review (6 October 2026) and Parter Studios' film playbook, done in six parallel workstreams.
+
+- **Story.** The prologue opens "My story began two years before the Paris Olympics" and its lines
+  appear whole (a `fade` reveal). The ChatGPT scene has a title, "I built an AI algorithm with
+  ChatGPT", loses the recommendation line, and wraps its code on phones. The chart labels "My
+  position" on the dot and "Position:" over 200+ and 31; the quota label sits on a dark backing
+  and shows on phones. "At the Olympics nobody believed / I'd make the final" is two lines on desktop.
+- **Scroll stops.** `lib/story/stops.ts` lists 15 moments; `lib/story/stopper.ts` eases a fast flick
+  or trackpad fling into the next one and holds it until the next gesture (Lenis `virtualScroll` on
+  desktop, a post-fling settle on touch, Space and Page Down step). Slow scrolling never notices
+  them. Stops written in vh follow the set pieces; retune them there when a timeline changes.
+- **Story media.** Story clips preload nothing and load 1.5 screens ahead, after the page has loaded.
+  Only the cut that fits the screen is rendered (no more double request on phones), clips start
+  from their first frame when they appear, and rewind out of sight.
+- **Hero.** The loop is the film's own first 10.4 s with its commentary captions, cut on "Hey mom,
+  I made it" (`scripts/encode-hero.sh`). It is chosen by aspect ratio (square cut on upright
+  screens, a band below 3:2, full bleed above), autoplays from the markup once the page has loaded
+  (so the poster stays the LCP) and retries on the first gesture. A centre play button with a slow
+  pulse says "Watch the film, 53 seconds" and "See me on stage at Supernova".
+- **Film.** Self-hosted HLS (`scripts/encode-film-hls.sh`, 360p to 1080p, 2 s segments) plays
+  natively where possible and through a lazily loaded hls.js light elsewhere; the progressive files
+  stay as the fallback. Phones go full screen on open; scroll is locked and restored exactly.
+  `film.en.vtt` is transcribed from the burned-in text and loads hidden (it would double the burned
+  English), feeding a transcript; a Dutch or French track would show by default. Closing mid-film
+  leaves a mini player bottom left. Two more ways in: a card after the story and one beside the enquiry.
+- **Practical part.** "More than an AI story" with one plain lead. The audience ruler is replaced by
+  two stages, each a silent loop. Testimonials highlight their key phrases (`*...*` in the copy)
+  and their logos sit in one fixed box. The header wears a frosted band wherever content scrolls
+  under it, the enquiry stays in its own section, a big amber "Check my availability" closes the
+  bio and the footer, a back-to-top button appears in the practical part, and the clip dialog fits
+  its 9:16 video. The 1 km pace board is gone.
+
+Measured on the production build (6 October 2026): first-load video 2.7 MB desktop, 1.6 MB phone
+(was about 7 and 5 MB); Lighthouse mobile LCP 5.2 s simulated (was 7.1 s), 2.9 s with devtools
+throttling, CLS 0, accessibility 100; JS 256 KB transferred including the film player's code,
+which is prefetched after load. Still open: an iPhone check of the
+full-screen film and the touch scroll stops, and `jh-film-start` in the privacy page once
+analytics goes live.
+
+Round 13b (6 October 2026): the small room is real footage now, a leadership lunch from March 2025
+(`media/Videos/Small keynote videos`, five takes cut by `scripts/encode-video.sh stage <folder>` with
+`STAGE_CRF="38 30 27"`, VMAF 90 to 93; 2.4 MB AV1). The film's card after the story moved into "The
+keynote" section: a small silent preview beside the heading (the hero's own loop, already cached)
+and one "Watch the film, 53 seconds" button. Testimonial highlights are bold only, no marker.
+
+### The film's two numbers
+
+Four events measure the film (`lib/story/analytics.ts`, all with `from`: `hero`, `story`,
+`enquiry` or `mini`): `film_impression` when a play button is properly on screen, `film_start`
+when the film really plays, `film_progress` at 50 and 100 percent, and `film_to_enquiry` when the
+enquiry is opened (`stage: opened`) or sent (`stage: sent`) after a film start in the same tab.
+
+- **Start rate** = `film_start` / `film_impression`, per `from`. It says whether the button and its
+  label make people want to watch. Low on the hero: work on the button, the label, the poster.
+- **Completion** = `film_progress` with `pct: 100` / `film_start`. It says whether the film holds
+  people. `pct: 50` against 100 shows where they leave. Low completion is the film's problem
+  (its opening seconds), not the page's.
+- Then `film_to_enquiry` / `film_start` is what the film is for: the share of viewers who go on
+  to the enquiry. Compare it with the enquiry rate of visitors who never started the film.
+
+Read them over weeks, not days: at a few hundred visits a month, single-day rates are noise.
+Nothing is sent until the visitor allows statistics; sessionStorage keeps only where the film
+was started (`jh-film-start`), so the enquiry can be credited to it.

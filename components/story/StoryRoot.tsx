@@ -2,22 +2,25 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
-import Lenis from "lenis";
+import Lenis, { type VirtualScrollData } from "lenis";
 import { content } from "@/lib/content";
 import { detectMode, isCinema, watchMode, type Mode } from "@/lib/story/modes";
 import { story } from "@/lib/story/store";
 import { scroller } from "@/lib/story/scroll";
+import { wheelStops } from "@/lib/story/stopper";
 import { gsap, ScrollTrigger } from "@/lib/story/gsap";
-import { track } from "@/lib/story/analytics";
+import { track, type FilmSource } from "@/lib/story/analytics";
 import type { FilmAssets } from "@/lib/story/assets";
 import { Frame } from "./Frame";
+import { warmHls } from "./media/useFilmEntry";
+import type { FilmMode } from "./media/FilmModal";
 import { CookieBanner } from "@/components/site/CookieBanner";
 
 const EnquiryDialog = dynamic(() => import("./EnquiryDialog"), { ssr: false });
 const FilmDialog = dynamic(() => import("./media/FilmModal"), { ssr: false });
 const Ground = dynamic(() => import("./Ground"), { ssr: false });
 
-type Dialog = null | "enquiry" | "film";
+type Dialog = null | "enquiry";
 
 type StoryPage = {
   mode: Mode | null;
@@ -26,7 +29,8 @@ type StoryPage = {
   ready: boolean;
   setReady: (ready: boolean) => void;
   openEnquiry: (from: string) => void;
-  openFilm: () => void;
+  /** Opens the large film player, or brings the corner player back to it. */
+  openFilm: (from?: FilmSource) => void;
 };
 
 const Ctx = createContext<StoryPage | null>(null);
@@ -64,7 +68,10 @@ export function StoryRoot({ children, className, typeKit, film }: { children: Re
 
   useEffect(() => {
     if (mode !== "cinema-desktop") return;
-    const lenis = new Lenis({ lerp: 0.1, autoRaf: false, anchors: false });
+    // The wheel passes the story's stops first (lib/story/stopper.ts).
+    let stops: ((data: VirtualScrollData) => boolean) | null = null;
+    const lenis = new Lenis({ lerp: 0.1, autoRaf: false, anchors: false, virtualScroll: (data) => stops?.(data) ?? true });
+    stops = wheelStops(lenis);
     scroller.set(lenis);
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.lagSmoothing(0);
@@ -83,10 +90,18 @@ export function StoryRoot({ children, className, typeKit, film }: { children: Re
     track("cta_clicked", { location: from });
     setDialog("enquiry");
   }, []);
-  const openFilm = useCallback(() => {
-    track("film_opened");
-    setDialog("film");
+  // The film player: large (modal) or, after closing it mid-film, small in the corner.
+  const [filmState, setFilmState] = useState<{ mode: FilmMode; from: FilmSource } | null>(null);
+  const openFilm = useCallback((from?: FilmSource) => {
+    // Some buttons pass their click event straight through: those are the hero's.
+    const source: FilmSource = typeof from === "string" ? from : "hero";
+    warmHls();
+    track("film_opened", { from: source });
+    setFilmState((f) => (f ? { ...f, mode: "modal" } : { mode: "modal", from: source }));
   }, []);
+  const filmMini = useCallback(() => setFilmState((f) => f && { ...f, mode: "mini" }), []);
+  const filmExpand = useCallback(() => openFilm("mini"), [openFilm]);
+  const filmClose = useCallback(() => setFilmState(null), []);
   const close = useCallback(() => setDialog(null), []);
 
   const value = useMemo(() => ({ mode, cinema, ready, setReady, openEnquiry, openFilm }), [mode, cinema, ready, openEnquiry, openFilm]);
@@ -101,7 +116,9 @@ export function StoryRoot({ children, className, typeKit, film }: { children: Re
         {cinema && <Ground />}
         {children}
         {dialog === "enquiry" && <EnquiryDialog onClose={close} />}
-        {dialog === "film" && <FilmDialog onClose={close} film={film} />}
+        {filmState && (
+          <FilmDialog film={film} mode={filmState.mode} from={filmState.from} onMini={filmMini} onExpand={filmExpand} onClose={filmClose} />
+        )}
         <CookieBanner />
       </div>
     </Ctx.Provider>

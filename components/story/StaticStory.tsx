@@ -88,6 +88,7 @@ export function StaticStory() {
         <h2 id="sb-algorithm" className="sr-only">
           {c.chapters.algorithm}
         </h2>
+        <p className="sb-title">{c.algorithm.title}</p>
         <div className="transcript">
           <p className="tr-app" aria-hidden="true">
             {c.algorithm.app}

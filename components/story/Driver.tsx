@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { BEATS, BEAT_INDEX, RELEASE_AT } from "@/lib/story/beats";
 import { driver } from "@/lib/story/driver";
 import { scroller } from "@/lib/story/scroll";
+import { attachStops, stopsY } from "@/lib/story/stopper";
 import { story } from "@/lib/story/store";
 import { audio } from "@/lib/story/audio";
 import { track } from "@/lib/story/analytics";
@@ -54,16 +55,19 @@ export function Driver({ touch, ready }: { touch: boolean; ready: boolean }) {
     });
 
     const offFrame = scroller.onFrame(() => driver.update(scroller.y(), ground, root));
+    const offStops = attachStops({ touch });
 
     if (process.env.NODE_ENV === "development") {
       (window as unknown as { __story: unknown }).__story = {
         seek: (beat: keyof typeof BEAT_INDEX, progress = 0) => scroller.to(driver.yAt(BEAT_INDEX[beat] + progress), { immediate: true }),
         state: () => story.get(),
+        stops: stopsY,
       };
     }
 
     return () => {
       offFrame();
+      offStops();
       offTime();
       ro.disconnect();
       window.removeEventListener("load", measure);

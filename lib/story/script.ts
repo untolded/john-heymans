@@ -13,7 +13,7 @@ export type StoryContent = typeof content.story;
 
 /** Every card shares one slot, in the middle of the stage. */
 export type Slot = "centre";
-export type Reveal = "words" | "rise" | "ink" | "type" | "flash" | "scribble";
+export type Reveal = "fade" | "words" | "rise" | "ink" | "type" | "flash" | "scribble";
 export type Exit = "rise" | "blur" | "cut";
 /** Visual weight of the entry. */
 export type Kind = "prologue" | "close" | "title" | "record";
@@ -38,6 +38,8 @@ export type CopyEntry = {
   low?: boolean;
   /** The bars in the copy are for wide screens only; on a phone the card wraps on its own. */
   flow?: boolean;
+  /** On wide screens the written lines set the measure, so each bar-separated line stays one line. */
+  wide?: boolean;
 };
 
 /** A moment written as viewport heights of scroll into a beat. */
@@ -51,7 +53,8 @@ const prologueLine = (i: 0 | 1, from: number, to: number): CopyEntry => ({
   text: (c) => c.prologue.lines[i],
   from: m("prologue", from),
   to: m("prologue", to),
-  reveal: "words",
+  // Each line is there whole, at once: a short fade, no typing.
+  reveal: "fade",
   exit: "blur",
   flow: true,
 });
@@ -76,7 +79,7 @@ export const SCRIPT: readonly CopyEntry[] = [
   { id: "climb.record", beat: "climb", slot: "centre", kind: "record", text: (c) => c.climb.record, from: m("climb", 14), to: m("climb", 154), reveal: "ink", exit: "blur", flow: true },
 
   // Title cards in the lower third, so the story keeps talking over the heats.
-  { id: "final.a", beat: "final", slot: "centre", kind: "title", text: (c) => c.final.a, from: m("final", 16), to: m("final", 52), reveal: "rise", exit: "blur", low: true },
+  { id: "final.a", beat: "final", slot: "centre", kind: "title", text: (c) => c.final.a, from: m("final", 16), to: m("final", 52), reveal: "rise", exit: "blur", low: true, wide: true },
   { id: "final.b", beat: "final", slot: "centre", kind: "title", text: (c) => c.final.b, from: m("final", 56), to: m("final", 88), reveal: "rise", exit: "blur", low: true },
   { id: "final.close", beat: "final", slot: "centre", kind: "close", text: (c) => c.final.close, from: m("final", 198), to: m("handover", 10), reveal: "words", exit: "blur", lesson: 5 },
 

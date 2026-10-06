@@ -26,6 +26,16 @@ const CLIPS = [
 function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: number; copy: boolean; playing: boolean; onOpen: () => void }) {
   const card = useRef<HTMLButtonElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  // The poster too waits until the wall is about two screens away: seven stills are half a megabyte.
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const el = card.current;
+    if (!el || near) return;
+    const io = new IntersectionObserver(([entry]) => entry.isIntersecting && setNear(true), { rootMargin: "200% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
 
   // Only the clips on screen play, so a wall of video stays cheap.
   useEffect(() => {
@@ -51,7 +61,7 @@ function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: num
       aria-hidden={copy || undefined}
       tabIndex={copy ? -1 : undefined}
     >
-      <video ref={video} poster={`/videos/testimonial-${id}.jpg`} muted loop playsInline preload="none">
+      <video ref={video} poster={near ? `/videos/testimonial-${id}.jpg` : undefined} muted loop playsInline preload="none">
         {/* The wall plays a light, silent preview; the dialog loads the full clip with sound. */}
         {sourcesFor(`/videos/testimonial-${id}-preview`, false).map((s) => (
           <source key={s.src} src={s.src} type={s.type} />
@@ -146,7 +156,7 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
 
       {current && (
         <Dialog title={p.roomDialog} onClose={() => setOpen(null)} closeLabel={content.story.film.close} size="wide">
-          <div className="film-frame film-frame-tall">
+          <div className="clip-frame">
             <video poster={`/videos/testimonial-${current.id}.jpg`} controls autoPlay playsInline>
               {sourcesFor(`/videos/testimonial-${current.id}`, true).map((s) => (
                 <source key={s.src} src={s.src} type={s.type} />

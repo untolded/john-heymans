@@ -5,34 +5,32 @@ import { Social } from "@/components/shared/Social";
 import { LEGAL } from "@/lib/seo";
 import { CookieSettings } from "@/components/site/CookieBanner";
 import { EnquireButton } from "./practical/Actions";
-import { ScrollPace } from "./ScrollPace";
 
 const f = content.story.footer;
 const e = content.story.enquiry;
 
 /**
- * A footer that looks like one: the name across the full width, the email
- * large, the enquiry pill, socials with handles, every photographer, and the
- * legal links. On the story page it opens on the scroll pace board, for
- * whoever made it all the way down; the other pages leave the board out.
+ * A footer that looks like one: the name across the full width, the one
+ * action that matters as the biggest button on the page, the email large,
+ * socials with handles, every photographer, and the legal links. The way
+ * back up is the round button in the corner (BackToTop).
  */
-export function Footer({ filmIsStandIn, pace = true }: { filmIsStandIn: boolean; pace?: boolean }) {
+export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
   const photographers = pagePhotographers(filmIsStandIn);
   return (
     <footer className="footer" data-ground="paper">
-      {pace && <ScrollPace />}
       <p className="footer-mark" aria-hidden="true" data-reveal="rise">
         {f.wordmark}
       </p>
       <div className="footer-grid">
         <div className="footer-contact" data-reveal="fade">
           <p className="footer-label">{f.contact}</p>
+          <EnquireButton from="footer" className="pill pill-amber pill-xl">
+            {f.cta}
+          </EnquireButton>
           <a className="footer-mail" href={`mailto:${e.email}`}>
             {e.email}
           </a>
-          <EnquireButton from="footer" className="pill pill-amber">
-            {content.story.frame.cta}
-          </EnquireButton>
         </div>
         <Social variant="full" className="footer-social" />
       </div>
@@ -47,7 +45,6 @@ export function Footer({ filmIsStandIn, pace = true }: { filmIsStandIn: boolean;
           ))}
           <CookieSettings label={f.legal.settings} />
         </nav>
-        {pace && <a href="#top">{f.top}</a>}
       </div>
     </footer>
   );

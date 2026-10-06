@@ -19,12 +19,13 @@ const at = (vh: number) => v("algorithm", vh);
 const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 
 /**
- * The set piece. The dot the edge dropped becomes the running light under
- * ChatGPT in a Mac dock; the icon bounces and the window opens out of it.
- * The prompt types and is sent. The answer builds the way ChatGPT's does:
- * thinking, the code, then the recommendation, the thread scrolling up as it
- * grows. Everything stays inside the window. When the ranking chart arrives,
- * the window folds back into the dock.
+ * The set piece. The title rises over the stage, then the dot the edge
+ * dropped becomes the running light under ChatGPT in a Mac dock; the icon
+ * bounces and the window opens out of it. The prompt types and is sent. The
+ * answer builds the way ChatGPT's does: thinking, then the code, the thread
+ * scrolling up as it grows. Everything stays inside the window. When the
+ * ranking chart arrives, the title fades and the window folds back into the
+ * dock.
  */
 export function Algorithm() {
   const size = useStageSize();
@@ -44,12 +45,13 @@ export function Algorithm() {
       const panel = q(".dock-panel")[0];
       const app = q(".dock-app")[0];
       const dot = q(".dock-dot")[0];
+      const head = q(".algo-head")[0];
+      const title = q(".algo-title")[0];
       const blocks = {
         you: q(".chat-you")[0],
         avatar: q(".chat-avatar")[0],
         think: q(".think")[0],
         code: q(".code")[0],
-        rec: q(".rec")[0],
       };
       const steps = q(".think-steps li");
       const lines = q(".code-line");
@@ -66,12 +68,14 @@ export function Algorithm() {
       gsap.set(chat, { x: dx, y: dy, scale: 0.05, autoAlpha: 0 });
       gsap.set(panel, { yPercent: 160 });
       gsap.set(dot, { autoAlpha: 1 });
+      R.reset(title);
+      let titleRevert: (() => void) | null = null;
       q("[data-state]").forEach((el) => (el.dataset.state = "live"));
       thread.style.transform = "";
 
       // The thread keeps its newest block in view, as the app does. Everything is laid out from the
       // start and only revealed, so this moves by transform and nothing on the page reflows.
-      const order = [blocks.you, blocks.think, blocks.code, blocks.rec];
+      const order = [blocks.you, blocks.think, blocks.code];
       let followed: HTMLElement | null = null;
       const follow = (el: HTMLElement | null, instant = false) => {
         if (el === followed) return;
@@ -87,8 +91,22 @@ export function Algorithm() {
 
       const onCue = cues([
         {
-          // Launching: the dock slides up, the icon bounces twice, the window zooms out of it.
+          // The heading first, like every title in the story: its lines rise inside a mask.
           at: at(1),
+          on: () => {
+            const r = R.rise(title);
+            titleRevert = r.revert;
+            return r.tl;
+          },
+          off: () => {
+            titleRevert?.();
+            titleRevert = null;
+            R.reset(title);
+          },
+        },
+        {
+          // Launching: the dock slides up, the icon bounces twice, the window zooms out of it.
+          at: at(6),
           on: () => {
             const t = gsap.timeline();
             t.to(panel, { yPercent: 0, duration: 0.45, ease: "power3.out" });
@@ -103,7 +121,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(18),
+          at: at(22),
           on: () => {
             placeholder.style.opacity = "0";
             chat.dataset.typing = "true";
@@ -116,7 +134,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(38),
+          at: at(42),
           on: () => {
             const t = gsap.timeline();
             t.to(send, { scale: 1.2, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 });
@@ -136,7 +154,7 @@ export function Algorithm() {
           },
         },
         {
-          at: at(46),
+          at: at(50),
           on: () => {
             gsap.set(blocks.avatar, { autoAlpha: 1 });
             follow(blocks.think);
@@ -147,10 +165,10 @@ export function Algorithm() {
             back(blocks.think);
           },
         },
-        ...steps.map((li, i) => ({ at: at(54 + i * 9), on: () => show(li, { y: 8 }), off: () => void gsap.set(li, { autoAlpha: 0 }) })),
-        { at: at(76), on: () => state(blocks.think, "done"), off: () => state(blocks.think, "live") },
+        ...steps.map((li, i) => ({ at: at(58 + i * 10), on: () => show(li, { y: 8 }), off: () => void gsap.set(li, { autoAlpha: 0 }) })),
+        { at: at(80), on: () => state(blocks.think, "done"), off: () => state(blocks.think, "live") },
         {
-          at: at(80),
+          at: at(86),
           on: () => {
             follow(blocks.code);
             return show(blocks.code);
@@ -160,19 +178,9 @@ export function Algorithm() {
             back(blocks.code);
           },
         },
-        // The code streams in with the scroll, a line at a time.
-        ...lines.map((line, i) => ({ at: at(84 + i * (46 / lines.length)), on: () => void gsap.set(line, { autoAlpha: 1 }), off: () => void gsap.set(line, { autoAlpha: 0 }) })),
-        {
-          at: at(136),
-          on: () => {
-            follow(blocks.rec);
-            return show(blocks.rec);
-          },
-          off: () => {
-            gsap.set(blocks.rec, { autoAlpha: 0 });
-            back(blocks.rec);
-          },
-        },
+        // The code streams in with the scroll, a line at a time, and is complete with room to read it
+        // before the chart arrives.
+        ...lines.map((line, i) => ({ at: at(92 + i * (62 / lines.length)), on: () => void gsap.set(line, { autoAlpha: 1 }), off: () => void gsap.set(line, { autoAlpha: 0 }) })),
       ]);
 
       // Reached the chat part-way (a jump, a reload): place the thread without animating it.
@@ -180,6 +188,8 @@ export function Algorithm() {
 
       return (b) => {
         onCue(b.progress);
+        // The heading steps away first as the chart arrives.
+        head.style.opacity = String(1 - seg(b.hide, 0, 0.12));
         // Folding away as the chart arrives: into the icon, then the dock slides down.
         const m = seg(b.hide, 0.02, 0.18);
         gsap.set(shell, { x: dx * m, y: dy * m, scale: 1 - 0.95 * m, autoAlpha: 1 - seg(m, 0.55, 1) });
@@ -195,50 +205,55 @@ export function Algorithm() {
   return (
     <div className="beat" ref={scope} data-beat="algorithm">
       <div className="L L-set algo-set">
-        <div className="chat-min">
-          <div className="chat">
-            <div className="chat-bg" />
-            <div className="chat-bar">
-              <span className="traffic" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              <p className="chat-title">
-                <Image className="chat-logo" src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
-                <span>{c.app}</span>
-              </p>
-            </div>
-            <div className="chat-view">
-              <div className="chat-thread">
-                <div className="chat-you">
-                  <p>{PROMPT}</p>
-                </div>
-                <div className="chat-ai">
-                  <span className="chat-avatar">
-                    <Image src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
-                  </span>
-                  <div className="chat-ai-body">
-                    <ChatAnswer />
+        <div className="algo-stack">
+          <div className="algo-head">
+            <p className="display algo-title">{c.title}</p>
+          </div>
+          <div className="chat-min">
+            <div className="chat">
+              <div className="chat-bg" />
+              <div className="chat-bar">
+                <span className="traffic" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <p className="chat-title">
+                  <Image className="chat-logo" src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+                  <span>{c.app}</span>
+                </p>
+              </div>
+              <div className="chat-view">
+                <div className="chat-thread">
+                  <div className="chat-you">
+                    <p>{PROMPT}</p>
+                  </div>
+                  <div className="chat-ai">
+                    <span className="chat-avatar">
+                      <Image src="/story/brand/chatgpt-white.png" alt="" width={18} height={18} unoptimized />
+                    </span>
+                    <div className="chat-ai-body">
+                      <ChatAnswer />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="chat-composer">
-              <p className="chat-input">
-                {/* Invisible full prompt: the composer takes its final height up front, so typing never moves the layout. */}
-                <span className="chat-ghost" aria-hidden="true">
-                  {PROMPT}
+              <div className="chat-composer">
+                <p className="chat-input">
+                  {/* Invisible full prompt: the composer takes its final height up front, so typing never moves the layout. */}
+                  <span className="chat-ghost" aria-hidden="true">
+                    {PROMPT}
+                  </span>
+                  <span className="chat-live">
+                    <span className="chat-typed" />
+                    <span className="chat-caret" />
+                  </span>
+                  <span className="chat-placeholder">{c.composer}</span>
+                </p>
+                <span className="chat-send">
+                  <SendIcon />
                 </span>
-                <span className="chat-live">
-                  <span className="chat-typed" />
-                  <span className="chat-caret" />
-                </span>
-                <span className="chat-placeholder">{c.composer}</span>
-              </p>
-              <span className="chat-send">
-                <SendIcon />
-              </span>
+              </div>
             </div>
           </div>
         </div>

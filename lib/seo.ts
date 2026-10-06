@@ -135,7 +135,7 @@ export function llmsTxt(): string {
     result.years ? `- ${result.years} years from deciding to try to the Olympic final.` : "",
     result.keynotes ? `- ${result.keynotes} keynotes delivered.` : "",
   ].filter(Boolean);
-  const quotes = c.practical.quotes.map((q) => `- "${q.text}" (${[q.name, q.who, q.org].filter(Boolean).join(", ")})`);
+  const quotes = c.practical.quotes.map((q) => `- "${plain(q.text)}" (${[q.name, q.who, q.org].filter(Boolean).join(", ")})`);
   return [
     `# ${content.brand.name}`,
     "",

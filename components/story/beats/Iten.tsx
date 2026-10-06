@@ -31,6 +31,8 @@ const PINS = at(42);
 const TURN = [at(42), at(100)] as const;
 const ARC = [at(46), at(94)] as const;
 const DIVE = [at(104), at(126)] as const;
+/** The pack fades in under the end of the dive. */
+const PACK_IN = at(114);
 const inOut = gsap.parseEase("power2.inOut");
 
 /**
@@ -79,8 +81,8 @@ export function Iten() {
       tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: at(8) }, 0);
       // The dive does not stop at the globe: the pack on the red road takes over, still falling towards it.
       tl.to(canvas, { opacity: 0, duration: at(10) }, at(122));
-      tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, at(114));
-      tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.4 }, { scale: 1, duration: at(50), ease: "power2.out" }, at(114));
+      tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, PACK_IN);
+      tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.4 }, { scale: 1, duration: at(50), ease: "power2.out" }, PACK_IN);
       // Darkens the dust at the top while the line sits there.
       tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(124));
 
@@ -129,7 +131,7 @@ export function Iten() {
   return (
     <div className="beat" ref={scope} data-beat="iten">
       <div className="L iten-media-out">
-        <VideoLayer name="pack" beat="iten" className="vd-pack" />
+        <VideoLayer name="pack" beat="iten" appear={["iten", PACK_IN]} className="vd-pack" />
         <div className="L L-media vd-scrim" />
       </div>
       <div className="L L-set iten-set">

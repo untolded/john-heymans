@@ -35,7 +35,7 @@ export function SiteShell({ ground, footer = true, children }: { ground: "paper"
         </div>
       </header>
       <main id="main">{children}</main>
-      {footer && <Footer filmIsStandIn={false} pace={false} />}
+      {footer && <Footer filmIsStandIn={false} />}
       <CookieBanner />
     </div>
   );

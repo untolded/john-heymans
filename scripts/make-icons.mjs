@@ -1,56 +1,38 @@
-// The favicon, the home-screen icon (web clip) and the manifest icons, all from one SVG.
+// The favicon, the home-screen icon (web clip) and the manifest icons, all from one photograph.
 //
 //   node scripts/make-icons.mjs
 //
-// "JH" in Big Shoulders Display Bold, the wordmark's face, in paper on a night tile, over a short
-// finish line in the AI gradient. The initials exist for the browser tab and the home screen only:
-// the brand guide has no monogram, and the wordmark stays the only mark everywhere else. The
-// glyph outlines are baked in below (read with fontTools from public/brand/fonts), so the icon
-// never waits on a web font. The tile is dark, so it reads on light browser chrome; on dark
-// chrome the SVG adds a faint light edge.
+// John at the Paris 2024 5000m final, hands on his head, "Hey mom" and "Made it" written on his
+// arms (public/photos/final-arms.jpg, Belga, cleared for commercial use). Two crops, chosen by
+// looking at them at 16, 32 and 180 px:
+//   - tab sizes (16, 32, 48): his face alone. At 32 px the arm writing is a grey smudge, the face
+//     still reads as a person laughing in disbelief.
+//   - home screen and manifest (180, 192, 512): face plus the "MADE IT" arm, legible from 180 up.
+//   - maskable: the system may cut it to a circle, so the face sits in the central safe zone.
 //
-// Writes app/icon.svg, app/favicon.ico (16, 32, 48), app/apple-icon.png (180, full bleed, as
-// iOS rounds it itself) and public/icons/icon-{192,512}.png plus icon-maskable-512.png.
+// Writes app/icon.png (32), app/favicon.ico (16, 32, 48, PNG-in-ICO), app/apple-icon.png (180,
+// full bleed, iOS rounds it itself) and public/icons/icon-{192,512}.png plus icon-maskable-512.png.
 import fs from "node:fs";
 import sharp from "sharp";
 
-// Font units, 2000 per em, cap height 1600, y up.
-const J = "M397 -18Q267 -18 190.5 18.5Q114 55 79.5 134.0Q45 213 42 342Q41 401 41.0 467.5Q41 534 42 594H277Q276 552 275.5 498.5Q275 445 275.5 392.0Q276 339 277 297Q279 242 307.5 214.5Q336 187 397 187Q458 187 484.5 214.5Q511 242 511 297V1600H761V342Q761 149 679.5 65.5Q598 -18 397 -18Z";
-const H = "M88 0V1600H337V922H561V1600H811V0H561V701H337V0Z";
-const J_ADVANCE = 831;
-const LEFT = 41; // J's left edge
-const RIGHT = J_ADVANCE + 811; // H's right edge
+const SRC = "public/photos/final-arms.jpg"; // 2400 x 1569
+const FACE = { left: 980, top: 140, width: 400, height: 400 };
+const MADE_IT = { left: 940, top: 40, width: 660, height: 660 };
+const MASKABLE = { left: 860, top: 0, width: 820, height: 820 };
 
-/**
- * The icon in a 64-unit square. `bleed` fills the square edge to edge (for iOS and maskable
- * icons, which are cropped by the system); `scale` shrinks the letters into a safe zone.
- */
-function svg({ bleed = false, scale = 1 } = {}) {
-  const cap = 34 * scale;
-  const s = cap / 1600;
-  const width = (RIGHT - LEFT) * s;
-  const bar = 4 * scale;
-  const gap = 5 * scale;
-  const x0 = (64 - width) / 2;
-  const top = (64 - (cap + gap + bar)) / 2 - 0.5 * scale;
-  const base = top + cap;
-  const tx = x0 - LEFT * s;
-  const glyph = (d, dx) => `<path d="${d}" transform="translate(${(tx + dx * s).toFixed(3)} ${base.toFixed(3)}) scale(${s.toFixed(5)} ${(-s).toFixed(5)})"/>`;
-  const tile = bleed ? `<rect width="64" height="64" fill="url(#night)"/>` : `<rect class="tile" x="0.5" y="0.5" width="63" height="63" rx="14" fill="url(#night)"/>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <style>@media (prefers-color-scheme: dark) { .tile { stroke: rgb(243 241 234 / 0.22); stroke-width: 1; } }</style>
-  <defs>
-    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1548"/><stop offset="1" stop-color="#070613"/></linearGradient>
-    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff7a2f"/><stop offset="0.5" stop-color="#ee9aa6"/><stop offset="1" stop-color="#b9a8f5"/></linearGradient>
-  </defs>
-  ${tile}
-  <g fill="#f3f1ea">${glyph(J, 0)}${glyph(H, J_ADVANCE)}</g>
-  <rect x="${x0.toFixed(3)}" y="${(base + gap).toFixed(3)}" width="${width.toFixed(3)}" height="${bar.toFixed(3)}" rx="${(bar / 2).toFixed(3)}" fill="url(#ai)"/>
-</svg>
-`;
+/** A square crop at `size`, sharpened a touch more the smaller it gets. Tab icons get softly rounded corners. */
+async function png(crop, size, { round = false } = {}) {
+  let img = sharp(SRC).extract(crop).resize(size, size, { kernel: "lanczos3" }).modulate({ saturation: 1.08 });
+  if (size <= 48) img = img.sharpen({ sigma: 0.6 });
+  let buf = await img.png().toBuffer();
+  if (round) {
+    const r = Math.round(size * 0.22);
+    const mask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${r}" fill="#fff"/></svg>`);
+    buf = await sharp(buf).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+  }
+  // Large sizes as a 256-colour palette: a photo at 512 px would otherwise weigh half a megabyte.
+  return sharp(buf).png(size > 48 ? { palette: true, quality: 92, effort: 10, dither: 0.6 } : { compressionLevel: 9 }).toBuffer();
 }
-
-const png = (markup, size) => sharp(Buffer.from(markup), { density: Math.max(72, (72 * size) / 64) }).resize(size, size).png({ compressionLevel: 9 }).toBuffer();
 
 /** An .ico holding PNG images, which every current browser reads. */
 function ico(images) {
@@ -72,14 +54,13 @@ function ico(images) {
   return Buffer.concat([head, ...images.map((im) => im.data)]);
 }
 
-const tab = svg();
-fs.writeFileSync("app/icon.svg", tab);
-const small = await Promise.all([16, 32, 48].map(async (size) => ({ size, data: await png(tab, size) })));
+if (fs.existsSync("app/icon.svg")) fs.rmSync("app/icon.svg");
+fs.writeFileSync("app/icon.png", await png(FACE, 32, { round: true }));
+const small = await Promise.all([16, 32, 48].map(async (size) => ({ size, data: await png(FACE, size, { round: true }) })));
 fs.writeFileSync("app/favicon.ico", ico(small));
-fs.writeFileSync("app/apple-icon.png", await png(svg({ bleed: true, scale: 0.78 }), 180));
+fs.writeFileSync("app/apple-icon.png", await png(MADE_IT, 180));
 fs.mkdirSync("public/icons", { recursive: true });
-fs.writeFileSync("public/icons/icon-192.png", await png(tab, 192));
-fs.writeFileSync("public/icons/icon-512.png", await png(tab, 512));
-// Maskable: the system may crop to a circle, so everything sits inside the central 80 percent.
-fs.writeFileSync("public/icons/icon-maskable-512.png", await png(svg({ bleed: true, scale: 0.7 }), 512));
+fs.writeFileSync("public/icons/icon-192.png", await png(MADE_IT, 192));
+fs.writeFileSync("public/icons/icon-512.png", await png(MADE_IT, 512));
+fs.writeFileSync("public/icons/icon-maskable-512.png", await png(MASKABLE, 512));
 console.log("icons written");

@@ -5,6 +5,7 @@ import { facts, show, mark } from "@/lib/story/data";
 import { fill, ordinal } from "@/lib/story/format";
 import { Social } from "@/components/shared/Social";
 import { photoAlt, photoCredit } from "./StoryPhoto";
+import { EnquireButton } from "./practical/Actions";
 
 const b = content.story.bio;
 const STAGE = photo(b.photo);
@@ -56,6 +57,11 @@ export function Bio() {
         <div className="bio-social" data-reveal="fade">
           <p className="bio-follow">{b.follow}</p>
           <Social variant="full" />
+        </div>
+        <div className="bio-cta" data-reveal="fade">
+          <EnquireButton from="bio" className="pill pill-amber pill-xl">
+            {b.cta}
+          </EnquireButton>
         </div>
       </div>
       {list.length > 0 && (

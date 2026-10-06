@@ -7,6 +7,16 @@
  * 10-bit, so the dark grounds do not band.
  */
 
+/**
+ * Screens at least as tall as they are wide get the square cut of the hero
+ * loop, shown as a band. Chosen by shape, not width or orientation, so a
+ * 1024 x 768 window keeps the wide film and a tall tablet gets the square.
+ */
+export const UPRIGHT = "(max-aspect-ratio: 1/1)";
+
+/** The hero loop only loads where motion is welcome; with reduced motion no source matches and the poster stays. */
+export const MOTION = "(prefers-reduced-motion: no-preference)";
+
 export type VideoSource = { src: string; type: string; media?: string };
 
 /** Up to 1080p (AV1 level 4.0, HEVC level 4.1), or up to 1440p (level 5.0 for both). */

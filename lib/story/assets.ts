@@ -1,14 +1,14 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { sourcesFor, type VideoSource } from "./video";
+import { MOTION, UPRIGHT, sourcesFor, type VideoSource } from "./video";
 
 /**
  * Which media files exist, checked on the server when the page renders. The
  * page prefers the real assets and falls back in the order the build brief
  * sets out, so dropping a file into public/story/film is all it takes.
  *
- *   F2  public/story/film/hero-loop(-1440).webm, -hevc.mp4, .mp4   clean landscape loop, 1080p and 1440p
- *   F3  public/story/film/hero-loop-portrait.webm, -hevc.mp4, .mp4 clean vertical loop
+ *   F2  public/story/film/hero-loop(-1440).webm, -hevc.mp4, .mp4   the trailer loop, 1080p and 1440p
+ *   F3  public/story/film/hero-loop-portrait.webm, -hevc.mp4, .mp4 the trailer loop, square, for upright screens
  *   F1  public/story/film/film.webm, -hevc.mp4, .mp4               the full film with sound
  *   F4  public/story/film/film.en.vtt                           its English captions
  *   F5  public/story/film/poster.jpg and poster-portrait.jpg   poster frames
@@ -23,6 +23,9 @@ const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
  */
 export const LARGE_SCREEN = "(min-width: 2200px), (min-width: 1100px) and (min-resolution: 1.5dppx)";
 
+/** "a, b" and MOTION become "MOTION and a, MOTION and b": a media query list, each part gated on motion. */
+const withMotion = (query?: string) => (query ? query.split(/,\s*/).map((q) => `${MOTION} and ${q}`).join(", ") : MOTION);
+
 export type FilmAssets = {
   /** Sources for the muted hero loop, best first, each with the screens it is for. */
   loop: VideoSource[];
@@ -32,7 +35,9 @@ export type FilmAssets = {
   film: VideoSource[];
   filmIsStandIn: boolean;
   captions: string | null;
-  /** True while the hero runs the full film rather than a clean loop, so our text must dodge its titles. */
+  /** The film's HLS master playlist (scripts/encode-film-hls.sh), played before the progressive files when present. */
+  hls: string | null;
+  /** True while the hero loop carries the film's own words (the trailer does), so our text must dodge them. */
   loopHasText: boolean;
   /** True while the hero runs the stand-in cut from stills, whose photographers must be credited. */
   loopIsStandIn: boolean;
@@ -45,20 +50,23 @@ export function filmAssets(): FilmAssets {
   const clean = present("/story/film/hero-loop", false);
   const full = present("/story/film/film", true);
   const standIn: VideoSource = { src: "/media/hero.mp4", type: "video/mp4" };
-  // The browser takes the first source whose media and type both match: upright phones, then large screens.
+  // The browser takes the first source whose media and type both match: upright screens, then large
+  // ones, then the rest. Every source asks for motion, so reduced motion loads no video at all.
   const sized = [
-    ...present("/story/film/hero-loop-portrait", false, "hd", "(orientation: portrait)"),
-    ...present("/story/film/hero-loop-1440", false, "qhd", LARGE_SCREEN),
+    ...present("/story/film/hero-loop-portrait", false, "hd", withMotion(UPRIGHT)),
+    ...present("/story/film/hero-loop-1440", false, "qhd", withMotion(LARGE_SCREEN)),
+    ...clean.map((s) => ({ ...s, media: withMotion() })),
   ];
 
   return {
-    loop: clean.length ? [...sized, ...clean] : full.length ? full : [standIn],
+    loop: clean.length ? sized : full.length ? full : [standIn],
     poster: has("story/film/poster.jpg") ? "/story/film/poster.jpg" : "/media/hero-poster.jpg",
     posterPortrait: has("story/film/poster-portrait.jpg") ? "/story/film/poster-portrait.jpg" : null,
     film: full.length ? full : [standIn],
     filmIsStandIn: !full.length,
     captions: has("story/film/film.en.vtt") ? "/story/film/film.en.vtt" : null,
-    loopHasText: !clean.length && !!full.length,
+    hls: full.length && has("story/film/hls/master.m3u8") ? "/story/film/hls/master.m3u8" : null,
+    loopHasText: !!clean.length || !!full.length,
     loopIsStandIn: !clean.length && !full.length,
   };
 }

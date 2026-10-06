@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { content } from "@/lib/content";
 
-/** For "Add to home screen": the name, the night ground, and the icons from scripts/make-icons.mjs. */
+/** For "Add to home screen": the name, the night ground, and the "Made it" photo icons from scripts/make-icons.mjs. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: content.story.meta.title,

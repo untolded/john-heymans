@@ -8,6 +8,7 @@ import { credits } from "@/lib/story/credits";
 import { gsap } from "@/lib/story/gsap";
 import { Social } from "@/components/shared/Social";
 import { useStoryPage } from "./StoryRoot";
+import { BackToTop } from "./BackToTop";
 
 const t = content.story.frame;
 
@@ -51,6 +52,7 @@ export function Frame() {
       {ready && (
         <>
           <Progress />
+          <BackToTop />
           <div className="frame-bottom" aria-hidden="true">
             <Credit />
           </div>
@@ -65,7 +67,19 @@ export function Frame() {
  * root gets data-nav="paper" and the frame turns to ink; above the story's
  * dark grounds it stays light. In cinema the visually hidden static story is
  * ignored, since the stage covers it.
+ *
+ * data-band says whether the bar wears a solid band: "paper" or "night" when
+ * page content scrolls under it (the practical part, the bio, the footer, and
+ * the static story's text), "none" over the cinema stage, where the footage is
+ * composed around the bar and its soft scrim is enough.
  */
+const PAPER = '.practical, .footer, .sb[data-ground="paper"]';
+/**
+ * Dark content that scrolls: the hero's line and controls as they leave the screen, the bio, and the
+ * static story's sections (the stage covers them in cinema).
+ */
+const NIGHT = '.hero-copy, .hero-controls, .bio, .story-static .sb:not([data-ground="paper"])';
+
 function useInkOverPaper() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".story-root");
@@ -86,12 +100,14 @@ function useInkOverPaper() {
             else inside.delete(e.target);
           }
           const cinema = root.classList.contains("is-cinema");
-          const paper = [...inside].some((t) => !(cinema && t.closest(".story-static")));
+          const live = [...inside].filter((t) => !(cinema && t.closest(".story-static")));
+          const paper = live.some((t) => t.matches(PAPER));
           root.dataset.nav = paper ? "paper" : "dark";
+          root.dataset.band = paper ? "paper" : live.length ? "night" : "none";
         },
         { rootMargin: `-${mid}px 0px -${Math.max(0, window.innerHeight - mid - 1)}px 0px` },
       );
-      document.querySelectorAll('.practical, .footer, .sb[data-ground="paper"]').forEach((n) => io!.observe(n));
+      document.querySelectorAll(`${PAPER}, ${NIGHT}`).forEach((n) => io!.observe(n));
     };
 
     watch();

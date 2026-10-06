@@ -1,16 +1,18 @@
 import { CHART, chartPoints, chartPath, chartY, quotaY, rankGuides } from "@/lib/story/layouts";
-import { MILESTONES, SERIES } from "@/lib/story/ranking";
+import { MILESTONES, QUOTA, SERIES } from "@/lib/story/ranking";
 import { facts, show, SHOW_PENDING } from "@/lib/story/data";
 import { content } from "@/lib/content";
+import { fill } from "@/lib/story/format";
 
 const copy = content.story.ranking;
 const year = (d: string) => String(new Date(d).getUTCFullYear());
+const QUOTA_LABEL = QUOTA != null && show(facts.ranking.quota) != null ? fill(copy.quotaLine, { n: QUOTA }) : "";
 
 /**
  * World ranking across the two years, as a chart: the world ranking up the
  * side with better higher, time across with its two years, the Olympic quota
- * as a dashed line. Only the two ends are named: outside the top 200, and the
- * 31st place that qualified John. The numbers only appear when the ranking
+ * as a dashed line with its label. Only the two ends are named, each under
+ * "Position:": outside the top 200, and the 31st place that qualified John. The numbers only appear when the ranking
  * may be shown.
  */
 export function RankingChartSvg({ className }: { className?: string }) {
@@ -22,8 +24,8 @@ export function RankingChartSvg({ className }: { className?: string }) {
   const last = pts[pts.length - 1];
   // The plot ends where the climb does; the end number has the margin to itself.
   const right = CHART.w - CHART.padR;
-  // Room kept clear of gridlines around the start number (about 4 characters at 64px).
-  const hole = first ? { x: first.x - 20 - 150, y: first.y - 12, w: 160, h: 76 } : null;
+  // Room kept clear of gridlines around the start number (about 4 characters at 64px) and its label.
+  const hole = first ? { x: first.x - 20 - 150, y: first.y - 60, w: 160, h: 124 } : null;
 
   return (
     <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className={`ranking-chart ${className ?? ""}`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
@@ -43,6 +45,11 @@ export function RankingChartSvg({ className }: { className?: string }) {
         </g>
         {qy != null && <line className="rc-quota" x1={CHART.axisX} x2={right} y1={qy} y2={qy} />}
       </g>
+      {qy != null && QUOTA_LABEL && (
+        <text className="rc-quota-svg" x={CHART.axisX + 12} y={qy - 12}>
+          {QUOTA_LABEL}
+        </text>
+      )}
       <g className="rc-axes">
         <line className="rc-axis" x1={CHART.axisX} x2={CHART.axisX} y1={CHART.padT - 12} y2={CHART.baseY} />
         <line className="rc-axis" x1={CHART.axisX} x2={right} y1={CHART.baseY} y2={CHART.baseY} />
@@ -73,8 +80,14 @@ export function RankingChartSvg({ className }: { className?: string }) {
         <>
           <circle className="rc-start-dot" cx={first.x} cy={first.y} r={6} />
           <circle className="rc-end-dot" cx={last.x} cy={last.y} r={9} />
+          <text className="rc-pos-svg" x={first.x - 20} y={first.y - 32} textAnchor="end">
+            {copy.position}
+          </text>
           <text className="rc-big-svg rc-start-svg" x={first.x - 20} y={first.y + 22} textAnchor="end">
             {copy.startValue}
+          </text>
+          <text className="rc-pos-svg" x={last.x + 24} y={last.y - 32}>
+            {copy.position}
           </text>
           <text className="rc-big-svg rc-end-svg" x={last.x + 22} y={last.y + 22}>
             {MILESTONES[MILESTONES.length - 1]?.label}

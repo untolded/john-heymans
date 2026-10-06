@@ -3,12 +3,13 @@
 import { gsap, SplitText } from "./gsap";
 
 /**
- * The six reveals and three exits, implemented once. Each returns a GSAP
+ * The seven reveals and three exits, implemented once. Each returns a GSAP
  * timeline, and splits are reverted when the reveal finishes so nothing stays
  * split in the DOM. SplitText keeps the original text for assistive
  * technology.
  *
  *   words     title cards: words arrive one at a time, from scale and blur
+ *   fade      John's prologue: the whole block fades in, nothing split
  *   rise      story copy and UI: lines rise inside a mask
  *   ink       lesson cards and key lines: written left to right, amber nib
  *   type      the ChatGPT prompt: characters appended, caret blinking
@@ -32,6 +33,14 @@ export function rise(el: HTMLElement, opts: { delay?: number; small?: boolean } 
   tl.from(split.lines, { yPercent: 100, duration: 0.6, ease: "power3.out", stagger: 0.07 });
   tl.call(() => split.revert());
   return { tl, revert: () => split.revert() };
+}
+
+/** The whole block at once: a short fade, nothing split. For lines that should simply be there. */
+export function fade(el: HTMLElement, opts: { delay?: number } = {}): Revealed {
+  gsap.set(el, { autoAlpha: 1, y: 0, scale: 1, filter: "none" });
+  const tl = gsap.timeline({ delay: opts.delay ?? 0 });
+  tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" });
+  return { tl, revert: noop };
 }
 
 /** Words arrive one at a time from a little larger and out of focus. */

@@ -11,7 +11,7 @@ const CopyGlyph = () => (
 );
 
 /**
- * ChatGPT's answer, whole: thinking, the code, the recommendation.
+ * ChatGPT's answer, whole: thinking, then the code.
  * Rendered finished (data-state="done"); the film sets everything back to
  * "live" and hidden, then reveals it.
  */
@@ -45,7 +45,8 @@ export function ChatAnswer() {
         <pre>
           <code>
             {CODE.map((line, i) => (
-              <span className="code-line" key={i}>
+              // The indent is passed on so a line that has to wrap on a phone hangs under its own code.
+              <span className="code-line" key={i} style={{ "--ind": line.length - line.trimStart().length } as React.CSSProperties}>
                 {highlight(line).map((tok, j) =>
                   tok.k ? (
                     <span className={`c-${tok.k}`} key={j}>
@@ -61,10 +62,6 @@ export function ChatAnswer() {
           </code>
         </pre>
       </div>
-
-      <p className="rec" data-block="rec">
-        <strong>{c.recommendationLead}</strong> {c.recommendation}
-      </p>
     </>
   );
 }

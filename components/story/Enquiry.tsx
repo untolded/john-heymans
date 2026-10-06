@@ -223,7 +223,17 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
   const hint = plain || current === "contact" ? g.details : g.pick;
 
   return (
-    <form ref={form} className="enq gpt" data-plain={plain} data-context={context} data-status={status} onSubmit={submit} noValidate>
+    <form
+      ref={form}
+      className="enq gpt"
+      data-plain={plain}
+      data-context={context}
+      data-status={status}
+      // Inline, the window arrives with its section's copy instead of waiting there, dark and alone, before it.
+      data-reveal={context === "inline" ? "fade" : undefined}
+      onSubmit={submit}
+      noValidate
+    >
       {context === "inline" && (
         <div className="gpt-bar" aria-hidden="true">
           <GptMark size={20} />

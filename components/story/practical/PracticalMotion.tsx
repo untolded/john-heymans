@@ -64,18 +64,6 @@ export function PracticalMotion() {
       all("[data-push]").forEach((el) => {
         gsap.fromTo(el, { scale: 1.1 }, { scale: 1, ease: "none", scrollTrigger: { trigger: el.parentElement ?? el, start: "top bottom", end: "bottom top", scrub: true } });
       });
-
-      const scale = document.querySelector(".practical .scale-svg");
-      if (scale) {
-        gsap.from(scale.querySelectorAll("line, path"), {
-          drawSVG: "0%",
-          duration: 1.4,
-          ease: "power2.inOut",
-          stagger: 0.08,
-          clearProps: "strokeDasharray,strokeDashoffset",
-          scrollTrigger: { trigger: scale, start: "top 80%", once: true },
-        });
-      }
     });
     const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 400);
     return () => {

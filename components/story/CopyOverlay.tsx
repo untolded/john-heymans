@@ -29,7 +29,7 @@ type Live = {
 
 function Entry({ e }: { e: CopyEntry }) {
   return (
-    <div className={`entry k-${e.kind}${e.low ? " is-low" : ""}${e.flow ? " is-flow" : ""}`} data-entry={e.id}>
+    <div className={`entry k-${e.kind}${e.low ? " is-low" : ""}${e.flow ? " is-flow" : ""}${e.wide ? " is-wide" : ""}`} data-entry={e.id}>
       <p className="e-text">
         <Text text={e.text(c)} />
       </p>
@@ -101,7 +101,7 @@ export function CopyOverlay() {
         tl.add(w.tl, 0);
         if (e.steps) stepWords(e, l, t);
       } else {
-        const r = e.reveal === "ink" ? R.ink(text) : R.rise(text);
+        const r = e.reveal === "ink" ? R.ink(text) : e.reveal === "fade" ? R.fade(text) : R.rise(text);
         l.reverts.push(r.revert);
         tl.add(r.tl, 0);
       }

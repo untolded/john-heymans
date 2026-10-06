@@ -5,7 +5,7 @@ import { at, span, v, type Moment } from "@/lib/story/beats";
 import { story } from "@/lib/story/store";
 import { gsap } from "@/lib/story/gsap";
 import { facts, show, SHOW_PENDING } from "@/lib/story/data";
-import { SERIES, MILESTONES, QUOTA, T_CROSS, drawnIndex, rankAt } from "@/lib/story/ranking";
+import { SERIES, MILESTONES, QUOTA, I_CROSS, T_CROSS, drawnIndex, rankAt } from "@/lib/story/ranking";
 import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
 import { useStageSize } from "./stage";
@@ -35,10 +35,11 @@ const svgEl = <K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<strin
  * The world ranking across two years, as a chart: the vertical axis is the
  * world ranking (better is higher, on a log scale) with round ranks marked,
  * the horizontal axis is time with the two years at its ends, and the
- * Olympic quota is a dashed line. The climb is the point, so only its two
- * ends are named, as large as the chart allows: outside the top 200 where it
- * starts, 31st where it ends, which was the Olympic qualification. Redrawn
- * every frame from story time.
+ * Olympic quota is a dashed line with its label above it. The climb is the
+ * point, so only its two ends are named, as large as the chart allows, each
+ * under a small "Position:": outside the top 200 where it starts, 31st where
+ * it ends, which was the Olympic qualification. While it climbs, "My
+ * position" rides with the dot. Redrawn every frame from story time.
  */
 export function Chart() {
   const size = useStageSize();
@@ -64,7 +65,9 @@ export function Chart() {
     const line = el.querySelector<SVGPathElement>(".rc-line")!;
     const head = el.querySelector<SVGCircleElement>(".rc-head")!;
     const quota = el.querySelector<SVGLineElement>(".rc-quota")!;
-    const quotaText = el.querySelector<SVGTextElement>(".rc-quota-label");
+    const quotaText = el.querySelector<HTMLElement>(".rc-quota-label");
+    const me = el.querySelector<HTMLElement>(".rc-me")!;
+    const meW = me.offsetWidth;
     const guides = el.querySelector<SVGGElement>(".rc-guides")!;
     const axes = el.querySelector<SVGGElement>(".rc-axes")!;
     const hole = el.querySelector<SVGRectElement>(".rc-hole")!;
@@ -112,11 +115,10 @@ export function Chart() {
       quota.setAttribute("x2", String(right));
       quota.setAttribute("y1", String(qy));
       quota.setAttribute("y2", String(qy));
-      // Under the dashed line at its right end, where the ranking line is always above it. A phone's
-      // chart is too narrow for it anywhere the climb does not cross, so there the line stands alone.
-      quotaText?.setAttribute("x", String(right));
-      quotaText?.setAttribute("y", String(qy + 1.6 * rem));
-      quotaText?.setAttribute("display", touch ? "none" : "inline");
+      // Just above the dashed line at its left end, on a dark backing, and ending before the climb
+      // crosses the line: everything left of the crossing is still below it, on a phone too.
+      const room = Math.min(w - 1.2 * rem, pts[I_CROSS][0] - 1.2 * rem) - (axisX + 0.6 * rem);
+      if (quotaText) Object.assign(quotaText.style, { left: `${axisX + 0.6 * rem}px`, top: `${qy}px`, maxWidth: `${Math.max(8 * rem, room)}px` });
     }
     startDot.setAttribute("cx", String(x0));
     startDot.setAttribute("cy", String(y0));
@@ -125,14 +127,17 @@ export function Chart() {
     const gap = touch ? 10 : 22;
     if (startLabel) {
       Object.assign(startLabel.style, { left: `${x0 - gap}px`, top: `${y0}px` });
-      // The gridlines stop short of the start number, so nothing runs through it.
+      // The gridlines stop short of the start number and its label, so nothing runs through them.
       const b = startLabel.getBoundingClientRect();
+      const pos = startLabel.querySelector(".rc-pos")?.getBoundingClientRect() ?? b;
       const box = el.getBoundingClientRect();
       const m = 0.5 * rem;
-      hole.setAttribute("x", String(b.left - box.left - m));
-      hole.setAttribute("y", String(b.top - box.top - m));
-      hole.setAttribute("width", String(b.width + 2 * m));
-      hole.setAttribute("height", String(b.height + 2 * m));
+      const left = Math.min(b.left, pos.left);
+      const top = Math.min(b.top, pos.top);
+      hole.setAttribute("x", String(left - box.left - m));
+      hole.setAttribute("y", String(top - box.top - m));
+      hole.setAttribute("width", String(Math.max(b.right, pos.right) - left + 2 * m));
+      hole.setAttribute("height", String(b.bottom - top + 2 * m));
     }
     if (endLabel) {
       endLabel.dataset.side = touch ? "above" : "right";
@@ -166,7 +171,11 @@ export function Chart() {
       line.setAttribute("d", d);
       head.setAttribute("cx", hx.toFixed(1));
       head.setAttribute("cy", hy.toFixed(1));
-      head.style.opacity = f > 0 && f < last ? "1" : "0";
+      const climbing = f > 0 && f < last;
+      head.style.opacity = climbing ? "1" : "0";
+      // "My position" rides just above the dot, kept inside the chart at its right edge.
+      me.style.opacity = climbing ? "1" : "0";
+      me.style.transform = `translate(${Math.min(hx - 0.5 * rem, w - meW).toFixed(1)}px, ${(hy - 0.9 * rem).toFixed(1)}px) translateY(-100%)`;
 
       // The end: 31st, and the qualification that came with it.
       const done = f >= last - 0.001;
@@ -225,11 +234,6 @@ export function Chart() {
           <line className="rc-quota" />
         </g>
         <g className="rc-axes" />
-        {QUOTA_LABEL && (
-          <text className="rc-quota-label" textAnchor="end">
-            {QUOTA_LABEL}
-          </text>
-        )}
         <path className="rc-line" />
         <circle className="rc-start-dot" r="5" />
         <circle className="rc-end-dot" r="0" />
@@ -238,13 +242,25 @@ export function Chart() {
       <p className="rc-title" aria-hidden="true">
         {copy.axis}
       </p>
+      {QUOTA_LABEL && (
+        <p className="rc-quota-label" aria-hidden="true">
+          {QUOTA_LABEL}
+        </p>
+      )}
+      <p className="rc-me" aria-hidden="true">
+        {copy.me}
+      </p>
       {SHOWN && (
         <>
           <p className="rc-big rc-start" aria-hidden="true">
+            <span className="rc-pos">{copy.position}</span>
             {copy.startValue}
           </p>
           <p className="rc-big rc-end" aria-hidden="true">
-            <span className="rc-end-n">{END}</span>
+            <span className="rc-end-n">
+              <span className="rc-pos">{copy.position}</span>
+              {END}
+            </span>
             <span className="rc-end-note">{copy.endNote}</span>
           </p>
         </>

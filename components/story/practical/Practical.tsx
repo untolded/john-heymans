@@ -2,16 +2,18 @@ import Image from "next/image";
 import { content } from "@/lib/content";
 import { fill, plain } from "@/lib/story/format";
 import { photo, type PhotoSlug } from "@/lib/photos";
-import { clipCaptions } from "@/lib/story/assets";
+import { clipCaptions, filmAssets } from "@/lib/story/assets";
 import { lessonEntry } from "@/lib/story/script";
 import { photoAlt, photoCredit } from "../StoryPhoto";
 import { Enquiry } from "../Enquiry";
 import { LessonLink } from "./Actions";
-import { AudienceScale } from "./AudienceScale";
+import { Stages } from "./Stages";
 import { Quotes } from "./Quotes";
 import { ClipWall } from "./ClipWall";
 import { LogoMarquee } from "./LogoMarquee";
 import { PracticalMotion } from "./PracticalMotion";
+import { FilmEntry } from "../media/FilmEntry";
+import { KeynoteFilm } from "../media/KeynoteFilm";
 
 const c = content.story;
 const p = c.practical;
@@ -22,7 +24,7 @@ const FRAMES: { slug: PhotoSlug; focus: string }[] = [
   { slug: "kit-portrait", focus: "50% 22%" },
   { slug: "shoes", focus: "52% 45%" },
   { slug: "lavender-race", focus: "50% 30%" },
-  { slug: "final-arms", focus: "58% 24%" },
+  { slug: "final-arms", focus: "46% 24%" },
 ];
 
 /** A lesson's photo, its credit set in the corner of the frame. */
@@ -46,14 +48,19 @@ function Frame({ n }: { n: number }) {
  * works, who booked it, what the room said, and the enquiry.
  */
 export function Practical() {
+  const film = filmAssets();
   return (
     <div className="practical" data-ground="paper">
       <PracticalMotion />
 
       <section className="pr pr-keynote" id="keynote" aria-labelledby="pr-keynote">
-        <h2 id="pr-keynote" className="pr-h2" data-reveal="rise">
-          {p.title}
-        </h2>
+        {/* The heading and, beside it, the film: the first thing a booker sees once the story is over. */}
+        <div className="pr-keynote-head">
+          <h2 id="pr-keynote" className="pr-h2" data-reveal="rise">
+            {p.title}
+          </h2>
+          <KeynoteFilm loop={film.loop} poster={film.poster} />
+        </div>
         {/* Three lanes, marked out like a track seen from above. The lines draw in (data-draw). */}
         <div className="pr-lanes" data-draw="x">
           <dl className="pr-facts">
@@ -70,9 +77,12 @@ export function Practical() {
       </section>
 
       <section className="pr pr-lessons" aria-labelledby="pr-lessons">
-        <h3 id="pr-lessons" className="pr-h3 pr-h3-long" data-reveal="rise">
+        <h3 id="pr-lessons" className="pr-h3" data-reveal="rise">
           {p.lessonsTitle}
         </h3>
+        <p className="pr-lead" data-reveal="fade">
+          {p.lessonsLead}
+        </p>
         <ol className="filmstrip">
           {c.lessons.map((lesson, i) => {
             const n = i + 1;
@@ -98,10 +108,10 @@ export function Practical() {
       </section>
 
       <section className="pr pr-scale" aria-labelledby="pr-scale">
-        <h3 id="pr-scale" className="pr-h3 pr-h3-long" data-reveal="rise">
+        <h3 id="pr-scale" className="pr-h3" data-reveal="rise">
           {p.scaleTitle}
         </h3>
-        <AudienceScale />
+        <Stages />
       </section>
 
       <section className="pr pr-proof" id="proof" aria-labelledby="pr-proof">
@@ -122,6 +132,7 @@ export function Practical() {
           <p className="pr-lead" data-reveal="fade">
             {c.enquiry.intro}
           </p>
+          <FilmEntry at="enquiry" />
         </div>
         <Enquiry context="inline" />
       </section>

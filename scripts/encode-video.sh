@@ -14,6 +14,12 @@
 #       muted preview of its first ten seconds for the wall. Into public/videos.
 #   scripts/encode-video.sh film <source> <name>
 #       The film with sound, 1920 x 1080, for the film dialog. Into public/story/film.
+#   scripts/encode-video.sh stage <source> <name> "<start>-<end>@<w>:<h>:<x>:<y> ..."
+#   scripts/encode-video.sh stage <folder> <name> "<take.mp4>:<start>-<end>@<w>:<h>:<x>:<y> ..."
+#       A muted stage loop cut from the 4K film: each segment cropped (to stay clear of the
+#       burned-in subtitles at 78 to 82 percent of the height and the titles), scaled with
+#       Lanczos to 1600 x 1000 and joined with hard cuts. Poster from the first frame.
+#       Into public/story/stage.
 #
 # CRFs were chosen by VMAF against lossless intermediates (round 12). The phone and drone
 # footage carries sensor noise and costs far more bits than the 4K film for the same score.
@@ -85,6 +91,26 @@ case "$kind" in
     out="public/story/film"; mkdir -p "$out"
     ffmpeg -v error -y -i "$src" -vf "scale=1920:1080:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv444p10le" -c:a pcm_s16le "${lossless[@]}" "$tmp/film.mkv"
     ladder "$tmp/film.mkv" "$out/$name" 34 27 24 "-c:a libopus -b:a 128k" "-c:a aac -b:a 160k"
+    ;;
+  stage)
+    segs="${4:?segments: start-end@w:h:x:y ...}"
+    out="public/story/stage"; mkdir -p "$out"
+    graph=""; labels=""; i=0
+    # <source> is one file, or a folder of takes: then each segment names its take, "take.mp4:start-end@crop".
+    inputs=()
+    for s in $segs; do
+      if [[ -d "$src" ]]; then inputs+=(-i "$src/${s%%:*}"); s="${s#*:}"; input=$i; else input=0; fi
+      range="${s%@*}"; crop="${s#*@}"
+      graph+="[$input:v]trim=${range%-*}:${range#*-},setpts=PTS-STARTPTS,crop=${crop},scale=1600:1000:flags=lanczos+accurate_rnd+full_chroma_int,setsar=1,format=yuv444p10le[s$i];"
+      labels+="[s$i]"; i=$((i + 1))
+    done
+    [[ -d "$src" ]] || inputs=(-i "$src")
+    ffmpeg -v error -y "${inputs[@]}" -an -filter_complex "${graph}${labels}concat=n=${i}:v=1:a=0[v]" -map "[v]" "${lossless[@]}" "$tmp/stage.mkv"
+    # STAGE_CRF="av1 hevc h264" overrides: phone footage is noisy and needs a step more (small-room: "38 30 27").
+    read -r -a crf <<< "${STAGE_CRF:-34 27 24}"
+    cp "$tmp/stage.mkv" "${KEEP_LOSSLESS:-/dev/null}" 2>/dev/null || true
+    ladder "$tmp/stage.mkv" "$out/$name" "${crf[@]}"
+    poster "$tmp/stage.mkv" "$out/$name.jpg"
     ;;
   *) echo "unknown kind: $kind" >&2; exit 1 ;;
 esac

@@ -371,14 +371,20 @@ export const content = {
     footageCredit: "Footage: {name}",
 
     hero: {
+      /** Where the commentary in the loop comes from. Paris had heats and a final, no semi-final. */
+      context: "Paris 2024, Olympic 5000m heat",
       line: "Two-year journey. One AI algorithm. The Olympic final.",
-      film: "Watch the film with sound",
+      /** The play button in the middle of the film: what it is, how long, and what a booker will see in it. */
+      watch: "Watch the film, 53 seconds",
+      soundTouch: "Tap for sound",
+      soundPointer: "Play with sound",
+      soundLabel: "Watch the film with sound",
       scroll: "Scroll to begin",
-      pause: "Pause the film",
-      play: "Play the film",
+      pause: "Pause the background film",
+      play: "Play the background film",
       standInCredit: "Stand-in film cut from photos by {names}",
-      /** Seconds in the hero film where it shows its own text. Our line steps aside. */
-      quietCues: [] as { start: number; end: number }[],
+      /** Seconds in the hero loop where "I made it" fills the frame. Our line steps aside. */
+      quietCues: [{ start: 9.2, end: 10.4 }] as { start: number; end: number }[],
     },
 
     film: {
@@ -386,12 +392,31 @@ export const content = {
       close: "Close",
       standIn: "The 60-second film is in its final edit. Until it arrives, this is the stand-in cut, without sound.",
       captions: "English",
+      fullscreen: "Full screen",
+      tapFullscreen: "Tap to watch full screen",
+      transcript: "Read the transcript",
+      /** The small player that keeps the film going in the corner after the large one is closed. */
+      mini: {
+        label: "The film, still playing",
+        expand: "Watch it large again",
+        close: "Stop the film",
+        play: "Play the film",
+        pause: "Pause the film",
+      },
+      /** The other ways into the same film, further down the page. */
+      entries: {
+        /** Beside "The keynote" heading: a small preview and one button. */
+        keynote: { cta: "Watch the film, 53 seconds" },
+        enquiry: { title: "See me on stage before you write.", note: "53 seconds of the keynote, sound on." },
+        duration: "0:53",
+        play: "Play the film",
+      },
     },
 
     /** John opens the story himself, one line at a time, over the red road in Iten. */
     prologue: {
       lines: [
-        "My story starts 2 years before|the Olympics in Paris. I wasn't even in the world's top 200 yet.",
+        "My story began two years before|the Paris Olympics. I wasn't even|ranked among the world's top 200.",
         "So I used AI to find a road|nobody else was taking.",
       ],
     },
@@ -416,6 +441,8 @@ export const content = {
      * The code is shown as written; only its comments are translatable.
      */
     algorithm: {
+      /** The heading over the window. */
+      title: "I built an AI algorithm with ChatGPT",
       app: "ChatGPT",
       composer: "Ask anything",
       send: "Send",
@@ -445,17 +472,15 @@ export const content = {
         "    minimise=[\"races\", \"fatigue\", \"travel\", \"injury_risk\"],",
         ")",
       ],
-      recommendationLead: "Recommendation:",
-      recommendation: "a competition calendar that's different from everyone else.",
     },
 
     climb: {
-      record: "This led to the fastest rise|up the world rankings|in the history of athletics.",
+      record: "The result: the fastest rise up the world rankings in the history of athletics.",
       chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}. That ranking was my Olympic qualification.",
     },
 
     final: {
-      a: "Nobody believed|I'd make the final.",
+      a: "At the Olympics nobody believed|I'd make the final.",
       b: "They all said|it was impossible.",
       arms: "Hey mom, made it.",
       close: "Dare to|dream big.",
@@ -480,8 +505,12 @@ export const content = {
 
     ranking: {
       /** The chart's own title, over its vertical axis. */
-      axis: "World ranking",
-      quotaLine: "The Olympic quota: {n} runners",
+      axis: "World ranking positions",
+      quotaLine: "The top {n} runners qualify for the Olympics",
+      /** Over the two big numbers at the ends of the climb. */
+      position: "Position:",
+      /** Rides with the dot at the head of the line as it climbs. */
+      me: "My position",
       /** The two ends of the climb, as big as the chart allows. */
       startValue: "200+",
       endNote: "Olympic qualification",
@@ -500,6 +529,7 @@ export const content = {
       "track-laugh": "Me sitting on a track, laughing",
       "stage-wide": "Me on stage at Supernova, Antwerp",
       "stage-lookup": "Me on stage at Supernova, Antwerp, mid-sentence with one finger raised",
+      audience: "Me speaking on the side stage at Supernova, Antwerp, to a packed room seen from the seats",
     },
 
     practical: {
@@ -509,15 +539,28 @@ export const content = {
         { figure: "3", line: "languages: English, Dutch or French" },
         { figure: "5", line: "lessons with clear parallels in business" },
       ],
-      lessonsTitle: "More than an AI story: 5 lessons with clear parallels in business and entrepreneurship",
+      /** A short heading, then one plain sentence that carries the point. */
+      lessonsTitle: "More than an AI story",
+      lessonsLead: "Five lessons from my road to the Olympic final, each with a clear parallel in business and entrepreneurship.",
       lessonBack: "Back to lesson {n} in the story",
-      scaleTitle: "Small room or full house, expect to feel high energy",
+      scaleTitle: "Small room or full house, expect high energy",
+      /** Every room the keynote is booked for, each under the stage it belongs to (stages, below). */
       scale: [
-        { title: "Leadership dinners", size: "8 to 20", at: 12 },
-        { title: "Executive offsites", size: "20 to 50", at: 32 },
-        { title: "Company events", size: "100+", at: 100 },
-        { title: "Conferences and business fairs", size: "1,000+", at: 1000 },
+        { title: "Leadership dinners", size: "8 to 20", room: "small" },
+        { title: "Executive offsites", size: "20 to 50", room: "small" },
+        { title: "Company events", size: "100+", room: "large" },
+        { title: "Conferences and business fairs", size: "1,000+", room: "large" },
       ],
+      /**
+       * The two stages side by side, both footage (scripts/encode-video.sh stage): a
+       * leadership lunch for the small room, the keynote film's main stage for the full house.
+       */
+      stages: {
+        small: { title: "Small room", note: "Leadership lunch, 2025" },
+        large: { title: "Full house", note: "Main stage, Supernova, Antwerp" },
+      },
+      stagePause: "Pause the stage footage",
+      stagePlay: "Play the stage footage",
       proofTitle: "I've been booked by",
       /**
        * The marquee, in order. Each file is prepared to read as one colour
@@ -549,40 +592,40 @@ export const content = {
       /** Translated from Dutch where the original was Dutch. Name and link only where the writer gave them. */
       quotes: [
         {
-          text: "I've attended plenty of keynotes lately, and take it from me, John: you stand head and shoulders above them. And I'm comparing you with the so-called top names from the business world.",
+          text: "I've attended plenty of keynotes lately, and take it from me, John: you stand *head and shoulders above them*. And I'm *comparing you with the so-called top names from the business world*.",
           name: "Andrés Jorge Buysse",
           who: "Private Banker",
           org: "Deutsche Bank",
           href: "https://www.linkedin.com/in/andr%C3%A9s-jorge-b-83897a83/",
           portrait: "/testimonials/deutsche-bank-portrait.jpg",
-          logo: { src: "/testimonials/deutsche-bank-logo.png", w: 120, h: 120 },
+          logo: { src: "/testimonials/deutsche-bank-mark.svg", w: 120, h: 120, wordmark: false },
         },
         {
-          text: "His story of rising from amateur to Olympic finalist in just two years wasn't about self-promotion but about sharing life lessons directly applicable to business. His high energy further enhanced the experience.",
+          text: "His story of rising from amateur to Olympic finalist in just two years wasn't about self-promotion but about sharing *life lessons directly applicable to business*. His *high energy* further enhanced the experience.",
           name: "Thierry Bosly",
           who: "Partner, Co-Head of Global M&A",
           org: "White & Case",
           href: "https://www.linkedin.com/in/thierrybosly/",
           portrait: "/testimonials/white-case-portrait.png",
-          logo: { src: "/testimonials/white-case-logo.png", w: 120, h: 40 },
+          logo: { src: "/logos/white-case.svg", w: 162, h: 12, wordmark: true },
         },
         {
-          text: "Your keynote at De Warande was a unique experience for everyone there. With your enthusiasm, your youth and your positivity, you win over your whole audience. That philosophy applies directly to the attitude a business leader needs to grow.",
+          text: "Your keynote at De Warande was a unique experience for everyone there. With your enthusiasm, your youth and your positivity, you win over your whole audience. That philosophy applies directly to *the attitude a business leader needs to grow*.",
           name: "Marina De Groof",
           who: "Founder and CEO",
           org: "DGI Immo",
           href: "https://www.linkedin.com/in/marinadegroof/",
           portrait: "/testimonials/dgi-portrait.jpg",
-          logo: { src: "/testimonials/dgi-logo.png", w: 105, h: 120 },
+          logo: { src: "/testimonials/dgi-mark.png", w: 105, h: 96, wordmark: false },
         },
         {
-          text: "Sharing not only the highs of elite competition but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
+          text: "Sharing not only the highs of *elite competition* but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
           name: "Julien Gryp",
           who: "Programme Manager",
           org: "The Merode",
           href: "https://www.linkedin.com/in/juliengryp/",
           portrait: "/testimonials/merode-portrait.png",
-          logo: { src: "/testimonials/merode-logo.png", w: 120, h: 40 },
+          logo: { src: "/testimonials/merode-mark.png", w: 68, h: 54, wordmark: false },
         },
       ],
       quoteProfile: "{name} on LinkedIn",
@@ -659,27 +702,15 @@ export const content = {
       },
       years: "{n} years",
       follow: "Follow the training:",
+      cta: "Check my availability",
       photo: "stage-lookup",
     },
 
     footer: {
       wordmark: "John Heymans",
-      contact: "Business enquiries",
+      cta: "Check my availability",
       credits: "Photography: {names}",
       copyright: "© John Heymans {year}",
-      /** The easter egg: your scroll, timed like a race. */
-      /** Scrolling the page counts as a 1 km run; the clock pauses while you read, like a running watch. */
-      pace: {
-        title: "Your run down this page",
-        waiting: "You're on the last lap.",
-        lead: "Scrolling down this page counts as a 1 km run. Here's how fast you went.",
-        pace: "Your time for 1 km",
-        five: "Your 5 km at that speed",
-        mine: "My fastest 5 km, {city} {year}",
-        mineShort: "My fastest 5 km",
-        blank: "--:--",
-        days: "{d} d {h} h",
-      },
       top: "Back to the top",
       legal: { label: "Legal", privacy: "Privacy", cookies: "Cookies", notice: "Legal notice", settings: "Cookie settings" },
     },
