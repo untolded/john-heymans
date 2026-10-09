@@ -43,13 +43,20 @@ const blocked = (target: EventTarget | null) =>
 
 /** Gap between wheel events, in ms, after which the next one is a new gesture. */
 const GESTURE_GAP = 140;
-/** A held stop ignores even a new gesture for this long, so a double flick cannot skip it. */
-const MIN_HOLD = 240;
 /**
- * Longest a stop holds a gesture that keeps its strength (a wheel spun on and
- * on). A trackpad's momentum fades instead, and is held until it ends.
+ * A stop holds for at least this long once the page has arrived on it, even
+ * against a new gesture, so a double flick cannot skip it. Timed from the
+ * arrival, not from the moment the stop was chosen: the glide there takes
+ * about half a second, and a hold timed from its start could end before the
+ * page ever came to rest.
  */
-const MAX_HOLD = 1400;
+const MIN_HOLD = 300;
+/**
+ * Longest a stop holds, after arriving, a gesture that keeps its strength (a
+ * mouse wheel spun on and on). A trackpad's momentum fades instead, and is
+ * held until it ends.
+ */
+const MAX_HOLD = 800;
 /** A gesture is fast above this many screens of wheel delta per 100 ms. */
 const FAST = 0.15;
 const WINDOW = 100;
@@ -59,7 +66,11 @@ const LEAD = 0.35;
 type Sample = { t: number; d: number };
 
 export function wheelStops(lenis: Lenis) {
-  let hold: { y: number; since: number; peak: number } | null = null;
+  /** The stop being held; arrived is when the page came to rest on it (NaN while still gliding there). */
+  let hold: { y: number; arrived: number; peak: number } | null = null;
+  lenis.on("scroll", () => {
+    if (hold && Number.isNaN(hold.arrived) && Math.abs(lenis.animatedScroll - hold.y) < 1.5) hold.arrived = now();
+  });
   let last = { t: 0, abs: 0, dir: 0 };
   let recent: Sample[] = [];
   /** The current gesture has been fast at some point; its fading tail still counts as fast. */
@@ -91,7 +102,8 @@ export function wheelStops(lenis: Lenis) {
         hold = null;
         return true;
       }
-      const held = t - hold.since;
+      // Still gliding to the stop: hold whatever comes.
+      const held = Number.isNaN(hold.arrived) ? -1 : t - hold.arrived;
       hold.peak = Math.max(hold.peak, abs);
       const insisting = held > MAX_HOLD && abs > 0.5 * hold.peak;
       if ((continuing || held < MIN_HOLD) && !insisting) {
@@ -105,15 +117,18 @@ export function wheelStops(lenis: Lenis) {
     // Fast: a burst of delta, or scroll piling up ahead of the page (which also catches a gesture
     // whose events arrive slowly because the main thread is busy).
     const from = lenis.targetScroll;
+    const page = lenis.animatedScroll;
     const speed = recent.reduce((a, s) => a + s.d, 0);
     const lead = from + d - lenis.animatedScroll;
     fast ||= speed >= FAST * vh() || lead >= LEAD * vh();
     if (!fast) return true;
 
-    const stop = nextStop(from);
+    // The next stop the page itself has not reached: the first events of a gesture, before it
+    // counted as fast, may already have carried the target past one.
+    const stop = nextStop(Math.min(from, page));
     if (stop == null || from + d <= stop) return true;
     data.deltaY = stop - from;
-    hold = { y: stop, since: t, peak: abs };
+    hold = { y: stop, arrived: Math.abs(page - stop) < 1.5 ? t : Number.NaN, peak: abs };
     return true;
   };
 }
@@ -124,8 +139,14 @@ export function wheelStops(lenis: Lenis) {
 const COAST = 450;
 /** Flings slower than this many screens per second are left alone. */
 const MIN_FLING = 1.2;
-/** The take-over may brake at most this much harder than the browser would. */
-const MAX_BRAKE = 4;
+/**
+ * The take-over may brake at most this much harder than the browser would. Firm on purpose:
+ * a hard fling should still be caught by the next stop (John's "I scroll too far and skip a
+ * part"); the landing still eases out from the fling's own speed, it only comes sooner.
+ */
+const MAX_BRAKE = 10;
+/** How far past a stop, in screens, a fling too close to brake for may land: its moment is still on screen. */
+const LATE = 0.25;
 
 function touchStops(): () => void {
   const root = document.documentElement;
@@ -179,12 +200,22 @@ function touchStops(): () => void {
   const decide = (y: number, v: number) => {
     if (v < (MIN_FLING * vh()) / 1000) return;
     const coastTo = y + v * COAST;
+    // The shortest distance the take-over can stop in.
+    const brake = (v * v) / (2 * ((MAX_BRAKE * v) / COAST));
     for (const stop of stopsY()) {
-      if (stop <= y + 1) continue;
+      // The finger itself dragged just past this one before letting go: catch the fling here,
+      // while the stop's moment is still on screen, instead of coasting on to the next.
+      if (stop <= y + 1) {
+        if (y - stop < LATE * vh() && y + brake <= stop + LATE * vh()) return glide(y + brake, v);
+        continue;
+      }
       // The fling ends before this stop, or close enough past it: leave it to the browser.
       if (coastTo < stop + 0.1 * vh()) return;
-      // Close enough to brake for comfortably? Otherwise it is on screen now; aim for the next.
-      if ((v * v) / (2 * (stop - y)) <= (MAX_BRAKE * v) / COAST) return glide(stop, v);
+      // Room to brake for it: land on it.
+      if (stop - y >= brake) return glide(stop, v);
+      // The finger has carried the page almost onto it: land just past it, still on its moment.
+      if (y + brake <= stop + LATE * vh()) return glide(y + brake, v);
+      // Already well past what can be caught: aim for the next one.
     }
   };
 
@@ -263,7 +294,7 @@ function keyStops(): () => void {
     const t = now();
     const y = t - heading.t < 1200 ? Math.max(scroller.y(), heading.y) : scroller.y();
     const stop = nextStop(y);
-    if (stop == null || stop - y > 0.92 * vh()) return;
+    if (stop == null || stop - y > vh()) return;
     e.preventDefault();
     heading = { y: stop, t };
     scroller.to(stop, { duration: 0.9 });

@@ -68,6 +68,9 @@ export function Chart() {
     const quotaText = el.querySelector<HTMLElement>(".rc-quota-label");
     const me = el.querySelector<HTMLElement>(".rc-me")!;
     const meW = me.offsetWidth;
+    const meH = me.offsetHeight;
+    /** The quota label's box in chart coordinates, so "My position" can step aside as it passes. */
+    let quotaBox: { l: number; t: number; r: number; b: number } | null = null;
     const guides = el.querySelector<SVGGElement>(".rc-guides")!;
     const axes = el.querySelector<SVGGElement>(".rc-axes")!;
     const hole = el.querySelector<SVGRectElement>(".rc-hole")!;
@@ -118,7 +121,21 @@ export function Chart() {
       // Just above the dashed line at its left end, on a dark backing, and ending before the climb
       // crosses the line: everything left of the crossing is still below it, on a phone too.
       const room = Math.min(w - 1.2 * rem, pts[I_CROSS][0] - 1.2 * rem) - (axisX + 0.6 * rem);
-      if (quotaText) Object.assign(quotaText.style, { left: `${axisX + 0.6 * rem}px`, top: `${qy}px`, maxWidth: `${Math.max(8 * rem, room)}px` });
+      if (quotaText) {
+        // On a phone there is no free corner on the plot (the end number stands above the end of the
+        // line, the climb runs under it): the label becomes a legend under the years, with the line's dash.
+        const left = axisX + 0.6 * rem;
+        quotaText.dataset.side = touch ? "legend" : "above";
+        Object.assign(
+          quotaText.style,
+          touch
+            ? { left: `${axisX}px`, top: `${baseY + 2.35 * rem}px`, maxWidth: `${w - axisX}px` }
+            : { left: `${left}px`, top: `${qy}px`, maxWidth: `${Math.max(8 * rem, room)}px` },
+        );
+        const q = quotaText.getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        quotaBox = { l: q.left - box.left, t: q.top - box.top, r: q.right - box.left, b: q.bottom - box.top };
+      }
     }
     startDot.setAttribute("cx", String(x0));
     startDot.setAttribute("cy", String(y0));
@@ -174,8 +191,12 @@ export function Chart() {
       const climbing = f > 0 && f < last;
       head.style.opacity = climbing ? "1" : "0";
       // "My position" rides just above the dot, kept inside the chart at its right edge.
-      me.style.opacity = climbing ? "1" : "0";
-      me.style.transform = `translate(${Math.min(hx - 0.5 * rem, w - meW).toFixed(1)}px, ${(hy - 0.9 * rem).toFixed(1)}px) translateY(-100%)`;
+      const meX = Math.min(hx - 0.5 * rem, w - meW);
+      const meY = hy - 0.9 * rem;
+      // It steps aside while it passes over the quota's label, so the two never print over each other.
+      const overQuota = !!quotaBox && meX < quotaBox.r && meX + meW > quotaBox.l && meY - meH < quotaBox.b && meY > quotaBox.t;
+      me.style.opacity = climbing && !overQuota ? "1" : "0";
+      me.style.transform = `translate(${meX.toFixed(1)}px, ${meY.toFixed(1)}px) translateY(-100%)`;
 
       // The end: 31st, and the qualification that came with it.
       const done = f >= last - 0.001;

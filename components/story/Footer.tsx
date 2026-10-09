@@ -24,7 +24,6 @@ export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
       </p>
       <div className="footer-grid">
         <div className="footer-contact" data-reveal="fade">
-          <p className="footer-label">{f.contact}</p>
           <EnquireButton from="footer" className="pill pill-amber pill-xl">
             {f.cta}
           </EnquireButton>

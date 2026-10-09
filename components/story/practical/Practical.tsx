@@ -34,7 +34,9 @@ function Frame({ n }: { n: number }) {
   return (
     <>
       <span className="lf-art lf-photo">
-        <Image src={photo(f.slug).src} alt={photoAlt(f.slug)} fill sizes="(min-width: 992px) 20vw, 72vw" style={{ objectPosition: f.focus }} />
+        {/* Sized for the crop, not the card: the landscape photos are cut down to a portrait card, so
+            the image must be about twice as wide as the card to stay sharp. */}
+        <Image src={photo(f.slug).src} alt={photoAlt(f.slug)} fill sizes="(min-width: 992px) 40vw, 150vw" quality={85} style={{ objectPosition: f.focus }} />
       </span>
       {credit && <span className="lf-credit">{credit}</span>}
     </>

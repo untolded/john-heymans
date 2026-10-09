@@ -416,7 +416,7 @@ export const content = {
     /** John opens the story himself, one line at a time, over the red road in Iten. */
     prologue: {
       lines: [
-        "My story began two years before|the Paris Olympics. I wasn't even|ranked among the world's top 200.",
+        "My story began two years before|the Paris Olympics. I\u00a0wasn't even|ranked among the world's top 200.",
         "So I used AI to find a road|nobody else was taking.",
       ],
     },
@@ -498,7 +498,7 @@ export const content = {
     lessons: [
       { title: "You are the average of the 5 people you spend the most time with." },
       { title: "Don't be afraid|to challenge|the status quo." },
-      { title: "Consistency beats|hard work" },
+      { title: "Consistency beats|hard work." },
       { title: "Embrace|the pressure." },
       { title: "Dare to|dream big." },
     ],

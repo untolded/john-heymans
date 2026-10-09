@@ -161,10 +161,12 @@ export function Final() {
         p = b.progress;
         applyFrame(frameAt(p));
         onCue(p);
-        // Leaving for the handover: everything fades with the stadium.
+        // Leaving for the handover, in two steps so the screen only ever gets darker. First the photo and
+        // its ink fade out under the full dim; then the dim goes. Fading the dim with the photo lifted the
+        // multiply off a still-visible photo, which brightened it for a moment (the flash John saw).
         const out = b.hide < 0.25 ? 1 - b.hide / 0.25 : 0;
         media.style.opacity = String(out);
-        dimOut.style.opacity = String(out);
+        dimOut.style.opacity = String(Math.min(1, Math.max(0, 1 - (b.hide - 0.25) / 0.2)));
         inkLayer.style.opacity = String(out);
         reportCredits(root, b.active && out > 0.3);
         credits.report("final-arms@final", ARMS.credit ? fill(content.story.credit, { name: ARMS.credit }) : "", b.active && out > 0.3 && p > at(84) && p < at(160) ? 1 : 0);
@@ -182,7 +184,7 @@ export function Final() {
           {gate.load && <Image src={ARMS.src} alt="" fill sizes="2400px" quality={85} fetchPriority={gate.priority} />}
         </div>
       </div>
-      {/* The wrapper fades the dim out with the stadium; the timeline owns the dim's own opacity. */}
+      {/* The wrapper fades the dim out with the stadium ground; the timeline owns the dim's own opacity. */}
       <div className="L final-dim-out">
         <div className="L L-dim final-dim" />
       </div>

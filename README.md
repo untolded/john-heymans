@@ -300,10 +300,10 @@ gradient made from the brand colours, amber into lavender through the rose where
 crosses it every seven seconds; reduced motion keeps it still. The thin amber lines are unchanged:
 they are the story's line, not surfaces.
 
-**Icons.** Since round 13 the icons are John himself, from the licensed `final-arms` photo:
-`node scripts/make-icons.mjs` writes a face crop for the tab sizes (`app/icon.png`, `favicon.ico`
-at 16, 32 and 48), and face plus the "MADE IT" arm for the iOS web clip and the manifest icons.
-The writing on the arm cannot be read at 32 px, so the small sizes leave it out.
+**Icons.** The icons are John himself, a round portrait from the licensed `final-arms` photo
+(hands on his head down to the bib): `node scripts/make-icons.mjs` writes the tab sizes
+(`app/icon.png`, `favicon.ico` at 16, 32 and 48) transparent around the circle, and the iOS web
+clip and manifest icons with the circle on the night ground.
 
 **Search and AI assistants.** One module, `lib/seo.ts`, builds the structured data (WebSite,
 ProfilePage, Person with sameAs, the keynote as a Service), `/llms.txt` (generated from the page's
@@ -376,6 +376,23 @@ Round 13b (6 October 2026): the small room is real footage now, a leadership lun
 `STAGE_CRF="38 30 27"`, VMAF 90 to 93; 2.4 MB AV1). The film's card after the story moved into "The
 keynote" section: a small silent preview beside the heading (the hero's own loop, already cached)
 and one "Watch the film, 53 seconds" button. Testimonial highlights are bold only, no marker.
+
+Round 13c (9 October 2026), a double check of every point. Scroll stops, measured on the production
+build: a wheel or trackpad hold is now timed from the moment the page arrives on the stop (it used to
+start when the stop was chosen, so a new gesture during the half-second glide could carry on past it),
+and a stop the page has not reached still counts even if the target already passed it. A wheel spun
+on and on is released 0.8 s after arriving. Touch may brake up to 10x harder than native momentum,
+and a fling the finger dragged just past a stop lands just after it (within a quarter screen).
+Results: trackpad flings, mouse wheel spins, Space, and touch flicks up to 3000 px/s each land on all
+15 stops in order; slow scrolling is never held. On phones the quota label is a legend under the
+years, and short phones start the chart lower. The back-to-top button steps aside for corner controls.
+
+Round 13d (9 October 2026): the favicon is a round portrait from `final-arms` (hands on his head
+down to the HEYMANS bib, both arms in frame), transparent around the circle at tab sizes and on the
+night ground for the home screen and manifest (`node scripts/make-icons.mjs`). The flash between
+"Dare to dream big" and "That's my story" is gone: the violet dim multiplies the photo, and fading
+both together lifted the dim off a still-visible photo. Now the photo fades under the full dim, then
+the dim goes, so the screen only gets darker (measured: luminance 75 down to 27, no step up).
 
 ### The film's two numbers
 

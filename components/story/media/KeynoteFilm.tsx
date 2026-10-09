@@ -56,7 +56,6 @@ export function KeynoteFilm({ loop, poster }: { loop: VideoSource[]; poster: str
         </span>
         <span>{t.cta}</span>
       </button>
-      <p className="keynote-film-note">{t.note}</p>
     </div>
   );
 }

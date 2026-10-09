@@ -1,22 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { content } from "@/lib/content";
 import { scroller } from "@/lib/story/scroll";
 import { SendIcon } from "./icons";
 
 const label = content.story.footer.top;
 const PHONE = "(max-width: 699px)";
+/** Controls and credits that sit in a bottom-right corner of their own; the button steps aside as they pass. */
+const CORNER = ".venue-pause, .marquee-pause, .room-pause, .bio-credit";
 
 /**
  * A round "back to the top" button, bottom right, from the moment the
  * practical part takes over the screen. Hidden during the story, which has
  * its own skip control in that corner. On phones it steps aside while the
- * enquiry is on screen, so it never sits on the send button; the cookie
- * banner hides it in CSS. Moves through scroller.to, so Lenis runs it.
+ * enquiry is on screen, so it never sits on the send button, and everywhere
+ * it steps aside while another corner control (a pause button, a photo
+ * credit) passes under it; the cookie banner hides it in CSS. Moves through scroller.to, so Lenis runs it.
  */
 export function BackToTop() {
   const [on, setOn] = useState(false);
+  const self = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const practical = document.querySelector<HTMLElement>(".practical");
@@ -32,6 +36,14 @@ export function BackToTop() {
       if (enquiry && phone.matches) {
         const r = enquiry.getBoundingClientRect();
         blocked = r.top < h && r.bottom > 0;
+      }
+      const me = self.current?.getBoundingClientRect();
+      if (me && !blocked) {
+        const m = 12;
+        blocked = Array.from(document.querySelectorAll(CORNER)).some((el) => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.left < me.right + m && r.right > me.left - m && r.top < me.bottom + m && r.bottom > me.top - m;
+        });
       }
       setOn(inside && !blocked);
     };
@@ -50,6 +62,7 @@ export function BackToTop() {
 
   return (
     <button
+      ref={self}
       type="button"
       className="to-top"
       data-on={on}
