@@ -56,10 +56,11 @@ export const pages = {
         {
           heading: "What I collect and why",
           blocks: [
-            "When you send a booking enquiry, I receive the answers you give: your name, your organisation, your work email, the type of event, its date and size, the language you'd like, and anything you add in the message. I use them to reply with my availability and a fee, and to prepare the booking if you go ahead. The legal basis is taking steps at your request before a contract (Article 6(1)(b) of the GDPR).",
+            "When you send a booking enquiry, I receive the answers you give: your name, your company or organisation, your email, your phone number if you give it, and what you tell me about your event. I use them to reply with my availability and a fee, and to prepare the booking if you go ahead. The legal basis is taking steps at your request before a contract (Article 6(1)(b) of the GDPR).",
             "If we work together, I keep what I need to deliver the keynote and to invoice it. The legal basis is our contract and, for invoices, my obligations under Belgian accounting and tax law. If you email me directly, the same applies to what you send.",
             "When you visit, {host} processes your IP address and technical details of your browser to deliver the pages and keep the site secure. That is my legitimate interest in running a safe website (Article 6(1)(f)).",
             "To stop abuse of the enquiry form, the site keeps a scrambled (hashed) version of your IP address in memory for one hour and accepts five enquiries per hour from the same address. It is not written anywhere and is forgotten after the hour.",
+            "The enquiry form also runs a short spam check in your browser while you type (ALTCHA, an open-source proof-of-work check that runs on this site). Your device solves a small puzzle and the answer is sent along with your enquiry. It sets no cookie, uses no outside service and keeps nothing about you. So that one answer can't be sent twice, the site holds the used puzzle in memory until it expires ten minutes later.",
             "I don't measure visits at the moment. If I start, it will only happen after you agree in the cookie banner, and the cookie policy will name the tool first.",
           ],
         },

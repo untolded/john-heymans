@@ -18,9 +18,10 @@ const QUOTA_LABEL = QUOTA != null && show(facts.ranking.quota) != null ? fill(co
 const year = (d: string) => String(new Date(d).getUTCFullYear());
 const YEARS = SHOWN && SERIES.length > 1 ? [year(SERIES[0].date), year(SERIES[SERIES.length - 1].date)] : [];
 
-// When the chart is on screen: straight after the ChatGPT window folds away, until the stadium.
+// When the chart is on screen: straight after the ChatGPT window folds away, and gone before the arms
+// photo comes up, so none of it ghosts over the photo (it sits above the photo's layer).
 const IN: [Moment, Moment] = [["climb", v("climb", 10)], ["climb", v("climb", 20)]];
-const OUT: [Moment, Moment] = [["final", 0], ["final", v("final", 10)]];
+const OUT: [Moment, Moment] = [["climb", v("climb", 112)], ["climb", v("climb", 120)]];
 
 /** Round ranks on the vertical axis, each with a gridline. */
 const TICKS = [200, 100, 50];

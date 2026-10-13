@@ -25,7 +25,7 @@ const initials = (name: string) =>
     .join("");
 
 /**
- * "You stand *head and shoulders above them*." with the starred phrases set
+ * "And *I'm comparing you with the so-called top names...*" with the starred phrases set
  * in bold. Screen readers get the sentence as written.
  */
 function Marked({ text }: { text: string }) {

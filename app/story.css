@@ -486,7 +486,20 @@ html.lenis, html.lenis body { height: auto; }
 
 /* Iten: the globe and the flight, then the footage. */
 .globe-wrap { transition: opacity 0.6s; }
-.stage:has(.copy-overlay[data-centre="true"]) .globe-wrap { opacity: 0.3; }
+/*
+ * The title and the flight on one screen, side by side: the title leads (left on wide screens, low on
+ * phones, full white, largest), the globe stands beside it at full strength so the route reads.
+ */
+.slot-centre .entry[data-entry="iten.title"] { text-align: left; }
+/* Its written lines too: the centre slot centres each line block (.tl, margin auto) while the reveal runs, which made the title start centred and jump left once it settled. */
+@media (min-width: 992px) { .slot-centre [data-entry="iten.title"] .tl { margin-inline: 0; } }
+.slot-centre [data-entry="iten.title"] .e-text { margin-inline: 0; max-width: 13ch; text-align: left; }
+@media (max-width: 991px) {
+  .slot-centre .entry[data-entry="iten.title"] { align-self: end; margin-bottom: 14svh; text-align: center; }
+  .slot-centre [data-entry="iten.title"] .e-text { margin-inline: auto; max-width: 16ch; text-align: center; }
+}
+/* "However, training hard wasn't enough. I needed an edge." runs four lines: they get air, so no comma or apostrophe touches the line below. */
+.slot-centre [data-entry="edge.line"] .e-text { line-height: 1.04; }
 .globe { position: absolute; inset: 0; }
 .plane { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; color: var(--paper); opacity: 0; visibility: hidden; filter: drop-shadow(0 0 6px rgb(7 6 19 / 0.8)); }
 .plane svg { display: block; }
@@ -513,7 +526,7 @@ html.lenis, html.lenis body { height: auto; }
 /* The algorithm: a Mac window running ChatGPT, in the app's own dark neutrals, and a dock. */
 .algo-set { will-change: opacity; }
 /* The heading over the window, then the window in whatever height is left: they never overlap. */
-.algo-stack { position: absolute; left: 0; right: 0; top: 5.4rem; bottom: 8.2rem; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: clamp(1rem, 2.6svh, 1.75rem); justify-items: center; }
+.algo-stack { position: absolute; left: 0; right: 0; top: 6.4rem; bottom: 8.2rem; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: clamp(1rem, 2.6svh, 1.75rem); justify-items: center; }
 .algo-head { padding-inline: var(--pad); text-align: center; }
 .algo-title { margin: 0; font-size: calc(4.2rem * var(--d-scale)); line-height: 0.96; text-transform: var(--d-case); color: var(--paper); text-shadow: 0 2px 30px rgb(7 6 19 / 0.6); visibility: hidden; }
 .chat-min { position: relative; width: 100%; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); place-items: center; will-change: transform; }
@@ -535,18 +548,12 @@ html.lenis, html.lenis body { height: auto; }
 /* Everything in the thread is laid out from the start and only revealed; the thread moves by transform to follow it. */
 .chat-view { position: relative; overflow: hidden; padding: 1.4rem 2.6rem 0; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 1.6rem); mask-image: linear-gradient(to bottom, transparent 0, #000 1.6rem); }
 .chat-thread { position: relative; display: flex; flex-direction: column; gap: 1.5rem; padding-bottom: 0.5rem; will-change: transform; }
-.chat-you { align-self: flex-end; max-width: 75%; padding: 0.7rem 1.15rem; border-radius: 1.5rem; background: #303030; }
 .chat-ai { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 0.9rem; align-items: start; }
 .chat-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16); }
 .chat-avatar img { width: 18px; height: 18px; }
 .chat-ai-body { display: grid; gap: 1.15rem; min-width: 0; }
 .chat-composer { display: flex; align-items: flex-end; gap: 0.75rem; min-height: 56px; margin: 0.7rem 1.8rem 1.3rem; padding: 0.95rem 0.6rem 0.6rem 1.35rem; border-radius: 28px; background: #2f2f2f; }
-.chat-input { position: relative; flex: 1; display: block; min-height: 1.5em; line-height: 1.5; padding-bottom: 0.35rem; align-self: stretch; }
-.chat-ghost { display: block; visibility: hidden; }
-.chat-live { position: absolute; inset: 0 0 auto 0; }
-.chat-placeholder { position: absolute; left: 0; top: 0; color: #8e8e8e; transition: opacity 0.2s; }
-.chat-caret { display: inline-block; width: 2px; height: 1.3em; margin-left: 1px; vertical-align: text-bottom; background: var(--amber); visibility: hidden; animation: blink 1.05s steps(2, jump-none) infinite; }
-.chat[data-typing="true"] .chat-caret { visibility: visible; }
+.chat-input { flex: 1; min-height: 1.5em; line-height: 1.5; padding-bottom: 0.35rem; color: #8e8e8e; }
 .chat-send { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: #ececec; color: #212121; }
 
 /* The dock, with one app in it. The running light is the edge's amber dot. */
@@ -560,19 +567,7 @@ html.lenis, html.lenis body { height: auto; }
 .dock-app img { width: 62%; height: 62%; }
 .dock-dot { position: absolute; left: 50%; bottom: 0.32rem; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--amber); opacity: 0; box-shadow: 0 0 8px rgb(255 122 47 / 0.8); }
 
-/* ChatGPT's answer: thinking, then the code. */
-.swap { display: inline-grid; }
-.swap > * { grid-area: 1 / 1; }
-.think[data-state="live"] .think-done, .think[data-state="done"] .think-live { visibility: hidden; }
-.think { display: grid; gap: 0.5rem; }
-.think-head { font-weight: 500; color: #b4b4b4; }
-.think-live {
-  background: linear-gradient(90deg, #8e8e8e 0%, #8e8e8e 35%, #f3f1ea 50%, #8e8e8e 65%, #8e8e8e 100%) 0 0 / 250% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 1.8s linear infinite;
-}
-@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
-.think-steps { display: grid; gap: 0.35rem; padding-left: 1rem; border-left: 2px solid #3a3a3a; font-size: 0.9em; line-height: 1.45; color: #a3a3a3; }
-.think[data-state="done"] .think-steps { color: #8a8a8a; }
+/* ChatGPT's answer: the code. */
 .code { border-radius: 12px; overflow: hidden; background: #171717; border: 1px solid #2b2b2b; }
 .code-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.45rem 1rem; background: #2a2a2a; font-size: 0.78em; color: #b4b4b4; }
 .code-copy { display: inline-flex; align-items: center; gap: 0.35rem; }
@@ -581,7 +576,7 @@ html.lenis, html.lenis body { height: auto; }
 .code-line { display: block; padding-left: calc((var(--ind, 0) + 4) * 1ch); text-indent: calc((var(--ind, 0) + 4) * -1ch); }
 .c-com { color: #9b9b9b; font-style: italic; }
 .c-key { color: var(--lavender); }
-.c-str { color: #ffb38a; white-space: nowrap; }
+.c-str { color: #ffb38a; }
 .c-num { color: #ff9a5c; }
 .c-fn { color: #f3f1ea; }
 .c-arg { color: #a8a8a8; }
@@ -739,7 +734,6 @@ html.lenis, html.lenis body { height: auto; }
   background: #212121; color: #ececec; font-size: max(1.0625rem, 16px); line-height: 1.5;
 }
 .tr-app { font-weight: 600; font-size: max(1rem, 15px); opacity: 0.85; }
-.tr-you { justify-self: end; max-width: 82%; padding: 0.7rem 1.1rem; border-radius: 1.4rem; background: #303030; }
 .tr-ai { display: grid; gap: 0.6rem; }
 
 .handwriting { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
@@ -805,7 +799,8 @@ html.lenis, html.lenis body { height: auto; }
 .pr-h3 { font-size: calc(3.36rem * var(--d-scale)); line-height: 0.95; text-transform: var(--d-case); }
 .pr-lead { margin-top: 1.5rem; font-size: max(1.6rem, 20px); line-height: 1.3; letter-spacing: -0.012em; font-weight: 500; max-width: 40rem; text-wrap: pretty; }
 .pr-note { margin-top: 1rem; color: var(--ink-72); font-size: max(1.0625rem, 16px); }
-.pr-keynote { padding-top: 10rem; }
+/* The practical part opens with the five lessons, straight after "Dare to dream big"; the keynote follows. */
+.pr-lessons { padding-top: 10rem; }
 /* The facts as three lanes: hairlines above and below, one between each pair. --draw runs 0 to 1 as they draw in. */
 .pr-lanes { position: relative; margin-top: 4.5rem; padding: 3.25rem 0 3.5rem; }
 .pr-lanes::before, .pr-lanes::after, .pr-fact + .pr-fact::before {
@@ -821,20 +816,12 @@ html.lenis, html.lenis body { height: auto; }
 .pr-figure { font-size: calc(8.96rem * var(--d-scale)); line-height: 0.82; letter-spacing: -0.03em; }
 .pr-fact dd { font-size: max(1.25rem, 18px); line-height: 1.35; max-width: 17rem; }
 
-.pr-lessons { padding-top: 6rem; }
 .filmstrip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; margin-top: 3rem; }
 .lf { display: grid; align-content: start; }
-.lf-link { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; background: var(--night); color: var(--paper); transition: transform 0.4s var(--ease-out); }
-.lf-link:hover { transform: translateY(-4px); }
+/* The lessons hold still: no reveals, no hover lift. No credit on the frames; the footer names the photographers. */
+.lf-link { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; background: var(--night); color: var(--paper); }
 .lf-art { position: absolute; inset: 0; }
 .lf-photo img { object-fit: cover; }
-/* The credit sits in the frame's bottom right corner, on the photo. */
-.lf-credit {
-  position: absolute; right: 0.6rem; bottom: 0.55rem; z-index: 1; max-width: calc(100% - 1.2rem); text-align: right;
-  font-size: max(0.72rem, 11px); line-height: 1.25; color: var(--paper-85); text-shadow: 0 1px 8px rgb(7 6 19 / 0.9);
-}
-.lf-link::after { content: ""; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(to top, rgb(7 6 19 / 0.5), rgb(7 6 19 / 0)); pointer-events: none; }
-div.lf-link:hover { transform: none; }
 .pr-h3-long { max-width: 30ch; }
 .lf-title { margin-top: 1rem; font-family: var(--d-face); font-weight: var(--d-wght-sm); font-variation-settings: var(--d-axes); font-size: max(calc(1.79rem * var(--d-scale)), 19px); line-height: 1.05; letter-spacing: var(--d-track-sm); }
 
@@ -859,10 +846,14 @@ div.lf-link:hover { transform: none; }
 .sm-title { font-weight: 600; font-size: max(1.2rem, 17px); line-height: 1.25; }
 
 .pr-proof { padding-top: 8rem; }
-/* Booked by: one slow row that never ends. Every logo is drawn as a single ink silhouette. */
+/* Booked by: two slow rows that never end, running in opposite directions. Every logo is drawn as a single ink silhouette. */
 .marquee { position: relative; margin-top: 3.5rem; overflow: hidden; margin-inline: calc(var(--pad) * -1); padding: 1rem 0; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
 .marquee-track { display: flex; width: max-content; animation: marquee 60s linear infinite; }
-.marquee:hover .marquee-track, .marquee:focus-within .marquee-track, .marquee[data-paused="true"] .marquee-track { animation-play-state: paused; }
+.marquee[data-reverse] .marquee-track { animation-direction: reverse; }
+/* Pointing at or focusing either row stops both; so does the pause button (data-paused). */
+.marquee-rows { display: grid; gap: 1rem; margin-top: 3.5rem; justify-self: stretch; }
+.marquee-rows .marquee { margin-top: 0; }
+.marquee-rows:hover .marquee-track, .marquee-rows:focus-within .marquee-track, .marquee-rows[data-paused="true"] .marquee-track { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 .logos { display: flex; align-items: center; gap: 5.5rem; padding-right: 5.5rem; }
 .marquee.is-still { margin-inline: 0; -webkit-mask-image: none; mask-image: none; }
@@ -871,7 +862,6 @@ div.lf-link:hover { transform: none; }
 .logos img { display: block; filter: brightness(0); opacity: 0.8; }
 .logo-caption { font-family: var(--d-face); font-weight: var(--d-wght-sm); font-variation-settings: var(--d-axes); font-size: max(1rem, 14px); line-height: 1; letter-spacing: 0.01em; text-transform: var(--d-case); color: rgb(20 16 25 / 0.8); }
 .marquee-wrap { display: grid; justify-items: end; gap: 0.75rem; }
-.marquee-wrap .marquee { justify-self: stretch; }
 @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 .quotes { margin-top: 6rem; }
 .quotes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 5rem; align-items: start; }
@@ -958,7 +948,7 @@ div.lf-link:hover { transform: none; }
 .gpt-thread > :first-child { margin-top: auto; }
 .gpt-ai { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 0.85rem; align-items: start; max-width: 44rem; }
 .gpt-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16); }
-.gpt-ai > p, .gpt-body > p, .gpt .enq-q { margin: 0.15rem 0 0; font: 400 16px/1.6 var(--t-face); letter-spacing: 0; text-transform: none; text-wrap: pretty; }
+.gpt-ai > p, .gpt-body > p { margin: 0.15rem 0 0; font: 400 16px/1.6 var(--t-face); letter-spacing: 0; text-transform: none; text-wrap: pretty; }
 .gpt-body { display: grid; gap: 0.5rem; min-width: 0; }
 .gpt-past { color: var(--gpt-muted); }
 .gpt .enq-field { min-width: 0; margin: 0; padding: 0; border: 0; }
@@ -968,7 +958,7 @@ div.lf-link:hover { transform: none; }
 .gpt-you {
   align-self: flex-end; display: inline-flex; align-items: center; gap: 0.6rem; max-width: 80%;
   margin: 0; padding: 0.6rem 1.1rem; border: 0; border-radius: 1.5rem;
-  background: var(--gpt-surface); color: var(--gpt-text); font: 400 16px/1.45 var(--t-face); text-align: left;
+  background: var(--gpt-surface); color: var(--gpt-text); font: 400 16px/1.45 var(--t-face); text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;
   animation: gpt-in 0.3s var(--ease-out) both;
 }
 button.gpt-you { cursor: pointer; transition: background-color 0.2s; }
@@ -976,23 +966,10 @@ button.gpt-you:hover { background: #3a3a3a; }
 .gpt-you svg { flex: none; opacity: 0; transition: opacity 0.2s; }
 button.gpt-you:hover svg, button.gpt-you:focus-visible svg { opacity: 0.75; }
 
-/* Suggestions, like ChatGPT's: outlined pills that fill when chosen. */
-.enq-choices { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.85rem; }
-.choice { position: relative; display: inline-flex; }
-.choice input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.choice span {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.05rem; border-radius: 999px;
-  border: 1px solid var(--gpt-line); font-size: 15px; font-weight: 500; line-height: 1.2; color: var(--gpt-text);
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
-.choice:hover span { background: var(--gpt-surface); }
-.choice input:checked + span { background: var(--gpt-text); color: #0d0d0d; border-color: var(--gpt-text); }
-.choice input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
-.choice-check span::before { content: ""; width: 14px; height: 14px; margin-right: 0.6rem; border-radius: 4px; border: 1.5px solid currentColor; }
-.choice-check input:checked + span::before { background: var(--amber) var(--ai); border-color: transparent; }
-.enq-date { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin-top: 0.85rem; }
+/* Suggestions, like ChatGPT's: outlined pills under the question (.gpt-chip, with the composer rules). */
+.enq-choices { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.35rem; }
 .enq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem 1rem; margin-top: 0.85rem; }
-.field { display: grid; gap: 0.35rem; }
+.field { display: grid; align-content: start; gap: 0.35rem; }
 .field-wide { grid-column: 1 / -1; }
 .field-label { font-size: 13px; font-weight: 500; color: var(--gpt-muted); }
 .field-optional { font-weight: 400; }
@@ -1003,13 +980,12 @@ button.gpt-you:hover svg, button.gpt-you:focus-visible svg { opacity: 0.75; }
 }
 .field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 .field input:disabled { opacity: 0.45; }
-.field input[aria-invalid="true"] { border-color: var(--error); }
+.field :is(input, textarea)[aria-invalid="true"] { border-color: var(--error); }
 .field textarea { resize: vertical; min-height: 5.5rem; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .enq-error { display: block; margin-top: 0.3rem; color: var(--error); font-size: 14px; font-weight: 500; }
 .enq-send-error { margin: 0 0.75rem 0.75rem; }
 .enq-send-error a, .enq-note a { text-decoration: underline; text-underline-offset: 0.2em; }
-.enq-label { display: block; margin-bottom: 0.1rem; font-weight: 500; font-size: 16px; }
 .enq-plain { display: grid; gap: 1.75rem; }
 .enq-note { color: var(--gpt-muted); }
 
@@ -1020,6 +996,28 @@ button.gpt-you:hover svg, button.gpt-you:focus-visible svg { opacity: 0.75; }
 }
 .gpt-draft { flex: 1; min-width: 0; margin: 0; padding: 0 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gpt-draft[data-empty="true"] { color: var(--gpt-muted); }
+/* The answer is typed here. 16px keeps iOS from zooming on focus; the ring shows on the whole composer. */
+.gpt-composer:focus-within { box-shadow: 0 0 0 2px var(--focus); }
+.gpt-input {
+  flex: 1; min-width: 0; min-height: 44px; margin: 0; padding: 0.6rem 0.75rem; border: 0; border-radius: 14px;
+  background: transparent; color: var(--gpt-text); font: 400 16px/1.5 var(--t-face); color-scheme: dark;
+}
+.gpt-input:focus { outline: none; }
+.gpt-input::placeholder { color: var(--gpt-muted); opacity: 1; }
+.gpt-input-long { resize: none; max-height: min(12rem, 32svh); overflow-y: auto; }
+/* The long answer gets the composer's full width, with back and send on a row under it, as ChatGPT does on a phone. */
+.gpt-composer[data-long="true"] { flex-wrap: wrap; row-gap: 0.25rem; border-radius: 24px; padding-top: 0.35rem; }
+.gpt-composer[data-long="true"] .gpt-input-long { order: -1; flex-basis: 100%; }
+.gpt-composer[data-long="true"] .gpt-send { margin-left: auto; }
+.gpt-hint { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; margin: 0.4rem clamp(0.75rem, 2vw, 1.5rem) 0; font-size: 12px; line-height: 1.4; color: var(--gpt-muted); }
+.gpt-hint span:last-child:not(:first-child) { margin-left: auto; }
+.gpt-chip {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.05rem; border-radius: 999px;
+  border: 1px solid var(--gpt-line); background: transparent; color: var(--gpt-text);
+  font: 500 15px/1.2 var(--t-face); cursor: pointer; transition: background-color 0.2s;
+}
+.gpt-chip:hover { background: var(--gpt-surface); }
+.gpt-you[data-skipped="true"] { color: var(--gpt-muted); font-style: italic; }
 .gpt-round { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--gpt-text); cursor: pointer; }
 .gpt-round:hover { background: #3d3d3d; }
 .gpt-send {
@@ -1027,7 +1025,7 @@ button.gpt-you:hover svg, button.gpt-you:focus-visible svg { opacity: 0.75; }
   min-width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px;
   background: var(--gpt-text); color: #0d0d0d; font: 600 15px/1 var(--t-face); cursor: pointer; transition: background-color 0.2s;
 }
-.gpt-send:disabled { background: #5c5c5c; color: #2b2b2b; cursor: default; }
+.gpt-send:disabled, .gpt-send[data-ready="false"] { background: #5c5c5c; color: #2b2b2b; cursor: default; }
 /* The final send is an AI surface (see the top of the file); this restates its fill over .gpt-send's. */
 .gpt-send-label, .gpt-send-label:disabled { padding: 0 0.85rem 0 1.15rem; background: var(--amber) var(--ai) 15% 50% / 190% 100%; color: var(--ink); }
 .gpt-send-label:disabled { opacity: 0.6; }
@@ -1318,7 +1316,6 @@ html:has(.site[data-ground="paper"]) { background: var(--paper); }
   .traffic i { width: 10px; height: 10px; }
   .chat-view { padding: 1rem 0.9rem 0; }
   .chat-thread { gap: 1.1rem; }
-  .chat-you { max-width: 88%; }
   .chat-ai { grid-template-columns: minmax(0, 1fr); }
   .chat-avatar { display: none; }
   .chat-composer { min-height: 48px; margin: 0.5rem 0.7rem 0.75rem; padding: 0.7rem 0.5rem 0.5rem 1rem; }
@@ -1340,7 +1337,7 @@ html:has(.site[data-ground="paper"]) { background: var(--paper); }
   .sb-map { height: 22rem; }
 
   .pr { padding: 5rem var(--pad); }
-  .pr-keynote { padding-top: 6rem; }
+  .pr-lessons { padding-top: 6rem; }
   .pr-h2 { font-size: calc(3.08rem * var(--d-scale)); }
   .pr-h3 { font-size: calc(2.24rem * var(--d-scale)); }
   .pr-lead { font-size: 1.3rem; }
@@ -1350,7 +1347,7 @@ html:has(.site[data-ground="paper"]) { background: var(--paper); }
   .pr-fact, .pr-fact:first-child { padding: 1.5rem 0; }
   .pr-fact + .pr-fact::before { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 1px; transform: scaleX(var(--draw, 1)); transform-origin: left center; }
   .pr-figure { font-size: calc(5.04rem * var(--d-scale)); }
-  .filmstrip { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; margin-inline: calc(var(--pad) * -1); padding: 0 var(--pad) 0.5rem; }
+  .filmstrip { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--pad); gap: 1rem; margin-inline: calc(var(--pad) * -1); padding: 0 var(--pad) 0.5rem; }
   .lf { flex: none; width: 72vw; scroll-snap-align: start; }
   .venues { grid-template-columns: minmax(0, 1fr); gap: 3rem; margin-top: 2rem; }
   .venue-media { height: auto; aspect-ratio: 4 / 3; }
@@ -1375,6 +1372,9 @@ html:has(.site[data-ground="paper"]) { background: var(--paper); }
   .gpt-ai { grid-template-columns: 26px minmax(0, 1fr); gap: 0.65rem; }
   .gpt-avatar { width: 26px; height: 26px; }
   .gpt-you { max-width: 88%; }
+  /* With the keyboard up there is little room: the long answer stays short and scrolls, and the fine print steps aside while it is typed. */
+  .gpt-input-long { max-height: min(9rem, 24svh); }
+  .gpt:has(.gpt-input-long:focus) :is(.gpt-fine, .enq-direct) { display: none; }
   .dlg-gpt .dlg-panel { height: calc(100svh - 1rem); border-radius: 20px; }
   .bio { display: block; min-height: 0; padding: 0 0 4rem; }
   .bio-media { position: relative; inset: auto; z-index: 0; aspect-ratio: 4 / 5; max-height: 80svh; width: 100%; overflow: hidden; }
@@ -1536,3 +1536,8 @@ html:has(.site[data-ground="paper"]) { background: var(--paper); }
   .quote-by { flex-wrap: wrap; }
   .quote-logo { order: 3; flex-basis: 100%; margin-left: 0; justify-content: flex-start; }
 }
+@media (max-width: 420px) {
+  /* While the ChatGPT dock sits at the bottom centre, "Skip the story" keeps only its icon, so the two never touch. */
+  .story-root[data-ground="signal"] .skip-story > span:first-child { display: none; }
+}
+.pr-h-line { display: block; }

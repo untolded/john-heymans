@@ -1,5 +1,5 @@
 import { content } from "@/lib/content";
-import { STEPS, CODE, highlight } from "@/lib/story/chat";
+import { CODE, highlight } from "@/lib/story/chat";
 
 const c = content.story.algorithm;
 
@@ -11,57 +11,38 @@ const CopyGlyph = () => (
 );
 
 /**
- * ChatGPT's answer, whole: thinking, then the code.
- * Rendered finished (data-state="done"); the film sets everything back to
- * "live" and hidden, then reveals it.
+ * ChatGPT's answer: the code, whole. The film hides every line and writes
+ * them in as the reader scrolls.
  */
 export function ChatAnswer() {
   return (
-    <>
-      <div className="think" data-block="think" data-state="done">
-        <p className="think-head">
-          <span className="swap">
-            <span className="think-live" aria-hidden="true">
-              {c.thinking}
+    <div className="code" data-block="code">
+      <p className="code-bar" aria-hidden="true">
+        <span>{c.codeLang}</span>
+        <span className="code-copy">
+          <CopyGlyph />
+          {c.copy}
+        </span>
+      </p>
+      <pre>
+        <code>
+          {CODE.map((line, i) => (
+            // The indent is passed on so a line that has to wrap hangs under its own code.
+            <span className="code-line" key={i} style={{ "--ind": line.length - line.trimStart().length } as React.CSSProperties}>
+              {highlight(line).map((tok, j) =>
+                tok.k ? (
+                  <span className={`c-${tok.k}`} key={j}>
+                    {tok.t}
+                  </span>
+                ) : (
+                  tok.t
+                ),
+              )}
+              {"\n"}
             </span>
-            <span className="think-done">{c.thought}</span>
-          </span>
-        </p>
-        <ol className="think-steps">
-          {STEPS.map((s) => (
-            <li key={s}>{s}</li>
           ))}
-        </ol>
-      </div>
-
-      <div className="code" data-block="code">
-        <p className="code-bar" aria-hidden="true">
-          <span>{c.codeLang}</span>
-          <span className="code-copy">
-            <CopyGlyph />
-            {c.copy}
-          </span>
-        </p>
-        <pre>
-          <code>
-            {CODE.map((line, i) => (
-              // The indent is passed on so a line that has to wrap on a phone hangs under its own code.
-              <span className="code-line" key={i} style={{ "--ind": line.length - line.trimStart().length } as React.CSSProperties}>
-                {highlight(line).map((tok, j) =>
-                  tok.k ? (
-                    <span className={`c-${tok.k}`} key={j}>
-                      {tok.t}
-                    </span>
-                  ) : (
-                    tok.t
-                  ),
-                )}
-                {"\n"}
-              </span>
-            ))}
-          </code>
-        </pre>
-      </div>
-    </>
+        </code>
+      </pre>
+    </div>
   );
 }

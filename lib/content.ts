@@ -431,64 +431,33 @@ export const content = {
     },
 
     edge: {
-      a: "However,|training hard alone|wouldn't be enough.",
-      b: "I needed an *edge*.",
+      /* One sentence on one screen. The amber line underlines the marked word, then drops into the dock. */
+      line: "However,|training hard|wasn't enough.|I needed an *edge*.",
     },
 
     /**
-     * The ChatGPT conversation. A reconstruction of the method in
-     * docs/john_heymans_olympic_journey_ai_strategy.md, not a transcript.
-     * The code is shown as written; only its comments are translatable.
+     * The ChatGPT window. It shows only the code being written; the code
+     * itself is in lib/story/chat.ts, as written, and is not translated.
      */
     algorithm: {
       /** The heading over the window. */
       title: "I built an AI algorithm with ChatGPT",
       app: "ChatGPT",
       composer: "Ask anything",
-      send: "Send",
-      prompt: "Help me build an AI-algorithm to get me to the Olympics",
-      you: "I asked",
-      assistant: "ChatGPT answered",
-      thinking: "Thinking",
-      thought: "Finished thinking",
-      steps: [
-        "{quota} runners can qualify for the Olympics in the 5000m.",
-        "John needs to rise to the top 42 in the world rankings.",
-      ],
+      /** Read before the code in the static story. */
+      assistant: "ChatGPT wrote",
       codeLang: "python",
       copy: "Copy",
-      code: [
-        "# Olympic 5000m: {quota} places, decided by world ranking",
-        "TARGET = {points}  # projected cut for the top {quota}",
-        "",
-        "def meet_score(meet, me):",
-        "    podium = top3_odds(meet.field_depth, me.form)",
-        "    return result_points(me.target_time) + podium * placing_points(meet.category)",
-        "",
-        "season = optimise(",
-        "    meets=world_calendar(\"2023-07\", \"2024-06\"),",
-        "    score=meet_score,",
-        "    reach=TARGET,",
-        "    minimise=[\"races\", \"fatigue\", \"travel\", \"injury_risk\"],",
-        ")",
-      ],
     },
 
     climb: {
-      record: "The result: the fastest rise up the world rankings in the history of athletics.",
+      record: "The result: Olympic qualification after a historic rise in the world rankings.",
       chartSummary: "My world ranking climbed from {a} in {from} to {b} in {to}, inside the Olympic quota of {quota}. That ranking was my Olympic qualification.",
     },
 
     final: {
-      a: "At the Olympics nobody believed|I'd make the final.",
-      b: "They all said|it was impossible.",
       arms: "Hey mom, made it.",
       close: "Dare to|dream big.",
-    },
-
-    handover: {
-      /* Bars are line breaks. Written in, so the card never leaves "it." alone on a line. */
-      line: "That's my story.|Here's what your team takes from it.",
     },
 
     /**
@@ -530,6 +499,8 @@ export const content = {
       "stage-wide": "Me on stage at Supernova, Antwerp",
       "stage-lookup": "Me on stage at Supernova, Antwerp, mid-sentence with one finger raised",
       audience: "Me speaking on the side stage at Supernova, Antwerp, to a packed room seen from the seats",
+      "lesson-average": "Me laughing on the track after a session, water bottle in hand, with one of the people I train with",
+      "lesson-pressure": "Me and the field lined up on the start line at the Paris Olympics, under three tiers of packed stands",
     },
 
     practical: {
@@ -540,8 +511,8 @@ export const content = {
         { figure: "5", line: "lessons with clear parallels in business" },
       ],
       /** A short heading, then one plain sentence that carries the point. */
-      lessonsTitle: "More than an AI story",
-      lessonsLead: "Five lessons from my road to the Olympic final, each with a clear parallel in business and entrepreneurship.",
+      lessonsTitle: "That's the story.|Here's what your team gets from it.",
+      lessonsLead: "Five lessons with a clear parallel in business and entrepreneurship.",
       lessonBack: "Back to lesson {n} in the story",
       scaleTitle: "Small room or full house, expect high energy",
       /** Every room the keynote is booked for, each under the stage it belongs to (stages, below). */
@@ -592,7 +563,7 @@ export const content = {
       /** Translated from Dutch where the original was Dutch. Name and link only where the writer gave them. */
       quotes: [
         {
-          text: "I've attended plenty of keynotes lately, and take it from me, John: you stand *head and shoulders above them*. And I'm *comparing you with the so-called top names from the business world*.",
+          text: "I've attended plenty of keynotes lately, and take it from me, John: you stand head and shoulders above them. And *I'm comparing you with the so-called top names in keynote speaking.*",
           name: "Andrés Jorge Buysse",
           who: "Private Banker",
           org: "Deutsche Bank",
@@ -619,7 +590,7 @@ export const content = {
           logo: { src: "/testimonials/dgi-mark.png", w: 105, h: 96, wordmark: false },
         },
         {
-          text: "Sharing not only the highs of *elite competition* but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
+          text: "Sharing not only the highs of elite competition but also the hurdles and setbacks that shaped his path to success. His authenticity and openness made his message even more impactful.",
           name: "Julien Gryp",
           who: "Programme Manager",
           org: "The Merode",
@@ -645,30 +616,30 @@ export const content = {
       chat: {
         app: "ChatGPT",
         hello: "Let's see if I'm free for your event. Five quick questions, then I'll reply with availability and a fee within two working days.",
-        pick: "Choose an answer above",
-        details: "Add your details above, then send",
         disclaimer: "Not actually ChatGPT. Your answers come straight to me.",
         edit: "Change this answer",
         sent: "Sent. I'll reply within two working days, usually sooner.",
+        /** Under the long answer, with a keyboard. On a touch screen Enter starts a new line and the button sends. */
+        keys: "Enter sends, Shift+Enter starts a new line",
+        details: "Fill in the fields above, then send",
       },
+      /** The five questions, in order. label names the field in the one-form view; placeholder sits in the composer. */
       steps: {
-        type: {
-          q: "What kind of event is it?",
-          options: ["Conference or business fair", "Company event", "Executive offsite", "Leadership dinner", "Something else"],
+        name: { q: "What's your name?", label: "Your name", placeholder: "Your name" },
+        org: { q: "Which company or organisation are you with?", label: "Company or organisation", placeholder: "Company or organisation" },
+        email: { q: "What's the best email to reach you?", label: "Email", placeholder: "name@company.com" },
+        phone: {
+          q: "Your phone number (optional)",
+          label: "Phone (optional)",
+          placeholder: "+32 470 12 34 56",
+          skip: "Skip this one",
+          skipped: "No phone number",
         },
-        date: { q: "When is it?", label: "Event date", notFixed: "Not fixed yet" },
-        size: {
-          q: "Roughly how many people will be in the room?",
-          options: ["8 to 20", "20 to 50", "100 or more", "1,000 or more"],
-        },
-        language: { q: "Which language should I speak?", options: ["English", "Dutch", "French"] },
-        contact: {
-          q: "Who should I reply to?",
-          name: "Your name",
-          org: "Organisation",
-          email: "Work email",
-          message: "Anything else I should know",
-          optional: "optional",
+        event: {
+          q: "What should I know about your event?",
+          label: "About your event",
+          placeholder: "Date, place, who's in the room, what you'd like them to leave with",
+          count: "{n} of {max} characters",
         },
       },
       next: "Next question",
@@ -684,6 +655,13 @@ export const content = {
       error: "That didn't go through. Write to me directly at {email}.",
       required: "I need this one to reply.",
       invalidEmail: "That email address doesn't look complete.",
+      invalidPhone: "That number doesn't look right. Digits, spaces and + are fine, or skip it.",
+      tooLong: "That's a little long. Could you trim it?",
+      tooManyLinks: "Two links at most, please. Send the rest when I reply.",
+      /** When the browser's spam check could not finish. {retry} is a button. */
+      captcha: "The spam check in your browser didn't finish. {retry}, or write to me directly at {email}.",
+      retry: "Try again",
+      busy: "That's a few enquiries in a short time. Write to me directly at {email}.",
       direct: "Or write directly to {email}",
       email: "hello@johnheymans.com",
     },
@@ -691,8 +669,9 @@ export const content = {
     bio: {
       title: "About me",
       body: [
-        "I am a Belgian distance runner and a bio-engineer by training. I started running seriously late, graduated during Covid, and decided on the Olympics two years before the Games.",
-        "The keynote came out of people asking how the ranking climb actually happened. The honest answer is a mix of environment, a model most people told me to ignore, and knowing which setbacks were worth my attention. That answer turned out to be useful to teams as well.",
+        "At 18, I decided to switch from hockey to athletics. I contacted an athletics coach, and together we reached the Olympic Games eight years later.",
+        "It had never been my plan to become a professional athlete. I was the typical ambitious student, who graduated magna cum laude as a bio-engineer from KU Leuven. I was a party animal and fully enjoyed student life.",
+        "It was only during the Covid period that my life changed drastically and the Olympic dream was born.",
       ],
       figures: {
         placing: "in the Paris Olympic final",

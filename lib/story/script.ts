@@ -61,30 +61,26 @@ const prologueLine = (i: 0 | 1, from: number, to: number): CopyEntry => ({
 
 export const SCRIPT: readonly CopyEntry[] = [
   // John's prologue, one line at a time inside the letterbox. The first line is the long one.
-  prologueLine(0, 12, 74),
-  prologueLine(1, 80, 124),
+  prologueLine(0, 10, 60),
+  prologueLine(1, 64, 104),
 
-  // Starts while the letterbox is still opening, so there is no empty screen. The globe steps
-  // back behind the title; it has gone before Brussels is marked.
-  { id: "iten.title", beat: "iten", slot: "centre", kind: "title", text: (c) => c.iten.title, from: m("iten", -4), to: m("iten", 38), reveal: "rise", exit: "blur", flow: true },
-  // Set high, over the dust, so the pack coming at the camera stays in view.
-  { id: "iten.line", beat: "iten", slot: "centre", kind: "record", text: (c) => c.iten.line, from: m("iten", 130), to: m("iten", 196), reveal: "ink", exit: "blur", flow: true },
+  // Starts while the letterbox is still opening, so there is no empty screen. The flight plays behind
+  // it, smaller and dimmer, so title and globe are read in one look (beats/Iten).
+  { id: "iten.title", beat: "iten", slot: "centre", kind: "title", text: (c) => c.iten.title, from: m("iten", -4), to: m("iten", 46), reveal: "rise", exit: "blur", flow: true },
+  // Set high, over the dust, so the pack coming at the camera stays in view. There whole, at once.
+  { id: "iten.line", beat: "iten", slot: "centre", kind: "record", text: (c) => c.iten.line, from: m("iten", 70), to: m("iten", 122), reveal: "fade", exit: "blur", flow: true },
 
-  { id: "edge.a", beat: "edge", slot: "centre", kind: "title", text: (c) => c.edge.a, from: m("edge", 14), to: m("edge", 52), reveal: "rise", exit: "blur" },
-  { id: "edge.b", beat: "edge", slot: "centre", kind: "title", text: (c) => c.edge.b, from: m("edge", 55), to: m("edge", 96), reveal: "rise", exit: "rise" },
+  // One sentence; its underline becomes the dock's running light (beats/Edge).
+  { id: "edge.line", beat: "edge", slot: "centre", kind: "title", text: (c) => c.edge.line, from: m("edge", 6), to: m("edge", 60), reveal: "rise", exit: "rise" },
 
   // The algorithm speaks only inside its own window (beats/Algorithm).
 
   // Above the chart from the moment it appears, until the stadium takes over.
-  { id: "climb.record", beat: "climb", slot: "centre", kind: "record", text: (c) => c.climb.record, from: m("climb", 14), to: m("climb", 154), reveal: "ink", exit: "blur", flow: true },
+  { id: "climb.record", beat: "climb", slot: "centre", kind: "record", text: (c) => c.climb.record, from: m("climb", 14), to: m("climb", 116), reveal: "ink", exit: "blur", flow: true },
 
-  // Title cards in the lower third, so the story keeps talking over the heats.
-  { id: "final.a", beat: "final", slot: "centre", kind: "title", text: (c) => c.final.a, from: m("final", 16), to: m("final", 52), reveal: "rise", exit: "blur", low: true, wide: true },
-  { id: "final.b", beat: "final", slot: "centre", kind: "title", text: (c) => c.final.b, from: m("final", 56), to: m("final", 88), reveal: "rise", exit: "blur", low: true },
-  { id: "final.close", beat: "final", slot: "centre", kind: "close", text: (c) => c.final.close, from: m("final", 198), to: m("handover", 10), reveal: "words", exit: "blur", lesson: 5 },
-
-  // Stays until the stage has scrolled away.
-  { id: "handover.line", beat: "handover", slot: "centre", kind: "title", text: (c) => c.handover.line, from: m("handover", 13), to: ["handover", 9], reveal: "rise" },
+  // The chart goes straight to the arms; "Hey mom, made it" is written on them (beats/Final). The
+  // close stays while the photo goes dark and the practical part rises over it.
+  { id: "final.close", beat: "final", slot: "centre", kind: "close", text: (c) => c.final.close, from: m("final", 94), to: ["handover", 2.5], reveal: "words", exit: "blur", lesson: 5 },
 ];
 
 /** The script entries of one beat, in order, for the static layout. */

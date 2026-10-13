@@ -1,69 +1,114 @@
 "use client";
 
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
 import { track } from "@/lib/story/analytics";
+import { Pow } from "@/lib/story/pow";
+import { FIELDS, MAX, problem, type Field } from "@/lib/enquiry-rules";
 import { BackIcon, EditIcon, GptMark, SendIcon } from "./icons";
 
 const e = content.story.enquiry;
 const g = e.chat;
-const STEPS = ["type", "date", "size", "language", "contact"] as const;
-type StepId = (typeof STEPS)[number];
-type Choice = "type" | "size" | "language";
+const STEPS = FIELDS;
+const LAST = STEPS.length - 1;
 
-type Answers = {
-  type: string;
-  date: string;
-  dateOpen: boolean;
-  size: string;
-  language: string;
-  name: string;
-  org: string;
-  email: string;
-  message: string;
+type Answers = Record<Field, string> & {
   /** Honeypot. People never see it; bots fill it. */
   website: string;
 };
 
-const EMPTY: Answers = { type: "", date: "", dateOpen: false, size: "", language: "", name: "", org: "", email: "", message: "", website: "" };
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const dateText = (d: string) => (d ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date(d)) : "");
+const EMPTY: Answers = { name: "", org: "", email: "", phone: "", event: "", website: "" };
 
-type Status = "idle" | "sending" | "sent" | "error";
-type Errors = Partial<Record<keyof Answers, string>>;
+/** How each answer is typed: the right keyboard on a phone, and autofill where the browser has it. */
+const INPUT: Record<Exclude<Field, "event">, { type: string; autoComplete: string; inputMode?: "email" | "tel" }> = {
+  name: { type: "text", autoComplete: "name" },
+  org: { type: "text", autoComplete: "organization" },
+  email: { type: "email", autoComplete: "email", inputMode: "email" },
+  phone: { type: "tel", autoComplete: "tel", inputMode: "tel" },
+};
+
+type Status = "idle" | "sending" | "sent" | "error" | "captcha" | "busy";
+type Errors = Partial<Record<Field, string>>;
+
+const message = (p: ReturnType<typeof problem>) =>
+  p === "required" ? e.required : p === "email" ? e.invalidEmail : p === "phone" ? e.invalidPhone : p === "links" ? e.tooManyLinks : p === "long" ? e.tooLong : undefined;
 
 /**
  * The enquiry as a ChatGPT conversation, a nod to how the season was
- * planned: the assistant asks one question at a time, each answer becomes a
- * bubble (click it to change it), suggestions sit under the question and the
- * composer's send button moves on. Full keyboard use; the plain form is
- * always one click away, and the email address is always on screen.
+ * planned: the assistant asks one question at a time and the visitor answers
+ * in the composer, as in a chat. Each answer becomes a bubble (click it to
+ * change it). The plain form is one click away and the email address is
+ * always on screen.
+ *
+ * Spam: a hidden honeypot, and an ALTCHA proof of work (lib/story/pow.ts)
+ * that starts solving in the background when the enquiry first comes into
+ * view. The visitor never sees it unless it fails, and then gets a retry and
+ * the email address.
  */
 export function Enquiry({ context }: { context: "inline" | "modal" }) {
   const [a, setA] = useState<Answers>(EMPTY);
   const [step, setStep] = useState(0);
+  const [furthest, setFurthest] = useState(0);
   const [plain, setPlain] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
+  const [moved, setMoved] = useState(false);
+  const [keys, setKeys] = useState(false);
   const uid = useId();
   const form = useRef<HTMLFormElement>(null);
   const thread = useRef<HTMLDivElement>(null);
-  const [moved, setMoved] = useState(false);
+  const input = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  const pow = useRef<Pow | null>(null);
 
-  const set = <K extends keyof Answers>(k: K, v: Answers[K]) => {
+  const startPow = useCallback(() => {
+    pow.current ??= new Pow(() => {});
+    pow.current.warm();
+  }, []);
+
+  // The spam check starts solving when the enquiry first comes near the screen (at once in the modal).
+  useEffect(() => {
+    const f = form.current;
+    if (!f) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((en) => en.isIntersecting)) {
+          startPow();
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" },
+    );
+    io.observe(f);
+    return () => {
+      io.disconnect();
+      pow.current?.stop();
+    };
+  }, [startPow]);
+
+  // With a keyboard, Enter sends the long answer; on a touch screen Enter is a new line and the button sends.
+  useEffect(() => {
+    const mq = matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => setKeys(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  const set = (k: keyof Answers, v: string) => {
     setA((prev) => ({ ...prev, [k]: v }));
-    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
+    if (k !== "website" && errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
+    if (status === "captcha" || status === "error" || status === "busy") setStatus("idle");
   };
 
-  const answered = (s: StepId) => (s === "date" ? !!a.date || a.dateOpen : s === "contact" ? true : !!a[s]);
-  const question = (s: StepId) => e.steps[s].q;
-  const answer = (s: StepId) => (s === "date" ? (a.dateOpen ? e.steps.date.notFixed : dateText(a.date)) : s === "contact" ? a.name : a[s]);
+  const question = (s: Field) => e.steps[s].q;
+  const answer = (s: Field) => (s === "phone" && !a.phone.trim() ? e.steps.phone.skipped : a[s].trim());
 
   const go = (n: number) => {
     setMoved(true);
     setStep(n);
-    track("enquiry_step", { step: n + 1, context });
+    setFurthest((f) => Math.max(f, n));
+    track("enquiry_step", { step: n + 1, field: STEPS[n], context });
   };
 
   // The newest message is always in view, as in a chat.
@@ -72,155 +117,189 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
     if (!t) return;
     const quick = !moved || matchMedia("(prefers-reduced-motion: reduce)").matches;
     t.scrollTo({ top: t.scrollHeight, behavior: quick ? "auto" : "smooth" });
-  }, [step, plain, status, moved]);
+  }, [step, plain, status, moved, errors]);
 
-  // After moving between questions, focus lands on the new one.
+  // After moving between questions, the cursor waits in the composer.
   useEffect(() => {
     if (!moved || plain) return;
-    const f = form.current?.querySelector<HTMLElement>(".enq-current input:checked, .enq-current input, .enq-current button.choice");
-    f?.focus();
+    input.current?.focus({ preventScroll: true });
   }, [step, plain, moved]);
 
-  const validate = () => {
+  // The long answer grows with what is typed, up to a limit set in CSS, then scrolls.
+  const current = STEPS[step];
+  useLayoutEffect(() => {
+    const t = input.current;
+    if (!t || current !== "event" || plain) return;
+    const before = t.offsetHeight;
+    t.style.height = "auto";
+    t.style.height = `${t.scrollHeight}px`;
+    // A taller composer leaves the thread less room: keep the question in view.
+    if (t.offsetHeight !== before) thread.current?.scrollTo({ top: thread.current.scrollHeight });
+  }, [a.event, current, plain]);
+
+  /** Checks the given fields, shows the first problem, and returns the first field that has one. */
+  const check = (fields: readonly Field[]) => {
     const err: Errors = {};
-    if (!a.name.trim()) err.name = e.required;
-    if (!a.org.trim()) err.org = e.required;
-    if (!EMAIL.test(a.email.trim())) err.email = a.email.trim() ? e.invalidEmail : e.required;
-    if (plain) {
-      if (!a.type) err.type = e.required;
-      if (!a.size) err.size = e.required;
-      if (!a.language) err.language = e.required;
+    for (const k of fields) {
+      const m = message(problem(k, a[k]));
+      if (m) err[k] = m;
     }
     setErrors(err);
-    const first = Object.keys(err)[0];
-    if (first) form.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
-    return !first;
+    return fields.find((k) => err[k]);
   };
 
-  const submit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    if (!plain && step < STEPS.length - 1) {
-      if (answered(STEPS[step])) go(step + 1);
+  const focusField = (k: Field) => {
+    if (plain) form.current?.querySelector<HTMLElement>(`[name="${k}"]`)?.focus();
+    else if (STEPS.indexOf(k) === step) input.current?.focus();
+    else go(STEPS.indexOf(k));
+  };
+
+  const send = async () => {
+    const bad = check(STEPS);
+    if (bad) return focusField(bad);
+    setStatus("sending");
+    startPow();
+    // Waits for a solve underway, or starts one again after a failure.
+    const altcha = await pow.current!.payload();
+    if (!altcha) {
+      setStatus(pow.current!.state === "unavailable" ? "error" : "captcha");
       return;
     }
-    if (!validate()) return;
-    setStatus("sending");
     try {
       const res = await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: a.type,
-          date: a.dateOpen ? "" : a.date,
-          dateOpen: a.dateOpen,
-          size: a.size,
-          language: a.language,
           name: a.name.trim(),
           org: a.org.trim(),
           email: a.email.trim(),
-          message: a.message.trim(),
+          phone: a.phone.trim(),
+          event: a.event.trim(),
           website: a.website,
+          altcha,
         }),
       });
-      if (!res.ok) throw new Error(String(res.status));
-      setStatus("sent");
-      track("enquiry_sent", { context });
+      if (res.ok) {
+        setStatus("sent");
+        track("enquiry_sent", { context, phone: !!a.phone.trim() });
+        return;
+      }
+      const body = await res.json().catch(() => ({}));
+      if (res.status === 400 && body.error === "captcha") return setStatus("captcha");
+      if (res.status === 429) return setStatus("busy");
+      if (res.status === 422 && Array.isArray(body.fields)) {
+        setStatus("idle");
+        const first = check(body.fields.filter((f: string): f is Field => (STEPS as readonly string[]).includes(f)));
+        if (first) focusField(first);
+        return;
+      }
+      setStatus("error");
     } catch {
       setStatus("error");
     }
   };
 
-  const mail = <a href={`mailto:${e.email}`}>{e.email}</a>;
-
-  const pick = (s: Choice, v: string, clicked: boolean) => {
-    set(s, v);
-    // A click sends the answer, like a suggestion in a chat; arrow keys only select, Enter sends.
-    if (clicked && !plain) window.setTimeout(() => go(STEPS.indexOf(s) + 1), 260);
+  const submit = (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (status === "sending") return;
+    if (plain || step === LAST) return void send();
+    if (check([current])) return;
+    // After changing an earlier answer, carry on where the conversation had got to.
+    go(furthest > step ? furthest : step + 1);
   };
 
-  const choices = (s: Choice, asQuestion = false) => (
-    <fieldset className="enq-field" aria-invalid={!!errors[s] || undefined}>
-      <legend className={asQuestion ? "enq-q" : "enq-label"}>{question(s)}</legend>
-      <div className="enq-choices">
-        {e.steps[s].options.map((o) => (
-          <label className="choice" key={o}>
-            <input
-              type="radio"
-              name={s}
-              value={o}
-              checked={a[s] === o}
-              onChange={() => set(s, o)}
-              onClick={(ev) => {
-                if (ev.detail > 0) pick(s, o, true);
-              }}
-            />
-            <span>{o}</span>
-          </label>
-        ))}
-      </div>
-      {errors[s] && <p className="enq-error">{errors[s]}</p>}
-    </fieldset>
-  );
+  const skipPhone = () => {
+    set("phone", "");
+    go(furthest > step ? furthest : step + 1);
+  };
 
-  const date = (asQuestion: boolean) => (
-    <fieldset className="enq-field">
-      <legend className={asQuestion ? "enq-q" : "enq-label"}>{question("date")}</legend>
-      <div className="enq-date">
-        <label className="field">
-          <span className="field-label">{e.steps.date.label}</span>
-          <input type="date" name="date" value={a.date} disabled={a.dateOpen} onChange={(ev) => set("date", ev.target.value)} />
-        </label>
-        <label className="choice choice-check">
-          <input type="checkbox" name="dateOpen" checked={a.dateOpen} onChange={(ev) => set("dateOpen", ev.target.checked)} />
-          <span>{e.steps.date.notFixed}</span>
-        </label>
-      </div>
-    </fieldset>
-  );
+  const mail = <a href={`mailto:${e.email}`}>{e.email}</a>;
+  const sent = status === "sent";
+  const errId = (k: Field) => `${uid}-${k}-err`;
+  const qId = `${uid}-q`;
+  const countId = `${uid}-count`;
+  const near = a.event.length > MAX.event * 0.8;
 
-  const contact = (asQuestion: boolean) => (
-    <fieldset className="enq-field">
-      <legend className={asQuestion ? "enq-q" : "enq-label"}>{question("contact")}</legend>
-      <div className="enq-grid">
-        {(["name", "org", "email"] as const).map((k) => (
-          <label className="field" key={k}>
-            <span className="field-label">{e.steps.contact[k]}</span>
-            <input
+  const fieldError = (k: Field) =>
+    errors[k] ? (
+      <span className="enq-error" id={errId(k)} role="alert">
+        {errors[k]}
+      </span>
+    ) : null;
+
+  /** The one-form view: all five fields at once, labelled. */
+  const plainForm = (
+    <div className="enq-grid">
+      {STEPS.map((k) => (
+        <label className={k === "event" ? "field field-wide" : "field"} key={k}>
+          <span className="field-label">{e.steps[k].label}</span>
+          {k === "event" ? (
+            <textarea
               name={k}
-              type={k === "email" ? "email" : "text"}
-              autoComplete={k === "name" ? "name" : k === "org" ? "organization" : "email"}
-              value={a[k]}
+              rows={5}
+              maxLength={MAX.event}
+              value={a.event}
               aria-invalid={!!errors[k] || undefined}
-              aria-describedby={errors[k] ? `${uid}-${k}` : undefined}
+              aria-describedby={errors[k] ? errId(k) : undefined}
               onChange={(ev) => set(k, ev.target.value)}
             />
-            {errors[k] && (
-              <span className="enq-error" id={`${uid}-${k}`}>
-                {errors[k]}
-              </span>
-            )}
-          </label>
-        ))}
-        <label className="field field-wide">
-          <span className="field-label">
-            {e.steps.contact.message} <span className="field-optional">({e.steps.contact.optional})</span>
-          </span>
-          <textarea name="message" rows={3} value={a.message} onChange={(ev) => set("message", ev.target.value)} />
+          ) : (
+            <input
+              name={k}
+              {...INPUT[k]}
+              maxLength={MAX[k]}
+              value={a[k]}
+              aria-invalid={!!errors[k] || undefined}
+              aria-describedby={errors[k] ? errId(k) : undefined}
+              onChange={(ev) => set(k, ev.target.value)}
+            />
+          )}
+          {fieldError(k)}
         </label>
-        <label className="hp" aria-hidden="true">
-          Website
-          <input name="website" tabIndex={-1} autoComplete="off" value={a.website} onChange={(ev) => set("website", ev.target.value)} />
-        </label>
-      </div>
-    </fieldset>
+      ))}
+    </div>
   );
 
-  const current = STEPS[step];
-  const last = step === STEPS.length - 1;
-  const sent = status === "sent";
-  // What the composer shows: the answer about to be sent, as if typed.
-  const draft = plain ? "" : current === "contact" ? [a.name, a.org].filter(Boolean).join(", ") : answer(current);
-  const hint = plain || current === "contact" ? g.details : g.pick;
+  /** The composer is where each answer is typed, as in ChatGPT. */
+  const composerField =
+    current === "event" ? (
+      <textarea
+        ref={input}
+        className="gpt-input gpt-input-long"
+        name="event"
+        rows={1}
+        maxLength={MAX.event}
+        value={a.event}
+        placeholder={e.steps.event.placeholder}
+        enterKeyHint={keys ? "send" : "enter"}
+        aria-labelledby={qId}
+        aria-invalid={!!errors.event || undefined}
+        aria-describedby={[errors.event && errId("event"), near && countId].filter(Boolean).join(" ") || undefined}
+        onChange={(ev) => set("event", ev.target.value)}
+        onKeyDown={(ev) => {
+          if (ev.key === "Enter" && keys && !ev.shiftKey && !ev.nativeEvent.isComposing) {
+            ev.preventDefault();
+            form.current?.requestSubmit();
+          }
+        }}
+      />
+    ) : (
+      <input
+        ref={input}
+        key={current}
+        className="gpt-input"
+        name={current}
+        {...INPUT[current]}
+        maxLength={MAX[current]}
+        value={a[current]}
+        placeholder={e.steps[current].placeholder}
+        enterKeyHint="next"
+        aria-labelledby={qId}
+        aria-invalid={!!errors[current] || undefined}
+        aria-describedby={errors[current] ? errId(current) : undefined}
+        onChange={(ev) => set(current, ev.target.value)}
+      />
+    );
 
   return (
     <form
@@ -232,6 +311,7 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
       // Inline, the window arrives with its section's copy instead of waiting there, dark and alone, before it.
       data-reveal={context === "inline" ? "fade" : undefined}
       onSubmit={submit}
+      onFocusCapture={startPow}
       noValidate
     >
       {context === "inline" && (
@@ -253,13 +333,7 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
         {plain ? (
           <div className="gpt-ai">
             <Avatar />
-            <div className="enq-plain">
-              {choices("type")}
-              {date(false)}
-              {choices("size")}
-              {choices("language")}
-              {contact(false)}
-            </div>
+            <div className="enq-plain">{plainForm}</div>
           </div>
         ) : (
           <>
@@ -270,9 +344,17 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
                   <p>{question(s)}</p>
                 </div>
                 {sent ? (
-                  <p className="gpt-you">{answer(s)}</p>
+                  <p className="gpt-you" data-skipped={s === "phone" && !a.phone.trim()}>
+                    {answer(s)}
+                  </p>
                 ) : (
-                  <button type="button" className="gpt-you" onClick={() => go(i)} aria-label={`${e.revisit}: ${question(s)} ${answer(s)}`}>
+                  <button
+                    type="button"
+                    className="gpt-you"
+                    data-skipped={s === "phone" && !a.phone.trim()}
+                    onClick={() => go(i)}
+                    aria-label={`${e.revisit}: ${question(s)} ${answer(s)}`}
+                  >
                     <span>{answer(s)}</span>
                     <EditIcon />
                   </button>
@@ -280,18 +362,19 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
               </Fragment>
             ))}
             {!sent && (
-              <div
-                className="gpt-ai enq-current"
-                key={current}
-                onKeyDown={(ev) => {
-                  if (ev.key === "Enter" && !(ev.target instanceof HTMLTextAreaElement) && !last) {
-                    ev.preventDefault();
-                    if (answered(current)) go(step + 1);
-                  }
-                }}
-              >
+              <div className="gpt-ai enq-current" key={current}>
                 <Avatar />
-                <div className="gpt-body">{current === "date" ? date(true) : current === "contact" ? contact(true) : choices(current, true)}</div>
+                <div className="gpt-body">
+                  <p id={qId}>{question(current)}</p>
+                  {current === "phone" && (
+                    <div className="enq-choices">
+                      <button type="button" className="gpt-chip" onClick={skipPhone}>
+                        {e.steps.phone.skip}
+                      </button>
+                    </div>
+                  )}
+                  {fieldError(current)}
+                </div>
               </div>
             )}
           </>
@@ -302,49 +385,92 @@ export function Enquiry({ context }: { context: "inline" | "modal" }) {
             <Avatar />
             <div className="gpt-body">
               <p>{g.sent}</p>
-              <p className="enq-note">{fillNode(e.urgent, mail)}</p>
+              <p className="enq-note">{fillNode(e.urgent, { email: mail })}</p>
             </div>
           </div>
         )}
       </div>
 
-      {status === "error" && (
+      {(status === "error" || status === "busy" || status === "captcha") && (
         <p className="enq-error enq-send-error" role="alert">
-          {fillNode(e.error, mail)}
+          {status === "captcha"
+            ? fillNode(e.captcha, {
+                email: mail,
+                retry: (
+                  <button type="button" className="link" onClick={() => void send()}>
+                    {e.retry}
+                  </button>
+                ),
+              })
+            : fillNode(status === "busy" ? e.busy : e.error, { email: mail })}
         </p>
       )}
 
       {!sent && (
-        <div className="gpt-composer">
+        <div className="gpt-composer" data-long={!plain && current === "event"}>
           {!plain && step > 0 && (
             <button type="button" className="gpt-round" onClick={() => go(step - 1)} aria-label={e.back}>
               <BackIcon />
             </button>
           )}
-          <p className="gpt-draft" data-empty={!draft} aria-hidden="true">
-            {draft || hint}
-          </p>
-          {plain || last ? (
-            <button type="submit" className="gpt-send gpt-send-label" disabled={status === "sending"}>
+          {plain ? (
+            <p className="gpt-draft" data-empty="true" aria-hidden="true">
+              {g.details}
+            </p>
+          ) : (
+            composerField
+          )}
+          {/* Pressing send must not blur the long answer first: on phones its blur brings the fine print back and moves the button from under the finger. */}
+          {plain || step === LAST ? (
+            <button type="submit" className="gpt-send gpt-send-label" disabled={status === "sending"} onPointerDown={(e) => e.preventDefault()}>
               <span>{status === "sending" ? e.sending : e.send}</span>
               <SendIcon />
             </button>
           ) : (
-            <button type="submit" className="gpt-send" disabled={!answered(current)} aria-label={e.next}>
+            <button
+              type="submit"
+              className="gpt-send"
+              onPointerDown={(e) => e.preventDefault()}
+              // An empty phone number is a skip, so that one can always be sent.
+              data-ready={current === "phone" || !!a[current].trim()}
+              aria-label={e.next}
+            >
               <SendIcon />
             </button>
           )}
         </div>
       )}
+      {!sent && !plain && current === "event" && (
+        <p className="gpt-hint">
+          {keys && <span>{g.keys}</span>}
+          {near && (
+            <span id={countId}>
+              {fill(e.steps.event.count, { n: a.event.length, max: MAX.event })}
+            </span>
+          )}
+        </p>
+      )}
+
+      <label className="hp" aria-hidden="true">
+        Website
+        <input name="website" tabIndex={-1} autoComplete="off" value={a.website} onChange={(ev) => set("website", ev.target.value)} />
+      </label>
 
       <p className="gpt-fine">{g.disclaimer}</p>
       <p className="enq-direct">
         {!sent && (
-          <button type="button" className="link" onClick={() => setPlain((p) => !p)}>
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              setErrors({});
+              setPlain((p) => !p);
+            }}
+          >
             {plain ? e.conversational : e.plain}
           </button>
         )}
-        <span>{fillNode(e.direct, mail)}</span>
+        <span>{fillNode(e.direct, { email: mail })}</span>
       </p>
     </form>
   );
@@ -357,14 +483,10 @@ const Avatar = () => (
   </span>
 );
 
-/** Fills {email} in a sentence with a link. */
-function fillNode(template: string, node: React.ReactNode) {
-  const [before, after] = template.split("{email}");
-  return (
-    <>
-      {before}
-      {node}
-      {after}
-    </>
-  );
+/** Fills {key} placeholders in a sentence with nodes, such as the email link or a retry button. */
+function fillNode(template: string, nodes: Record<string, React.ReactNode>) {
+  return template.split(/(\{\w+\})/).map((part, i) => {
+    const key = /^\{(\w+)\}$/.exec(part)?.[1];
+    return <Fragment key={i}>{key && key in nodes ? nodes[key] : part}</Fragment>;
+  });
 }

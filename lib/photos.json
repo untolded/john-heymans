@@ -307,5 +307,19 @@
     "credit": "",
     "caption": "Iten, Kenya",
     "free": true
+  },
+  "lesson-average": {
+    "src": "/photos/lesson-average.jpg",
+    "width": 1600,
+    "height": 2000,
+    "credit": "Bram Vandenbroeck",
+    "caption": "Track session"
+  },
+  "lesson-pressure": {
+    "src": "/photos/lesson-pressure.jpg",
+    "width": 566,
+    "height": 1059,
+    "credit": "Bram Vandenbroeck",
+    "caption": "Olympic Games, Paris, 2024"
   }
 }

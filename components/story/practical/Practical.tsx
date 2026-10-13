@@ -4,7 +4,7 @@ import { fill, plain } from "@/lib/story/format";
 import { photo, type PhotoSlug } from "@/lib/photos";
 import { clipCaptions, filmAssets } from "@/lib/story/assets";
 import { lessonEntry } from "@/lib/story/script";
-import { photoAlt, photoCredit } from "../StoryPhoto";
+import { photoAlt } from "../StoryPhoto";
 import { Enquiry } from "../Enquiry";
 import { LessonLink } from "./Actions";
 import { Stages } from "./Stages";
@@ -18,36 +18,36 @@ import { KeynoteFilm } from "../media/KeynoteFilm";
 const c = content.story;
 const p = c.practical;
 
-/** Each lesson's frame: John in the moment it comes from. */
+/**
+ * Each lesson's frame: John in the moment it comes from. The section is still on purpose (no
+ * reveals, no push) and the frames carry no credit: the footer names every photographer.
+ * focus is the object-position that keeps John in the 4:5 card on desktop and phone.
+ */
 const FRAMES: { slug: PhotoSlug; focus: string }[] = [
-  { slug: "iten", focus: "50% 30%" },
+  { slug: "lesson-average", focus: "50% 30%" },
   { slug: "kit-portrait", focus: "50% 22%" },
   { slug: "shoes", focus: "52% 45%" },
-  { slug: "lavender-race", focus: "50% 30%" },
+  { slug: "lesson-pressure", focus: "50% 100%" },
   { slug: "final-arms", focus: "46% 24%" },
 ];
 
-/** A lesson's photo, its credit set in the corner of the frame. */
 function Frame({ n }: { n: number }) {
   const f = FRAMES[n - 1];
-  const credit = photoCredit(f.slug);
   return (
-    <>
-      <span className="lf-art lf-photo">
-        {/* Sized for the crop, not the card: the landscape photos are cut down to a portrait card, so
-            the image must be about twice as wide as the card to stay sharp. */}
-        <Image src={photo(f.slug).src} alt={photoAlt(f.slug)} fill sizes="(min-width: 992px) 40vw, 150vw" quality={85} style={{ objectPosition: f.focus }} />
-      </span>
-      {credit && <span className="lf-credit">{credit}</span>}
-    </>
+    <span className="lf-art lf-photo">
+      {/* Sized for the crop, not the card: a landscape photo cut down to a portrait card must be
+          about twice as wide as the card to stay sharp. */}
+      <Image src={photo(f.slug).src} alt={photoAlt(f.slug)} fill sizes="(min-width: 992px) 40vw, 150vw" quality={85} style={{ objectPosition: f.focus }} />
+    </span>
   );
 }
 
 /**
  * The practical part. The story is over and the spell breaks on purpose:
  * paper ground, calm motion, facts. Its motion (PracticalMotion) also plays
- * the bio and the footer. The keynote, the five lessons, where it
- * works, who booked it, what the room said, and the enquiry.
+ * the bio and the footer. The five lessons (straight after "Dare to dream
+ * big", still), the keynote, where it works, who booked it, what the room
+ * said, and the enquiry.
  */
 export function Practical() {
   const film = filmAssets();
@@ -55,8 +55,45 @@ export function Practical() {
     <div className="practical" data-ground="paper">
       <PracticalMotion />
 
+      {/* First after the story, and still: the lessons are read, not performed. */}
+      <section className="pr pr-lessons" id="lessons" aria-labelledby="pr-lessons">
+        <h2 id="pr-lessons" className="pr-h3" tabIndex={-1}>
+          {/* Two lines, as written: "That's the story." on its own, the promise under it. */}
+          {p.lessonsTitle.split("|").map((line) => (
+            <span className="pr-h-line" key={line}>
+              {line}
+            </span>
+          ))}
+        </h2>
+        <p className="pr-lead">
+          {p.lessonsLead}
+        </p>
+        <ol className="filmstrip">
+          {c.lessons.map((lesson, i) => {
+            const n = i + 1;
+            const inStory = !!lessonEntry(n);
+            return (
+              <li className="lf" key={lesson.title}>
+                {inStory ? (
+                  <LessonLink n={n} className="lf-link" label={fill(p.lessonBack, { n })}>
+                    <Frame n={n} />
+                  </LessonLink>
+                ) : (
+                  <div className="lf-link">
+                    <Frame n={n} />
+                  </div>
+                )}
+                <p className="lf-title">
+                  {plain(lesson.title)}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
       <section className="pr pr-keynote" id="keynote" aria-labelledby="pr-keynote">
-        {/* The heading and, beside it, the film: the first thing a booker sees once the story is over. */}
+        {/* The heading and, beside it, the film: what a booker sees right after the lessons. */}
         <div className="pr-keynote-head">
           <h2 id="pr-keynote" className="pr-h2" data-reveal="rise">
             {p.title}
@@ -76,37 +113,6 @@ export function Practical() {
             ))}
           </dl>
         </div>
-      </section>
-
-      <section className="pr pr-lessons" aria-labelledby="pr-lessons">
-        <h3 id="pr-lessons" className="pr-h3" data-reveal="rise">
-          {p.lessonsTitle}
-        </h3>
-        <p className="pr-lead" data-reveal="fade">
-          {p.lessonsLead}
-        </p>
-        <ol className="filmstrip">
-          {c.lessons.map((lesson, i) => {
-            const n = i + 1;
-            const inStory = !!lessonEntry(n);
-            return (
-              <li className="lf" key={lesson.title}>
-                {inStory ? (
-                  <LessonLink n={n} className="lf-link" label={fill(p.lessonBack, { n })}>
-                    <Frame n={n} />
-                  </LessonLink>
-                ) : (
-                  <div className="lf-link">
-                    <Frame n={n} />
-                  </div>
-                )}
-                <p className="lf-title" data-reveal="ink">
-                  {plain(lesson.title)}
-                </p>
-              </li>
-            );
-          })}
-        </ol>
       </section>
 
       <section className="pr pr-scale" aria-labelledby="pr-scale">

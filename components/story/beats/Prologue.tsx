@@ -30,8 +30,8 @@ export function Prologue() {
 
       tl.fromTo([top, bottom], { scaleY: 0 }, { scaleY: 1, duration: at(14), ease: "power2.inOut" }, 0);
       tl.fromTo(q(".vd-follow .pl-inner"), { scale: 1.04 }, { scale: 1.2, duration: 1, ease: "none" }, 0);
-      tl.to([top, bottom], { scaleY: 0, duration: at(22), ease: "power2.inOut" }, at(122));
-      tl.to(media, { opacity: 0, duration: at(20), ease: "power1.in" }, at(126));
+      tl.to([top, bottom], { scaleY: 0, duration: at(20), ease: "power2.inOut" }, at(100));
+      tl.to(media, { opacity: 0, duration: at(16), ease: "power1.in" }, at(104));
 
       return (b) => {
         // The film runs from the moment the stage starts to cover the hero.

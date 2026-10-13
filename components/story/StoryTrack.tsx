@@ -47,10 +47,12 @@ function SkipStory() {
       className="skip-story"
       data-on="false"
       onClick={() => {
-        const target = document.getElementById("keynote");
+        const target = document.getElementById("lessons");
         if (!target) return;
         track("story_skipped", { beat: story.get().current ?? "hero" });
         scroller.toElement(target, { offset: 1 });
+        // Focus follows, so a keyboard user carries on from the lessons, not from a hidden button.
+        document.getElementById("pr-lessons")?.focus({ preventScroll: true });
       }}
     >
       <span>{content.story.frame.skip}</span>

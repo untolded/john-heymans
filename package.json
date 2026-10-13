@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "altcha-lib": "^2.6.0",
     "d3-geo": "^3.1.1",
     "framer-motion": "^13.2.0",
     "gsap": "^3.15.0",

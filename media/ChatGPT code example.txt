@@ -1,0 +1,44 @@
+def scrape_world_ranking(rank_date: str, session: requests.Session | None = None) -> pd.DataFrame:
+    client = session or requests.Session()
+    response = client.get(
+        _ranking_url(rank_date),
+        headers={"User-Agent": USER_AGENT},
+        timeout=REQUEST_TIMEOUT,
+    )
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    table = soup.select_one("table")
+    if table is None:
+        raise ValueError(
+            f"No ranking table found for {rank_date}; the site may now render it with JavaScript."
+        )
+
+    headers = [_clean_text(th.get_text(" ", strip=True)) for th in table.select("thead th")]
+    rows: list[dict[str, object]] = []
+    for row in table.select("tbody tr"):
+        cells = row.find_all("td")
+        if not cells:
+            continue
+        values = [_clean_text(cell.get_text(" ", strip=True)) for cell in cells]
+        athlete_id = row.get("data-id", "")
+        record: dict[str, object] = {
+            "Ranking": values[0] if len(values) > 0 else "",
+            "Name": values[1] if len(values) > 1 else "",
+            "Birth": values[2] if len(values) > 2 else "",
+            "Country": values[3] if len(values) > 3 else "",
+            "Ranking Pts": values[4] if len(values) > 4 else "",
+            "Type of Event": values[5] if len(values) > 5 else "",
+            "Athlete ID": athlete_id,
+            "Date Ranking": rank_date,
+        }
+        if headers:
+            for index, header in enumerate(headers):
+                if header and index < len(values):
+                    record.setdefault(header, values[index])
+        rows.append(record)
+
+    result = pd.DataFrame(rows)
+    if not result.empty:
+        result["Ranking"] = pd.to_numeric(result["Ranking"], errors="coerce")
+        result["Ranking Pts"] = pd.to_numeric(result["Ranking Pts"], errors="coerce")
+    return result

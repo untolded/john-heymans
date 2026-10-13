@@ -3,7 +3,6 @@ import { content } from "@/lib/content";
 import { SCRIPT } from "@/lib/story/script";
 import { fill, ordinal, plain } from "@/lib/story/format";
 import { facts, show } from "@/lib/story/data";
-import { PROMPT } from "@/lib/story/chat";
 import { StoryPhoto } from "./StoryPhoto";
 import { Text } from "./Text";
 import { ItenMapSvg } from "./set-pieces/ItenMap";
@@ -77,10 +76,7 @@ export function StaticStory() {
           {c.chapters.edge}
         </h2>
         <p className="sb-title">
-          <Text text={text("edge.a")} />
-        </p>
-        <p className="sb-title">
-          <Text text={text("edge.b")} />
+          <Text text={text("edge.line")} />
         </p>
       </section>
 
@@ -92,10 +88,6 @@ export function StaticStory() {
         <div className="transcript">
           <p className="tr-app" aria-hidden="true">
             {c.algorithm.app}
-          </p>
-          <p className="tr-msg tr-you">
-            <span className="sr-only">{c.algorithm.you}: </span>
-            {PROMPT}
           </p>
           <div className="tr-msg tr-ai">
             <p className="sr-only">{c.algorithm.assistant}:</p>
@@ -121,23 +113,12 @@ export function StaticStory() {
         <h2 id="sb-final" className="sr-only">
           {c.chapters.final}
         </h2>
-        <StoryPhoto slug="heats-pack" sizes="(min-width: 992px) 60vw, 100vw" className="sb-photo sb-photo-wide" />
-        <p className="sb-title">
-          <Text text={text("final.a")} />
-        </p>
-        <p className="sb-title">{text("final.b")}</p>
         <StoryPhoto slug="final-arms" sizes="(min-width: 992px) 60vw, 100vw" className="sb-photo sb-photo-wide sb-arms">
           <HandwritingSvg className="sb-hand" />
         </StoryPhoto>
         <p className="sr-only">{c.final.arms}</p>
         <p className="sb-close" id="lesson-5">
           <Text text={text("final.close")} />
-        </p>
-      </section>
-
-      <section className="sb sb-handover" data-ground="paper" aria-label={plain(c.handover.line)}>
-        <p className="sb-title">
-          <Text text={text("handover.line")} />
         </p>
       </section>
     </>

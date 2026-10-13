@@ -25,22 +25,23 @@ const clamp = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 /** A moment in this beat, in viewport heights of scroll. */
 const at = (vh: number) => v("iten", vh);
-// The flight: Brussels is marked once the title has gone, the globe turns, the arc draws; Iten is
-// marked when it lands, and both marks stay until the dive.
-const PINS = at(42);
-const TURN = [at(42), at(100)] as const;
-const ARC = [at(46), at(94)] as const;
-const DIVE = [at(104), at(126)] as const;
+// The flight plays behind the title, on one screen: Brussels is marked, the globe turns, the arc
+// draws; Iten is marked when it lands, and both marks stay until the dive, as the title leaves.
+const PINS = at(2);
+const TURN = [at(2), at(36)] as const;
+const ARC = [at(4), at(30)] as const;
+const DIVE = [at(48), at(68)] as const;
 /** The pack fades in under the end of the dive. */
-const PACK_IN = at(114);
+const PACK_IN = at(58);
 const inOut = gsap.parseEase("power2.inOut");
 
 /**
- * Iten, in three movements. The globe appears behind the chapter's title.
- * Then the flight: Brussels marked with a dot, a great circle drawn across
- * the globe as it turns from Belgium to Kenya, Iten marked where it lands.
- * The globe dives into western Kenya and lands, still diving, in the pack
- * running at the camera on the red road, for the second line.
+ * Iten, in two movements. The title and the flight share one screen: the
+ * globe sits behind the title, smaller and dimmer, and while the title is
+ * read Brussels is marked with a dot, a great circle is drawn across the
+ * globe as it turns from Belgium to Kenya, and Iten is marked where it
+ * lands. Then the globe dives into western Kenya and lands, still diving, in
+ * the pack running at the camera on the red road, for the second line.
  */
 export function Iten() {
   const size = useStageSize();
@@ -74,27 +75,31 @@ export function Iten() {
       const fromLabel = q(".lbl-from")[0];
       const toLabel = q(".lbl-to")[0];
 
-      const R = size.touch ? Math.min(size.w * 0.46, size.h * 0.3) : Math.min(size.w, size.h) * 0.42;
-      const cx = size.w / 2;
-      const cy = size.touch ? size.h * 0.42 : size.h * 0.53;
+      // Beside the title, never under it, so the flight is seen whole and the title still leads: on a
+      // wide screen the globe stands to the right of the title (set left, CSS), on a phone just above it
+      // (set low). One look takes in both; the route never runs behind a letter.
+      const R = size.touch ? Math.min(size.w * 0.42, size.h * 0.25) : Math.min(size.w * 0.22, size.h * 0.4);
+      const cx = size.touch ? size.w / 2 : size.w * 0.7;
+      const cy = size.touch ? size.h * 0.34 : size.h / 2;
 
-      tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: at(8) }, 0);
+      tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: at(4) }, 0);
       // The dive does not stop at the globe: the pack on the red road takes over, still falling towards it.
-      tl.to(canvas, { opacity: 0, duration: at(10) }, at(122));
+      tl.to(canvas, { opacity: 0, duration: at(8) }, at(50));
       tl.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: at(10), ease: "power1.out" }, PACK_IN);
       tl.fromTo(q(".vd-pack .pl-inner"), { scale: 1.4 }, { scale: 1, duration: at(50), ease: "power2.out" }, PACK_IN);
       // Darkens the dust at the top while the line sits there.
-      tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(124));
+      tl.fromTo(q(".vd-scrim"), { opacity: 0 }, { opacity: 1, duration: at(8) }, at(66));
 
       return (b) => {
         const p = b.progress;
 
-        if (globe && p < at(134)) {
-          const turn = inOut(seg(p, ...TURN));
+        if (globe && p < at(78)) {
+          // The globe drifts a little while the arc draws, then turns to Iten as it dives.
+          const turn = 0.42 + 0.08 * inOut(seg(p, ...TURN)) + 0.5 * inOut(seg(p, ...DIVE));
           const arc = seg(p, ...ARC);
           const dive = 1 + 5 * inOut(seg(p, ...DIVE));
           const centre = along(turn) as LonLat;
-          globe.draw({ centre, r: R * dive, cx, cy, from: ORIGIN, to: ITEN, arc, dots: 1 - seg(p, at(112), DIVE[1]) });
+          globe.draw({ centre, r: R * dive, cx, cy, from: ORIGIN, to: ITEN, arc, dots: 1 - seg(p, at(58), DIVE[1]) });
 
           if (arc > 0 && arc < 1) {
             const h = globe.head(ORIGIN, ITEN, arc);
@@ -106,7 +111,10 @@ export function Iten() {
           const [fx, fy, fv] = globe.project(ORIGIN);
           if (fromLabel) {
             gsap.set(fromLabel, { x: fx, y: fy });
-            fromLabel.dataset.on = String(marked && fv);
+            // Brussels starts right behind the heading: its mark waits until it has turned clear of it.
+            const title = fromLabel.closest(".stage")?.querySelector('[data-entry="iten.title"] .e-text')?.getBoundingClientRect();
+            const onTitle = !!title && fy > title.top - 20 && fy < title.bottom + 14 && fx > title.left - 190 && fx < title.right + 10;
+            fromLabel.dataset.on = String(marked && fv && !onTitle);
           }
           const [tx, ty, tv] = globe.project(ITEN);
           gsap.set(toLabel, { x: tx, y: ty });

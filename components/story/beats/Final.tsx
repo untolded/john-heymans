@@ -10,7 +10,6 @@ import * as R from "@/lib/story/reveals";
 import { credits } from "@/lib/story/credits";
 import { useLoadGate } from "@/lib/story/media";
 import { HANDWRITING, pose, extent, type Word } from "@/lib/story/handwriting";
-import { PhotoLayer, reportCredits } from "../media/PhotoLayer";
 import { useBeat, cues } from "./useBeat";
 import { useStageSize, boxOf, entryEl } from "./stage";
 
@@ -41,7 +40,7 @@ function place(W: number, H: number, s: number, [fx, fy]: [number, number]): Fra
 }
 
 /**
- * The final. The heat where he made it, the race itself, then the arms: the
+ * The final. Straight from the chart to the arms: the
  * frame starts tight on the writing and widens to his face while the amber
  * line writes "HEY MOM" and "MADE IT" over the real ink. The photo dims, the
  * two phrases lift off his arms, straighten and take the centre, then settle
@@ -54,13 +53,11 @@ export function Final() {
 
   const scope = useBeat(
     "final",
-    ({ tl, q, root }) => {
+    ({ tl, q }) => {
       if (!size.w) return;
       const W = size.w;
       const H = size.h;
       const media = q(".final-media")[0];
-      const heats = q(".ph-heats")[0];
-      const pan = q(".ph-pan")[0];
       const frameEl = q(".arms-frame")[0];
       const ink = q(".arms-ink")[0];
       const inkLayer = q(".final-ink")[0];
@@ -76,7 +73,7 @@ export function Final() {
       const wide = size.touch ? tight : place(W, H, sCover, WIDE_FOCUS);
       const frameAt = (p: number): Frame => {
         if (size.touch) return tight;
-        const u = inOut(seg(p, at(90), at(150)));
+        const u = inOut(seg(p, at(4), at(54)));
         const s = tight.s * Math.pow(wide.s / tight.s, u);
         return place(W, H, s, [TIGHT_FOCUS[0] + (WIDE_FOCUS[0] - TIGHT_FOCUS[0]) * u, TIGHT_FOCUS[1] + (WIDE_FOCUS[1] - TIGHT_FOCUS[1]) * u]);
       };
@@ -112,16 +109,10 @@ export function Final() {
       const capSmall = capBig * 0.4;
       const settled = layout(capSmall, H * 0.16, H * 0.16 + capSmall * 1.85);
 
-      // The photographs.
-      tl.fromTo(heats, { opacity: 0 }, { opacity: 1, duration: at(9) }, 0);
-      tl.fromTo(q(".ph-heats .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(60) }, 0);
-      tl.fromTo(pan, { opacity: 0 }, { opacity: 1, duration: at(12) }, at(48));
-      tl.fromTo(q(".ph-pan .pl-inner"), { scale: 1.08 }, { scale: 1, duration: at(54) }, at(48));
-      tl.to(heats, { opacity: 0, duration: at(3) }, at(60));
-      tl.fromTo([frameEl, ink], { opacity: 0 }, { opacity: 1, duration: at(9) }, at(84));
-      tl.to(pan, { opacity: 0, duration: at(3) }, at(96));
-      tl.fromTo(dim, { opacity: 0 }, { opacity: 0.62, duration: at(18) }, at(150));
-      tl.to(frameEl, { opacity: 0.45, duration: at(18) }, at(150));
+      // The photograph comes up as the chart goes.
+      tl.fromTo([frameEl, ink], { opacity: 0 }, { opacity: 1, duration: at(9) }, 0);
+      tl.fromTo(dim, { opacity: 0 }, { opacity: 0.62, duration: at(16) }, at(56));
+      tl.to(frameEl, { opacity: 0.45, duration: at(16) }, at(56));
 
       // The words: registered on the arms, then centred and upright, then settled above the close.
       WORDS.forEach((w) => {
@@ -130,8 +121,8 @@ export function Final() {
         const state = pose(w);
         const draw = () => g.setAttribute("transform", `translate(${state.x} ${state.y}) rotate(${state.rotation}) scale(${state.scale})`);
         draw();
-        tl.to(state, { ...big.get(w.id)!, duration: at(22), ease: "power2.inOut", onUpdate: draw }, at(150));
-        tl.to(state, { ...settled.get(w.id)!, duration: at(22), ease: "power2.inOut", onUpdate: draw }, at(174));
+        tl.to(state, { ...big.get(w.id)!, duration: at(18), ease: "power2.inOut", onUpdate: draw }, at(56));
+        tl.to(state, { ...settled.get(w.id)!, duration: at(18), ease: "power2.inOut", onUpdate: draw }, at(76));
       });
 
       // The finish line, under the close.
@@ -140,7 +131,7 @@ export function Final() {
         const lineY = last.y + last.h + Math.max(8, H * 0.012);
         gsap.set(closeLine, { x: last.x, y: lineY, width: last.w, scaleX: 0 });
       }
-      tl.to(closeLine, { scaleX: 1, duration: at(18), ease: "power2.inOut" }, at(212));
+      tl.to(closeLine, { scaleX: 1, duration: at(14), ease: "power2.inOut" }, at(104));
 
       // Writing: each phrase at its own speed, finished at once if the visitor is already past it.
       let p = 0;
@@ -150,12 +141,12 @@ export function Final() {
         at: when,
         on: () => {
           const t = R.scribble(strokes(id), { duration: 1.6 });
-          if (p > when + at(40)) t.progress(1);
+          if (p > when + at(30)) t.progress(1);
           return t;
         },
         off: () => void gsap.set(strokes(id), { drawSVG: "0%" }),
       });
-      const onCue = cues([write("hey-mom", at(98)), write("made-it", at(124))]);
+      const onCue = cues([write("hey-mom", at(8)), write("made-it", at(24))]);
 
       return (b) => {
         p = b.progress;
@@ -168,8 +159,7 @@ export function Final() {
         media.style.opacity = String(out);
         dimOut.style.opacity = String(Math.min(1, Math.max(0, 1 - (b.hide - 0.25) / 0.2)));
         inkLayer.style.opacity = String(out);
-        reportCredits(root, b.active && out > 0.3);
-        credits.report("final-arms@final", ARMS.credit ? fill(content.story.credit, { name: ARMS.credit }) : "", b.active && out > 0.3 && p > at(84) && p < at(160) ? 1 : 0);
+        credits.report("final-arms@final", ARMS.credit ? fill(content.story.credit, { name: ARMS.credit }) : "", b.active && out > 0.3 && p > at(4) && p < at(66) ? 1 : 0);
       };
     },
     [size.w, size.h, size.touch],
@@ -178,8 +168,6 @@ export function Final() {
   return (
     <div className="beat" ref={scope} data-beat="final">
       <div className="L L-media final-media">
-        <PhotoLayer slug="heats-pack" beat="final" focus="70% 38%" focusMobile="76% 38%" className="ph-heats" />
-        <PhotoLayer slug="final-pan" beat="final" focus="50% 55%" focusMobile="46% 55%" className="ph-pan" />
         <div className="arms-frame" style={{ width: IW, height: IH }}>
           {gate.load && <Image src={ARMS.src} alt="" fill sizes="2400px" quality={85} fetchPriority={gate.priority} />}
         </div>
@@ -204,6 +192,9 @@ export function Final() {
             ))}
           </svg>
         </div>
+      </div>
+      {/* The finish line stays under "Dare to dream big" while the photo goes dark beneath it. */}
+      <div className="L L-line">
         <span className="closeline" />
       </div>
     </div>

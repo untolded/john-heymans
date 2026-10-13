@@ -13,7 +13,7 @@ export const creditFor = (slug: PhotoSlug) => photo(slug).credit || (SHOW_PENDIN
 export const STAND_IN_STILLS: PhotoSlug[] = ["stage-point", "heats-pack", "watch", "final-arms", "stage-wide", "audience"];
 
 /** Every photograph the page itself shows, in order of appearance: the final, the lessons, the bio. */
-export const PAGE_PHOTOS: PhotoSlug[] = ["heats-pack", "final-pan", "final-arms", "iten", "kit-portrait", "shoes", "lavender-race", "stage-lookup"];
+export const PAGE_PHOTOS: PhotoSlug[] = ["final-arms", "lesson-average", "kit-portrait", "shoes", "lesson-pressure", "stage-lookup"];
 
 /**
  * Named in the footer's photography line without a photo of theirs in the
@@ -22,8 +22,12 @@ export const PAGE_PHOTOS: PhotoSlug[] = ["heats-pack", "final-pan", "final-arms"
  */
 export const EXTRA_PHOTOGRAPHERS = ["Seppe Teunis"];
 
-/** Photographers whose work is on the page, in order of appearance, each once. */
+/**
+ * Photographers whose work is on the page, in order of appearance, each once. A photo whose
+ * photographer is not known yet adds "photographer to confirm" in development and nothing in
+ * production (creditFor), so the gap stays visible during review.
+ */
 export function pagePhotographers(filmIsStandIn: boolean): string[] {
   const slugs = filmIsStandIn ? [...STAND_IN_STILLS, ...PAGE_PHOTOS] : PAGE_PHOTOS;
-  return Array.from(new Set([...slugs.map((s) => photo(s).credit), ...EXTRA_PHOTOGRAPHERS].filter(Boolean)));
+  return Array.from(new Set([...slugs.map(creditFor), ...EXTRA_PHOTOGRAPHERS].filter(Boolean)));
 }

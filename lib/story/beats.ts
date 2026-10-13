@@ -26,18 +26,19 @@ export type BeatConfig = {
 
 export const BEATS: readonly BeatConfig[] = [
   // John's prologue: two lines over the red road, letterboxed.
-  { id: "prologue", length: { desktop: 150, touch: 125 }, ground: "night", chapter: false },
-  // The flight, then the globe dives straight into the pack on the red road.
-  { id: "iten", length: { desktop: 200, touch: 165 }, ground: "altitude", chapter: true },
-  // Two lines and the underline dropping into the dock.
-  { id: "edge", length: { desktop: 126, touch: 105 }, ground: "night", chapter: true },
-  // The app opens, the prompt, thinking, the code, the recommendation.
-  { id: "algorithm", length: { desktop: 172, touch: 146 }, ground: "signal", chapter: true },
+  { id: "prologue", length: { desktop: 120, touch: 100 }, ground: "night", chapter: false },
+  // The title and the flight on one screen, then the globe dives straight into the pack on the red road.
+  { id: "iten", length: { desktop: 126, touch: 105 }, ground: "altitude", chapter: true },
+  // One sentence, and the underline dropping into the dock.
+  { id: "edge", length: { desktop: 80, touch: 68 }, ground: "night", chapter: true },
+  // The app opens and writes the code.
+  { id: "algorithm", length: { desktop: 80, touch: 68 }, ground: "signal", chapter: true },
   // The world ranking, from outside the top 200 to 31st, drawn as the reader scrolls.
-  { id: "climb", length: { desktop: 160, touch: 135 }, ground: "signal", chapter: true },
-  { id: "final", length: { desktop: 240, touch: 200 }, ground: "stadium", chapter: true },
-  // The story ends on the dark. The practical part then rises over it as a sheet of paper.
-  { id: "handover", length: { desktop: 100, touch: 80 }, ground: "night", chapter: false },
+  { id: "climb", length: { desktop: 120, touch: 100 }, ground: "signal", chapter: true },
+  // "Hey mom, made it" written on the arms, then "Dare to dream big".
+  { id: "final", length: { desktop: 124, touch: 104 }, ground: "stadium", chapter: true },
+  // The photo goes dark under "Dare to dream big", and the practical part rises over it as a sheet of paper.
+  { id: "handover", length: { desktop: 40, touch: 34 }, ground: "night", chapter: false },
 ];
 
 export const BEAT_INDEX = Object.fromEntries(BEATS.map((b, i) => [b.id, i])) as Record<BeatId, number>;
@@ -86,7 +87,8 @@ export const GROUND_SWITCHES: readonly GroundSwitch[] = [
 
 /**
  * Handover progress at which the story is over: the paper sheet of the
- * practical part starts rising over the held stage. The stage lets go one
- * screen later, once the sheet covers it.
+ * practical part starts rising over the held stage, while "Dare to dream
+ * big" is still on it. The stage lets go one screen later, once the sheet
+ * covers it.
  */
-export const RELEASE_AT = 0.6;
+export const RELEASE_AT = 0.5;

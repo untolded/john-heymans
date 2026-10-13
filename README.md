@@ -76,7 +76,10 @@ Built from `docs/build-brief.md`, approved by John, and now the live page at `/`
 - Frame sequences (F7, K2): `node scripts/export-frames.mjs <id> <source> desktop|mobile "<credit>"`.
 - Sharing image (X3): `node scripts/make-og.mjs` against a running server.
 
-**Enquiries.** `app/api/enquiry/route.ts` validates, drops honeypot hits, allows five per hour per visitor and sends through Resend once `RESEND_API_KEY` and `ENQUIRY_FROM` are set (`ENQUIRY_TO` defaults to the address on the site). Until then it answers 503 and the form shows the email address.
+**Enquiries.** `app/api/enquiry/route.ts` validates, drops honeypot hits, allows five per hour per visitor and sends through Resend once `RESEND_API_KEY` and `ENQUIRY_FROM` are set (`ENQUIRY_TO` defaults to the address on the site). Until then it answers 503 and the form shows the email address. Five questions: name, company or organisation, email, phone (optional) and a free text about the event (2,000 characters); the email lists them and sets Reply-To to the visitor.
+
+**Enquiry: captcha and spam.** No account, no third party, no cookie. [ALTCHA](https://altcha.org) proof of work (`altcha-lib`, MIT): `app/api/altcha/route.ts` issues a signed PBKDF2 challenge (`lib/altcha.ts`), the browser solves it in the background from the moment the enquiry comes into view (`lib/story/pow.ts`, solver loaded on demand, about 4 kB gzipped), and `/api/enquiry` verifies it and refuses a solution used twice. On top: the honeypot, a minimum of 4 seconds between the first question on screen and a send (signed into the challenge; faster is accepted and dropped), link markup or a link in the name dropped silently, more than two links in the event text answered with a request to trim, and the rate limit. Rules shared by page and route live in `lib/enquiry-rules.ts`. If the check can't finish, the visitor gets "Try again" and the email address.
+- `ALTCHA_HMAC_KEY`: required in production, a long random secret (`openssl rand -hex 32`). Without it, development uses a dev-only key and logs a warning; production answers 503 and the page shows the email address.
 
 **Checking a moment.** In development, `window.__story.seek("final", 0.6)` jumps to any point of any beat.
 
@@ -393,6 +396,34 @@ night ground for the home screen and manifest (`node scripts/make-icons.mjs`). T
 "Dare to dream big" and "That's my story" is gone: the violet dim multiplies the photo, and fading
 both together lifted the dim off a still-visible photo. Now the photo fades under the full dim, then
 the dim goes, so the screen only gets darker (measured: luminance 75 down to 27, no step up).
+
+## Round 14: John's review of 13 October 2026, a shorter story
+
+Goal of the round: a visitor scrolls fast and still gets the concept, and is moved to book.
+
+- **Story, 38 percent shorter** (1148 to 714 vh on desktop, 956 to 599 on touch): prologue, Iten (the
+  graduation line now sits on the flight, the globe behind it at reduced opacity; the pack line appears
+  whole), edge (one screen: "However, training hard wasn't enough. I needed an edge."), algorithm (title,
+  then only the code of `media/ChatGPT code example.txt` being written; no prompt, no thinking), climb, final
+  (straight from the chart to "Hey mom, made it", then "Dare to dream big"; the "nobody believed" and
+  "impossible" screens and their photos are gone) and a 40 vh handover with no line. Nine stops
+  (`lib/story/stops.ts`); measured on the production build: trackpad flings, wheel spins, Space and touch
+  flicks up to 3000 px/s land on all nine. "Skip the story" lands on the lessons.
+- **Practical part**: the five lessons open it (no motion, no credits on the cards; new photos for
+  lessons 1 and 4), then the keynote with its film. Booked by runs as two rows in opposite directions.
+  Testimonials bold the whole "I'm comparing you with the so-called top names in keynote speaking."
+  About me has John's new text; the figures say 50+ keynotes (`lib/story/data/speaker.json`).
+- **Enquiry**: five questions (name, company, email, phone optional, the event in a long field), with
+  ALTCHA proof-of-work and the spam rules described in "Enquiry: captcha and spam" above.
+
+Open: a
+larger original of the lesson 4 photo (566 px wide, soft on phones); the new bio photo from John;
+`ALTCHA_HMAC_KEY` in production.
+
+Round 14b (13 October 2026): Iten sets the title left (low on phones) with the globe beside it at full
+strength, so the flight reads and never runs behind a letter. The edge sentence gets line-height 1.04.
+The lessons heading breaks after "That's the story." (a bar in the copy). `lesson-average.jpg` is
+re-cut at 4:5 from the original, centred on John. Bram Vandenbroeck is credited for both new lesson photos.
 
 ### The film's two numbers
 

@@ -43,7 +43,7 @@ export const facts = {
     reply: S<string[] | null>;
   },
   qualification: qualificationJson as { date: S<string | null>; how: S<string | null>; standard: S<string>; city: S<string> },
-  speaker: speakerJson as { yearsToFinal: S<number>; keynotes: S<number> },
+  speaker: speakerJson as { yearsToFinal: S<number>; keynotes: S<string> },
   /** Who filmed the video footage the story plays. */
   footage: footageJson as { kenya: S<{ credit: string } | null> },
   /** The legal pages' facts about who runs the site. */
