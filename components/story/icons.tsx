@@ -40,7 +40,7 @@ export const EditIcon = () => (
 /** The ChatGPT knot, for the chat mockups. A reference to how the season was planned. */
 export const GptMark = ({ size = 18 }: { size?: number }) => (
   // eslint-disable-next-line @next/next/no-img-element -- a 96px PNG; the optimiser adds nothing
-  <img className="gpt-mark" src="/story/brand/chatgpt-white.png" alt="" width={size} height={size} decoding="async" />
+  <img className="gpt-mark" src="/story/brand/chatgpt-white.png" alt="" width={size} height={size} loading="lazy" decoding="async" />
 );
 
 export const SoundOnIcon = () => (

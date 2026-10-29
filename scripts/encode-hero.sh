@@ -1,81 +1,91 @@
 #!/usr/bin/env bash
-# The hero loop: the film's own opening, cut straight from the 4K master. It
-# is the trailer the film playbook asks for. The live TV commentary is burned
-# into the picture ("This is good running from Heymans", "He's going to make
-# the final", "Hey mom, I made it"), so the loop is already talking, muted,
-# before anyone touches it. It ends on the "Hey mom, I made it" title card,
-# the frame before the film cuts to black.
+# The hero loop: the web keynote trailer (October 2026), an 8.72 s, 1920 x 1080 silent cut
+# with "Hey mom, I made it" burned in as titles. It ends on the title card. The picture is
+# letterboxed inside the frame (1920 x 812 at y=134), and the hero is full screen on every
+# shape (app/story.css, .hero-screen), so the loop is re-framed shot by shot twice: once
+# 16:9 for landscape screens and once 9:16 for upright ones. Both are cut from the picture
+# inside the letterbox, so no bar ever shows.
 #
-#   scripts/encode-hero.sh [master.mp4]
+#   scripts/encode-hero.sh [trailer.mp4]
 #
 # Every rendition is made from one lossless intermediate per frame shape, so
 # nothing is encoded twice.
 #
 # Outputs, in public/story/film, each as AV1 (.webm), HEVC (-hevc.mp4) and H.264 (.mp4):
-#   hero-loop            1920 x 1080  landscape screens
-#   hero-loop-1440       2560 x 1440  large and high-density landscape screens
-#   hero-loop-portrait   1080 x 1080  upright screens: a square, re-framed per shot so the
-#                                     captions stay whole, shown as a band in the hero
+#   hero-loop            1920 x 1080  landscape screens: a 1440 x 812 window per shot. A 1440-wide
+#                                     screen would show no more of the 2.36:1 picture than that
+#                                     under object-fit: cover, so the upscale costs no detail
+#                                     and the window, not the browser, decides what is cut.
+#   hero-loop-portrait    720 x 1280  upright screens: a 456 x 812 window per shot on John
 #   poster.jpg, poster-portrait.jpg   the first frame of each, painted before the video
 #
-# Quality is set by VMAF against the lossless intermediate (round 13): every
-# file scores 95 or more, the level where the caption edges stay clean.
+# CRFs: VMAF against the lossless intermediates, 94+ for every file (October 2026).
 set -euo pipefail
 export PATH="/opt/homebrew/bin:$PATH"
 
-src="${1:-media/Videos/20260826 John Heymans - Video keynote v2.mp4}"
+src="${1:-media/Videos/20261025 John Heymans - Video web keynote.mp4}"
 out="public/story/film"
 # HERO_TMP keeps the lossless intermediates somewhere for comparing encodes.
 tmp="${HERO_TMP:-$(mktemp -d)}"
 mkdir -p "$tmp"
 [[ -z "${HERO_TMP:-}" ]] && trap 'rm -rf "$tmp"' EXIT
 
-# The trailer runs from the first frame to the cut to black at 10.40 s (260 frames at 25 fps).
-END=10.40
+# The whole trailer: 218 frames at 25 fps.
+END=8.72
 SCALE="flags=lanczos+accurate_rnd+full_chroma_int"
 LOSSLESS=(-an -c:v libx264 -qp 0 -preset veryfast)
 
-# The square follows the captions shot by shot: a window from the 3840 x 2160
-# frame, its left edge chosen so each line of commentary stays whole. A window
-# wider than 2160 is scaled to the square's width and set on black; the bars
-# fall inside the fade the page puts on the band. The title card is black
-# around its letters, so it is scaled whole the same way.
-#   start  window x (or "card")  window width (2160 if not given)
-SQUARE=(
-  "0.00 700"        # stadium, "This is good running from Heymans"
-  "1.52 100"        # in the pack, "Right up alongside"
-  "2.64 1500"       # from above, "The very best in the world"
-  "3.72 640"        # Belgian fans, "Heymans has found a way through"
-  "4.80 660"        # the fan with his hands on his head, "... on the inside"
-  "5.84 870"        # the finish, "He's going to make the final"
-  "7.24 400 2560"   # John flexing, "Hey mom, I made": the widest line, so the widest window
-  "9.64 card"       # "Hey mom, I made it"
+# The picture inside the letterbox.
+PIC="crop=1920:812:0:134"
+# The title card is white letters on black, so it is scaled whole and set on black: on a
+# full-screen hero the black around it is the same night as the page.
+CARD=7.96
+
+# Landscape: a 1440 x 812 window per shot.   start  window x
+WIDE=(
+  "0.00 300"   # the start line in Paris, John flexing
+  "0.72 0"     # in the pack
+  "1.36 240"   # from above
+  "2.04 100"   # on stage at Supernova, beside the cut-out
+  "4.16 480"   # on stage, close
+  "5.56 290"   # John flexing, "Hey mom, I made": the titles (x 300 to 1360) and his face (x 1120 to 1720)
+)
+# Upright: a 456 x 812 window per shot on John. In the flex shot he moves left as the
+# camera pulls round, so the window follows him: x eases from the first value to the second
+# over the shot's second second. The titles cannot fit a phone's width here; the card says
+# them whole a second later.   start  window x  [x at the end]
+TALL=(
+  "0.00 912"
+  "0.72 627"
+  "1.36 417"
+  "2.04 600"
+  "4.16 760"
+  "5.56 1370 972"
 )
 
-# Landscape: the whole frame, scaled once per size.
-landscape() {
-  local name="$1" w="$2" h="$3"
-  ffmpeg -v error -y -i "$src" -t "$END" \
-    -vf "scale=$w:$h:$SCALE,setsar=1,format=yuv444p10le" "${LOSSLESS[@]}" "$tmp/$name.mkv"
-}
-
-square() {
-  local list="$tmp/square.txt" n=0 i
+# One lossless file of shots, each cut from the source with its own filter, then the card.
+#   cut <name> <out w> <out h> <window w> <list...>
+cut() {
+  local name="$1" ow="$2" oh="$3" ww="$4"; shift 4
+  local shots=("$@") list="$tmp/$name.txt" i
   : >"$list"
-  for ((i = 0; i < ${#SQUARE[@]}; i++)); do
-    local a x w
-    read -r a x w <<<"${SQUARE[$i]}"
-    local b="$END"
-    [[ $((i + 1)) -lt ${#SQUARE[@]} ]] && read -r b _ <<<"${SQUARE[$((i + 1))]}"
+  for ((i = 0; i < ${#shots[@]}; i++)); do
+    local a x x2
+    read -r a x x2 <<<"${shots[$i]}"
+    local b="$CARD"
+    [[ $((i + 1)) -lt ${#shots[@]} ]] && read -r b _ <<<"${shots[$((i + 1))]}"
     local frames; frames=$(awk -v a="$a" -v b="$b" 'BEGIN { printf "%d", (b - a) * 25 + 0.5 }')
-    local vf="crop=${w:-2160}:2160:$x:0,scale=1080:-2:$SCALE,pad=1080:1080:0:(oh-ih)/2:black"
-    [[ "$x" == card ]] && vf="scale=1080:-2:$SCALE,pad=1080:1080:0:(oh-ih)/2:black"
+    # A moving window eases with a smoothstep between 1 s and 2 s into the shot.
+    local cx="$x"
+    [[ -n "${x2:-}" ]] && cx="'$x+($x2-$x)*(3*pow(clip(t-1,0,1),2)-2*pow(clip(t-1,0,1),3))'"
     ffmpeg -v error -y -ss "$a" -i "$src" -frames:v "$frames" \
-      -vf "$vf,setsar=1,format=yuv444p10le" "${LOSSLESS[@]}" "$tmp/square-$n.mkv"
-    echo "file '$tmp/square-$n.mkv'" >>"$list"
-    n=$((n + 1))
+      -vf "$PIC,crop=$ww:812:$cx:0,scale=$ow:$oh:$SCALE,setsar=1,format=yuv444p10le" "${LOSSLESS[@]}" "$tmp/$name-$i.mkv"
+    echo "file '$tmp/$name-$i.mkv'" >>"$list"
   done
-  ffmpeg -v error -y -f concat -safe 0 -i "$list" -c copy "$tmp/square.mkv"
+  ffmpeg -v error -y -ss "$CARD" -i "$src" -t "$(awk -v a="$CARD" -v b="$END" 'BEGIN { print b - a }')" \
+    -vf "$PIC,scale=$ow:-2:$SCALE,pad=$ow:$oh:0:(oh-ih)/2:black,setsar=1,format=yuv444p10le" "${LOSSLESS[@]}" "$tmp/$name-card.mkv"
+  echo "file '$tmp/$name-card.mkv'" >>"$list"
+  ffmpeg -v error -y -f concat -safe 0 -i "$list" -c copy "$tmp/$name.mkv"
 }
 
 # AV1 in WebM first (10-bit: no banding in the dark stands), then HEVC for Safari and iPhones
@@ -100,19 +110,20 @@ jpeg() {
 }
 
 mkdir -p "$out"
-landscape land-1080 1920 1080
-landscape land-1440 2560 1440
-square
+cut wide 1920 1080 1440 "${WIDE[@]}"
+cut tall 720 1280 456 "${TALL[@]}"
 
-encode land-1080 hero-loop "${CRF_1080:-46}" "${CRF_1080_HEVC:-31}" "${CRF_1080_X264:-28}"
-encode land-1440 hero-loop-1440 "${CRF_1440:-48}" "${CRF_1440_HEVC:-32}" "${CRF_1440_X264:-29}"
-encode square hero-loop-portrait "${CRF_SQ:-46}" "${CRF_SQ_HEVC:-31}" "${CRF_SQ_X264:-28}"
+encode wide hero-loop "${CRF_WIDE:-46}" "${CRF_WIDE_HEVC:-31}" "${CRF_WIDE_X264:-28}"
+encode tall hero-loop-portrait "${CRF_TALL:-44}" "${CRF_TALL_HEVC:-30}" "${CRF_TALL_X264:-27}"
 
 # Posters: the first frame, matched to the loop so the video takes over without a jump. They are
 # the page's largest paint, so they stay small: next/image re-encodes them per screen anyway.
-ffmpeg -v error -y -i "$tmp/land-1440.mkv" -frames:v 1 -pix_fmt rgb24 "$tmp/poster.png"
-ffmpeg -v error -y -i "$tmp/square.mkv" -frames:v 1 -pix_fmt rgb24 "$tmp/poster-portrait.png"
+ffmpeg -v error -y -i "$tmp/wide.mkv" -frames:v 1 -pix_fmt rgb24 "$tmp/poster.png"
+ffmpeg -v error -y -i "$tmp/tall.mkv" -frames:v 1 -pix_fmt rgb24 "$tmp/poster-portrait.png"
 jpeg "$tmp/poster.png" "$out/poster.jpg" 82
 jpeg "$tmp/poster-portrait.png" "$out/poster-portrait.jpg" 82
+
+# Loops from an earlier, 4K-sourced cut must not outlive it.
+rm -f "$out"/hero-loop-1440.webm "$out"/hero-loop-1440-hevc.mp4 "$out"/hero-loop-1440.mp4
 
 ls -la "$out" | grep -E "hero-loop|poster"

@@ -4,10 +4,10 @@ import type { TypeKit } from "@/components/story/typeKit";
 // A monospace for the headlines: every character on the same fixed pitch, the
 // way a results list, a split time and a training log are set. It is also the
 // story's own subject, since a model wrote the schedule.
-const display = Martian_Mono({ subsets: ["latin"], axes: ["wdth"], variable: "--font-display", display: "swap" });
+const display = Martian_Mono({ subsets: ["latin"], axes: ["wdth"], variable: "--font-display", display: "swap", preload: false });
 const mono = Martian_Mono({ subsets: ["latin"], axes: ["wdth"], variable: "--font-mono", display: "swap", preload: false });
 // Everything a person has to read is proportional, and quiet.
-const text = Host_Grotesk({ subsets: ["latin"], variable: "--font-text", display: "swap" });
+const text = Host_Grotesk({ subsets: ["latin"], variable: "--font-text", display: "swap", preload: false });
 
 export const readoutKit: TypeKit = {
   id: "readout",

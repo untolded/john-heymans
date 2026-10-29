@@ -371,20 +371,19 @@ export const content = {
     footageCredit: "Footage: {name}",
 
     hero: {
-      /** Where the commentary in the loop comes from. Paris had heats and a final, no semi-final. */
-      context: "Paris 2024, Olympic 5000m heat",
+      /** Where the footage in the loop comes from. Paris had heats and a final, no semi-final. */
+      context: "Paris 2024, Olympic 5000m, and the keynote stage",
       line: "Two-year journey. One AI algorithm. The Olympic final.",
       /** The play button in the middle of the film: what it is, how long, and what a booker will see in it. */
       watch: "Watch the film, 53 seconds",
       soundTouch: "Tap for sound",
       soundPointer: "Play with sound",
-      soundLabel: "Watch the film with sound",
       scroll: "Scroll to begin",
       pause: "Pause the background film",
       play: "Play the background film",
       standInCredit: "Stand-in film cut from photos by {names}",
       /** Seconds in the hero loop where "I made it" fills the frame. Our line steps aside. */
-      quietCues: [{ start: 9.2, end: 10.4 }] as { start: number; end: number }[],
+      quietCues: [{ start: 7.96, end: 8.72 }] as { start: number; end: number }[],
     },
 
     film: {
@@ -497,6 +496,7 @@ export const content = {
       shoes: "Me tying my racing spikes on a bench before a race",
       "track-laugh": "Me sitting on a track, laughing",
       "stage-wide": "Me on stage at Supernova, Antwerp",
+      "about-john": "Me on stage at Supernova, Antwerp, talking with both hands open, the dark hall behind me",
       "stage-lookup": "Me on stage at Supernova, Antwerp, mid-sentence with one finger raised",
       audience: "Me speaking on the side stage at Supernova, Antwerp, to a packed room seen from the seats",
       "lesson-average": "Me laughing on the track after a session, water bottle in hand, with one of the people I train with",
@@ -604,7 +604,7 @@ export const content = {
       roomNote: "Filmed straight after the keynote at Supernova, Antwerp.",
       roomPause: "Pause the clips",
       roomPlay: "Play the clips",
-      roomOpen: "Watch with sound, {s} seconds",
+      roomOpen: "Watch {name} with sound, {s} seconds",
       roomDialog: "Straight after the keynote at Supernova",
     },
 
@@ -682,7 +682,7 @@ export const content = {
       years: "{n} years",
       follow: "Follow the training:",
       cta: "Check my availability",
-      photo: "stage-lookup",
+      photo: "about-john",
     },
 
     footer: {
@@ -691,7 +691,7 @@ export const content = {
       credits: "Photography: {names}",
       copyright: "© John Heymans {year}",
       top: "Back to the top",
-      legal: { label: "Legal", privacy: "Privacy", cookies: "Cookies", notice: "Legal notice", settings: "Cookie settings" },
+      legal: { label: "About this site", faq: "FAQ", privacy: "Privacy", cookies: "Cookies", notice: "Legal notice", settings: "Cookie settings" },
     },
 
     format: {

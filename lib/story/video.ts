@@ -8,9 +8,9 @@
  */
 
 /**
- * Screens at least as tall as they are wide get the square cut of the hero
- * loop, shown as a band. Chosen by shape, not width or orientation, so a
- * 1024 x 768 window keeps the wide film and a tall tablet gets the square.
+ * Screens at least as tall as they are wide get the 9:16 cut of the hero
+ * loop. Chosen by shape, not width or orientation, so a 1024 x 768 window
+ * keeps the wide film and a tall tablet gets the upright one.
  */
 export const UPRIGHT = "(max-aspect-ratio: 1/1)";
 

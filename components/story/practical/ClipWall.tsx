@@ -12,18 +12,18 @@ import { sourcesFor } from "@/lib/story/video";
 
 const p = content.story.practical;
 
-// The seven Supernova clips. Short ones first: a nine-second clip gets watched.
+// The seven Supernova clips (October 2026), each with the speaker's name burned in. Short ones first.
 const CLIPS = [
-  { id: "03", seconds: 9 },
-  { id: "04", seconds: 15 },
-  { id: "07", seconds: 18 },
-  { id: "01", seconds: 26 },
-  { id: "05", seconds: 44 },
-  { id: "02", seconds: 48 },
-  { id: "06", seconds: 49 },
+  { id: "02", name: "Erhan Kilicozlu", seconds: 7 },
+  { id: "06", name: "Nero Vanbiervliet", seconds: 7 },
+  { id: "05", name: "Lucy Izquierdo Greene", seconds: 10 },
+  { id: "01", name: "Barbara Soalheiro", seconds: 11 },
+  { id: "04", name: "Leen Anthuenis", seconds: 12 },
+  { id: "07", name: "Robert Seghers", seconds: 13 },
+  { id: "03", name: "Jürgen Ingels", seconds: 13 },
 ];
 
-function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: number; copy: boolean; playing: boolean; onOpen: () => void }) {
+function Clip({ id, name, seconds, copy, playing, onOpen }: { id: string; name: string; seconds: number; copy: boolean; playing: boolean; onOpen: () => void }) {
   const card = useRef<HTMLButtonElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   // The poster too waits until the wall is about two screens away: seven stills are half a megabyte.
@@ -57,7 +57,7 @@ function Clip({ id, seconds, copy, playing, onOpen }: { id: string; seconds: num
       type="button"
       className="clip"
       onClick={onOpen}
-      aria-label={fill(p.roomOpen, { s: seconds })}
+      aria-label={fill(p.roomOpen, { name, s: seconds })}
       aria-hidden={copy || undefined}
       tabIndex={copy ? -1 : undefined}
     >
@@ -88,23 +88,38 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
   const [paused, setPaused] = useState(false);
   const tween = useRef<gsap.core.Tween | null>(null);
   const pausedRef = useRef(paused);
+  const syncRef = useRef<(() => void) | null>(null);
 
   useGSAP(
     () => {
       if (!cinema) return;
       const wall = root.current!.querySelector<HTMLElement>(".wall")!;
-      const half = () => wall.scrollWidth / 2;
-      tween.current = gsap.fromTo(wall, { x: 0 }, { x: () => -half(), duration: 70, ease: "none", repeat: -1, modifiers: { x: (v) => `${parseFloat(v) % half()}px` } });
-      const stop = () => tween.current?.pause();
-      const go = () => {
-        if (!pausedRef.current) tween.current?.play();
-      };
+      // Measured once and on resize, never per frame: reading scrollWidth in the modifier forced a layout every tick.
+      let half = wall.scrollWidth / 2;
+      tween.current = gsap.fromTo(wall, { x: 0 }, { x: () => -half, duration: 70, ease: "none", repeat: -1, paused: true, modifiers: { x: (v) => `${parseFloat(v) % half}px` } });
+      // The drift runs only while the wall is on screen and nobody is pointing at it, touching or focused in it.
+      let onScreen = false;
+      let held = false;
+      const sync = () => (onScreen && !held && !pausedRef.current ? tween.current?.play() : tween.current?.pause());
+      syncRef.current = sync;
+      const stop = () => ((held = true), sync());
+      const go = () => ((held = false), sync());
+      const io = new IntersectionObserver(([entry]) => ((onScreen = entry.isIntersecting), sync()));
+      io.observe(wall);
+      const ro = new ResizeObserver(() => {
+        half = wall.scrollWidth / 2;
+        tween.current?.invalidate();
+      });
+      ro.observe(wall);
       wall.addEventListener("pointerenter", stop);
       wall.addEventListener("pointerdown", stop);
       wall.addEventListener("pointerleave", go);
       wall.addEventListener("focusin", stop);
       wall.addEventListener("focusout", go);
       return () => {
+        io.disconnect();
+        ro.disconnect();
+        syncRef.current = null;
         tween.current?.kill();
         tween.current = null;
       };
@@ -114,8 +129,7 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
 
   useEffect(() => {
     pausedRef.current = paused;
-    if (paused) tween.current?.pause();
-    else tween.current?.play();
+    syncRef.current?.();
   }, [paused]);
 
   const current = CLIPS.find((c) => c.id === open);
@@ -142,6 +156,7 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
             <Clip
               key={`${c.id}-${i}`}
               id={c.id}
+              name={c.name}
               seconds={c.seconds}
               copy={i >= CLIPS.length}
               playing={playing}

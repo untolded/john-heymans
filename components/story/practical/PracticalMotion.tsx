@@ -65,9 +65,13 @@ export function PracticalMotion() {
         gsap.fromTo(el, { scale: 1.1 }, { scale: 1, ease: "none", scrollTrigger: { trigger: el.parentElement ?? el, start: "top bottom", end: "bottom top", scrub: true } });
       });
     });
-    const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 400);
+    // One more measure once the page has settled, in idle time: a refresh reads every trigger's
+    // layout, and on a phone that is a long task if it lands while the page is still loading.
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 400));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const refresh = idle(() => ScrollTrigger.refresh(), { timeout: 2000 });
     return () => {
-      window.clearTimeout(refresh);
+      cancelIdle(refresh);
       revealed.forEach((revert) => revert());
       ctx.revert();
     };

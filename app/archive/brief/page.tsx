@@ -5,11 +5,11 @@ import { Archivo, Big_Shoulders, Bricolage_Grotesque, Geist } from "next/font/go
 import { photo, type PhotoSlug } from "@/lib/photos";
 import "./brief.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap", preload: false });
 // Each card previews its concept's own typeface.
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
-const shoulders = Big_Shoulders({ subsets: ["latin"], axes: ["opsz"], variable: "--font-shoulders", display: "swap" });
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-brico", display: "swap" });
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap", preload: false });
+const shoulders = Big_Shoulders({ subsets: ["latin"], axes: ["opsz"], variable: "--font-shoulders", display: "swap", fallback: ["Big Shoulders Fallback", "Arial", "sans-serif"], adjustFontFallback: false, preload: false });
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-brico", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   title: "Website concepts for John Heymans",

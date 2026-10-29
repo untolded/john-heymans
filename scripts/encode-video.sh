@@ -57,7 +57,7 @@ ladder() { # in base av1 hevc h264 [audio args for webm] [audio args for mp4]
 poster() { # in out.jpg [width]
   local png; png="$(mktemp).png"
   ffmpeg -v error -y -i "$1" -frames:v 1 -vf "scale=${3:--1}:-2:flags=lanczos" -pix_fmt rgb24 "$png"
-  node -e 'require("sharp")(process.argv[1]).jpeg({ quality: 86, mozjpeg: true }).toFile(process.argv[2])' "$png" "$2"
+  node -e 'require("sharp")(process.argv[1]).jpeg({ quality: 76, mozjpeg: true }).toFile(process.argv[2])' "$png" "$2"
   rm -f "$png"
 }
 
@@ -81,9 +81,10 @@ case "$kind" in
   clip)
     out="public/videos"; mkdir -p "$out"
     ffmpeg -v error -y -i "$src" -vf "scale=1080:1920:flags=lanczos,format=yuv444p10le" -c:a pcm_s16le "${lossless[@]}" "$tmp/full.mkv"
-    ladder "$tmp/full.mkv" "$out/$name" 34 27 24 "-c:a libopus -b:a 96k" "-c:a aac -b:a 128k"
+    # CRFs by VMAF on the October 2026 clips (talking heads, 1080 x 1920): 94 to 95 for every file.
+    ladder "$tmp/full.mkv" "$out/$name" 39 29 26 "-c:a libopus -b:a 96k" "-c:a aac -b:a 128k"
     ffmpeg -v error -y -i "$tmp/full.mkv" -t 10 -an -vf "scale=540:960:flags=lanczos" "${lossless[@]}" "$tmp/preview.mkv"
-    ladder "$tmp/preview.mkv" "$out/$name-preview" 36 29 26
+    ladder "$tmp/preview.mkv" "$out/$name-preview" 41 29 26
     # The wall's first paint and the dialog's first frame, so sharper than the preview itself.
     poster "$tmp/full.mkv" "$out/$name.jpg" 720
     ;;

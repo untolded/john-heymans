@@ -7,6 +7,7 @@ const archivo = Archivo({
   axes: ["wdth"],
   variable: "--font-archivo",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {

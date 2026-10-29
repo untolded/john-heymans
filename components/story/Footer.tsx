@@ -2,7 +2,7 @@ import { content } from "@/lib/content";
 import { fill } from "@/lib/story/format";
 import { pagePhotographers } from "@/lib/story/photos";
 import { Social } from "@/components/shared/Social";
-import { LEGAL } from "@/lib/seo";
+import { FAQ, LEGAL } from "@/lib/seo";
 import { CookieSettings } from "@/components/site/CookieBanner";
 import { EnquireButton } from "./practical/Actions";
 
@@ -37,6 +37,7 @@ export function Footer({ filmIsStandIn }: { filmIsStandIn: boolean }) {
         <p>{fill(f.credits, { names: photographers.join(", ") })}</p>
         <p>{fill(f.copyright, { year: new Date().getFullYear() })}</p>
         <nav className="footer-legal" aria-label={f.legal.label}>
+          <a href={FAQ}>{f.legal.faq}</a>
           {LEGAL.map(({ path, key }) => (
             <a key={path} href={path}>
               {f.legal[key]}

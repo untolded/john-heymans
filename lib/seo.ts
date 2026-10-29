@@ -17,6 +17,9 @@ const abs = (p: string) => new URL(p, SITE_URL).href;
 /** The date the site was last built, for dateModified. */
 export const UPDATED = new Date().toISOString().slice(0, 10);
 
+/** The FAQ for search engines and assistants (lib/faq.ts). Linked from the footer only. */
+export const FAQ = "/faq";
+
 /** The legal pages, for the sitemap, the footer and the cookie banner. */
 export const LEGAL = [
   { path: "/privacy", key: "privacy" },
@@ -66,7 +69,7 @@ export function homeJsonLd() {
     givenName: "John",
     familyName: "Heymans",
     url: SITE_URL,
-    image: [abs(photo("final-arms").src), abs(photo("stage-lookup").src)],
+    image: [abs(photo("final-arms").src), abs(photo("about-john").src)],
     description: summary(),
     jobTitle: "Keynote speaker",
     nationality: { "@type": "Country", name: "Belgium" },
@@ -166,6 +169,7 @@ export function llmsTxt(): string {
     "## Pages",
     "",
     `- [Home](${SITE_URL}/): the story, the keynote, testimonials and the booking enquiry.`,
+    `- [Questions about John Heymans](${SITE_URL}${FAQ}): short answers about his Olympic final, the AI behind it, the keynote and booking.`,
     `- [Privacy](${SITE_URL}/privacy), [Cookies](${SITE_URL}/cookies), [Legal notice](${SITE_URL}/legal).`,
     "",
     "## Contact",

@@ -7,8 +7,8 @@ import { MOTION, UPRIGHT, sourcesFor, type VideoSource } from "./video";
  * page prefers the real assets and falls back in the order the build brief
  * sets out, so dropping a file into public/story/film is all it takes.
  *
- *   F2  public/story/film/hero-loop(-1440).webm, -hevc.mp4, .mp4   the trailer loop, 1080p and 1440p
- *   F3  public/story/film/hero-loop-portrait.webm, -hevc.mp4, .mp4 the trailer loop, square, for upright screens
+ *   F2  public/story/film/hero-loop.webm, -hevc.mp4, .mp4          the trailer loop, 16:9
+ *   F3  public/story/film/hero-loop-portrait.webm, -hevc.mp4, .mp4 the trailer loop, 9:16, for upright screens
  *   F1  public/story/film/film.webm, -hevc.mp4, .mp4               the full film with sound
  *   F4  public/story/film/film.en.vtt                           its English captions
  *   F5  public/story/film/poster.jpg and poster-portrait.jpg   poster frames
@@ -16,12 +16,6 @@ import { MOTION, UPRIGHT, sourcesFor, type VideoSource } from "./video";
  */
 
 const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
-
-/**
- * Screens with at least 2,200 device pixels across get the 1440p loop; a
- * 1080p frame would be stretched by half again on them.
- */
-export const LARGE_SCREEN = "(min-width: 2200px), (min-width: 1100px) and (min-resolution: 1.5dppx)";
 
 /** "a, b" and MOTION become "MOTION and a, MOTION and b": a media query list, each part gated on motion. */
 const withMotion = (query?: string) => (query ? query.split(/,\s*/).map((q) => `${MOTION} and ${q}`).join(", ") : MOTION);
@@ -50,11 +44,11 @@ export function filmAssets(): FilmAssets {
   const clean = present("/story/film/hero-loop", false);
   const full = present("/story/film/film", true);
   const standIn: VideoSource = { src: "/media/hero.mp4", type: "video/mp4" };
-  // The browser takes the first source whose media and type both match: upright screens, then large
-  // ones, then the rest. Every source asks for motion, so reduced motion loads no video at all.
+  // The browser takes the first source whose media and type both match: upright screens, then the
+  // rest. Every source asks for motion, so reduced motion loads no video at all. The trailer is 1080p
+  // at the source, so there is no 1440p loop (scripts/encode-hero.sh).
   const sized = [
     ...present("/story/film/hero-loop-portrait", false, "hd", withMotion(UPRIGHT)),
-    ...present("/story/film/hero-loop-1440", false, "qhd", withMotion(LARGE_SCREEN)),
     ...clean.map((s) => ({ ...s, media: withMotion() })),
   ];
 

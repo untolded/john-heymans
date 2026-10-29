@@ -190,4 +190,133 @@ export const pages = {
       ],
     },
   },
+
+  /**
+   * The FAQ (/faq): short, self-contained answers for search engines and AI
+   * assistants, linked only from the footer. Each answer opens with the
+   * answer itself and names John, because assistants quote one passage
+   * without the page around it; that is why this page speaks about him in
+   * the third person, as /llms.txt does. Braces are confirmed facts filled
+   * in by lib/faq.ts; an answer whose fact is still pending is left out.
+   */
+  faq: {
+    title: "Questions about John Heymans",
+    description: "Short answers about John Heymans: his Olympic 5000m final, how he used AI to plan his races, and his keynote on strategy and risk.",
+    lead: "Short answers about John Heymans, his Olympic final and his keynote on strategy and risk.",
+    updated: "Last updated {date}",
+    date: "29 October 2026",
+    back: "Back to the story",
+    groups: [
+      {
+        heading: "John Heymans",
+        items: [
+          {
+            q: "Who is John Heymans?",
+            a: [
+              "John Heymans is a Belgian distance runner and keynote speaker. He finished {placing} in the men's 5000m final at the Olympic Games {games}, {years} years after he decided to try.",
+              "He got there with an AI model that chose which competitions to enter to maximise his world ranking, against the advice of his federation, his coach and his competitors. He now gives a 30-minute keynote on that decision.",
+            ],
+          },
+          {
+            q: "What was John Heymans' result at the Olympic Games {games}?",
+            a: [
+              "John Heymans finished {placing} in the men's 5000m final at the Olympic Games {games}, run at the {venue} on {finalDate}, in {time}. His personal best over 5000m is {pb}.",
+            ],
+          },
+          {
+            q: "How did John Heymans qualify for the Olympic Games?",
+            a: [
+              "John Heymans qualified through the world ranking. The Olympic 5000m had a quota of {quota} runners, and he climbed to {rank} in the world ranking to take one of those places. Two years earlier he was outside the world's top 200.",
+            ],
+          },
+          {
+            q: "How did John Heymans use AI to reach the Olympics?",
+            a: [
+              "John Heymans used an AI model, built with ChatGPT, to choose his competition calendar. World ranking points depend on the meeting and the placing as well as the time, so the model weighed {inputs} for each meeting.",
+              "It looked for the combination of meetings that earned the most ranking points with the fewest races, the least travel and the lowest injury risk. Its target was {target} ranking points, where it projected the top {quota} would close.",
+              "The answer was an indoor season at Gold and Silver level meetings: three or four races instead of twelve. A top-three placing at one of those meetings outscores a fast time in tenth place at a Diamond League. His federation, his coach and his competitors advised against it. He followed the model.",
+            ],
+          },
+          {
+            q: "How fast did John Heymans rise in the world rankings?",
+            a: [
+              "John Heymans went from outside the world's top 200 in {startYear} to {rank} in {endYear}, and from there to the Olympic final. It is the fastest rise up the world rankings in the history of athletics.",
+            ],
+          },
+          {
+            q: "What does “Hey mom, made it” mean?",
+            a: [
+              "John Heymans wrote “Hey mom” on one arm and “Made it” on the other on the day of the Olympic 5000m final in Paris. It is the moment his story and his keynote build towards: two years after deciding to try, he was in an Olympic final.",
+            ],
+          },
+          {
+            q: "What did John Heymans do before athletics?",
+            a: [
+              "John Heymans played hockey until he was 18, then switched to athletics and contacted the coach he would reach the Olympic Games with eight years later. He graduated magna cum laude as a bio-engineer from KU Leuven.",
+              "The Olympic goal came during the Covid period. The week after graduating he flew to Iten, Kenya, a village at 2,400 m where many of the world's best distance runners train.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "The keynote",
+        items: [
+          {
+            q: "What is John Heymans' keynote about?",
+            a: [
+              "John Heymans' keynote is about strategy and risk. It follows his {years} years from deciding to try to the Olympic final, and centres on the choice to trust an AI model over the advice of experienced people: how he made it, what it cost and why it worked.",
+              "Each part carries a lesson with a clear parallel in business and entrepreneurship, for teams coming off a difficult year and teams about to take a risk.",
+            ],
+          },
+          {
+            q: "What are the five lessons in John Heymans' keynote?",
+            a: ["The five lessons are: {lessons}."],
+          },
+          {
+            q: "How long is John Heymans' keynote, and in which languages?",
+            a: ["The keynote lasts 30 minutes, plus optional Q&A. John Heymans gives it in English, Dutch or French."],
+          },
+          {
+            q: "What kind of events does John Heymans speak at?",
+            a: ["John Heymans speaks at {rooms}. The same keynote works around one table and on a main stage."],
+          },
+          {
+            q: "Who has booked John Heymans as a speaker?",
+            a: ["Organisations that have booked John Heymans include {clients}. He has given {keynotes} keynotes."],
+          },
+          {
+            q: "What do organisers say about John Heymans' keynote?",
+            a: ["{quotes}"],
+          },
+        ],
+      },
+      {
+        heading: "Booking",
+        items: [
+          {
+            q: "How do I book John Heymans?",
+            a: [
+              "Send an enquiry with the form on johnheymans.com, or email {email}. Include the date, the place, who will be in the room and what you would like them to leave with. John Heymans replies with his availability and a fee within two working days.",
+            ],
+          },
+          {
+            q: "How much does John Heymans charge for a keynote?",
+            a: [
+              "John Heymans quotes his fee per event. Send the date, place and audience through the enquiry form on johnheymans.com or to {email}, and the reply with availability and a fee comes within two working days.",
+            ],
+          },
+          {
+            q: "Where is John Heymans based?",
+            a: ["John Heymans is based in Belgium. For an event abroad, put the location in the enquiry."],
+          },
+          {
+            q: "Can I see John Heymans speak before booking him?",
+            a: [
+              "The home page of johnheymans.com has a 53-second film of John Heymans' story and keynote, and short clips of audience members filmed straight after his keynote at Supernova, Antwerp.",
+            ],
+          },
+        ],
+      },
+    ],
+  },
 } as const;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { BEATS, BEAT_INDEX, RELEASE_AT } from "@/lib/story/beats";
+import { BEATS, BEAT_INDEX, RELEASE_AT, scrollLength } from "@/lib/story/beats";
 import { driver } from "@/lib/story/driver";
 import { scroller } from "@/lib/story/scroll";
 import { attachStops, stopsY } from "@/lib/story/stopper";
@@ -77,12 +77,12 @@ export function Driver({ touch, ready }: { touch: boolean; ready: boolean }) {
   }, [touch, ready]);
 
   // After the release point the stage holds one more screen while the paper sheet (pulled up by that much) covers it.
-  const tail = `calc(200svh - ${(touch ? last.length.touch : last.length.desktop) * (1 - RELEASE_AT)}vh)`;
+  const tail = `calc(200svh - ${scrollLength(last, touch) * (1 - RELEASE_AT)}vh)`;
 
   return (
     <div className="spacers" aria-hidden="true">
       {BEATS.map((b) => (
-        <div key={b.id} data-spacer={b.id} style={{ height: `${touch ? b.length.touch : b.length.desktop}vh` }} />
+        <div key={b.id} data-spacer={b.id} style={{ height: `${scrollLength(b, touch)}vh` }} />
       ))}
       <div className="spacer-tail" style={{ height: tail }} />
     </div>

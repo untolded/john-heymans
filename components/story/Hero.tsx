@@ -25,12 +25,13 @@ const WIDE = `not all and ${UPRIGHT}`;
 const GESTURES = ["pointerdown", "touchstart", "keydown", "wheel", "scroll"] as const;
 
 /**
- * The poster, art-directed by shape: the square frame on upright screens, the
+ * The poster, art-directed by shape: the 9:16 frame on upright screens, the
  * wide one everywhere else, each served at the width the screen needs and
  * preloaded from the head, so it is the first large paint on the page.
  */
 function Poster({ film }: { film: FilmAssets }) {
-  const common = { alt: "", fill: true, sizes: "100vw", quality: 75 } as const;
+  // Eager here too, not only on the <img>: Next tracks the props it was given and warns about a lazy LCP.
+  const common = { alt: "", fill: true, sizes: "100vw", quality: 75, loading: "eager" } as const;
   const { props: wide } = getImageProps({ ...common, src: film.poster });
   const upright = film.posterPortrait ? getImageProps({ ...common, src: film.posterPortrait }).props : null;
   const hint = { as: "image", fetchPriority: "high", imageSizes: "100vw" } as const;
@@ -46,8 +47,8 @@ function Poster({ film }: { film: FilmAssets }) {
 }
 
 /**
- * The page opens on the film's own first ten seconds: the live commentary from
- * the Paris heat, burned into the picture, cut on "Hey mom, I made it". It is
+ * The page opens on the web keynote trailer: Paris, the keynote stage, and
+ * "Hey mom, I made it" burned into the picture as titles. It is
  * muted and already moving when the page arrives (autoplay in the markup, so it
  * does not wait for React), and it starts again on the first touch or scroll
  * if the browser held it back. With reduced motion no source loads: the poster
@@ -231,10 +232,11 @@ export function Hero({ film }: { film: FilmAssets }) {
       {film.loopIsStandIn && <p className="hero-credit">{fill(t.standInCredit, { names: list.format(standInPhotographers) })}</p>}
 
       <div className="hero-controls">
-        <button type="button" className="hero-sound" onClick={() => openFilm("hero")} aria-label={t.soundLabel}>
+        {/* Named by its visible words (only one of the two shows), so voice control can say what it reads. */}
+        <button type="button" className="hero-sound" onClick={() => openFilm("hero")}>
           <SoundOffIcon />
-          <span className="hero-sound-touch" aria-hidden="true">{t.soundTouch}</span>
-          <span className="hero-sound-pointer" aria-hidden="true">{t.soundPointer}</span>
+          <span className="hero-sound-touch">{t.soundTouch}</span>
+          <span className="hero-sound-pointer">{t.soundPointer}</span>
         </button>
         {motion && (
           <button type="button" className="hero-pause" onClick={toggle} aria-label={playing ? t.pause : t.play}>

@@ -41,6 +41,17 @@ export const BEATS: readonly BeatConfig[] = [
   { id: "handover", length: { desktop: 40, touch: 34 }, ground: "night", chapter: false },
 ];
 
+/**
+ * How much of the scroll each beat is given, against the lengths above. One
+ * factor for the whole story, so every timeline and stop keeps its place in
+ * its beat (they are written as fractions of it) and only the distance changes.
+ * Below 1 the story reads faster (launch round, October 2026: 0.82 and 0.86).
+ */
+export const PACE = { desktop: 0.82, touch: 0.86 } as const;
+
+/** A beat's scroll length in vh, pace included. */
+export const scrollLength = (b: BeatConfig, touch: boolean) => (touch ? b.length.touch * PACE.touch : b.length.desktop * PACE.desktop);
+
 export const BEAT_INDEX = Object.fromEntries(BEATS.map((b, i) => [b.id, i])) as Record<BeatId, number>;
 
 /**

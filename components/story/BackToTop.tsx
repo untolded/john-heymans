@@ -27,9 +27,11 @@ export function BackToTop() {
     const enquiry = document.querySelector<HTMLElement>("#enquiry");
     if (!practical) return;
     const phone = matchMedia(PHONE);
-    let frame = 0;
+    // Measured at most every 150 ms, not every scroll frame: the reads below force a layout, and in
+    // the story they would land between the driver's writes on every frame of the scroll.
+    let timer = 0;
     const check = () => {
-      frame = 0;
+      timer = 0;
       const h = window.innerHeight;
       const inside = practical.getBoundingClientRect().top < h * 0.35;
       let blocked = false;
@@ -48,13 +50,13 @@ export function BackToTop() {
       setOn(inside && !blocked);
     };
     const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(check);
+      if (!timer) timer = window.setTimeout(() => requestAnimationFrame(check), 150);
     };
     check();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
-      cancelAnimationFrame(frame);
+      clearTimeout(timer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };

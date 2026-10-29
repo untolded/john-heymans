@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 
 /**
- * The live page and the legal pages are worth indexing. The archive is earlier
+ * The live page, the FAQ and the legal pages are worth indexing. The archive is earlier
  * rounds and the brand guide is unlisted, so both are kept out. The guide's
  * own path is not named here, because a robots file is public.
  *

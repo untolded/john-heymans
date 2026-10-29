@@ -3,7 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./c.css";
 
 // One family for everything. Optical size and width axes carry the hierarchy.
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-brico", display: "swap" });
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-brico", display: "swap", preload: false });
 
 export const metadata: Metadata = { title: "Concept C. Stadium | John Heymans" };
 

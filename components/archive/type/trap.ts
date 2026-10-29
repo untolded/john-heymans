@@ -3,7 +3,7 @@ import type { TypeKit } from "@/components/story/typeKit";
 
 // One family for everything a person reads. The optical size axis does the
 // work: at 96 the ink traps are cut wide open, at 14 they close up again.
-const display = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-display", display: "swap" });
+const display = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], variable: "--font-display", display: "swap", preload: false });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap", preload: false });
 
 export const trapKit: TypeKit = {

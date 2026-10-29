@@ -70,7 +70,7 @@ export function StoryRoot({ children, className, typeKit, film }: { children: Re
     if (mode !== "cinema-desktop") return;
     // The wheel passes the story's stops first (lib/story/stopper.ts).
     let stops: ((data: VirtualScrollData) => boolean) | null = null;
-    const lenis = new Lenis({ lerp: 0.1, autoRaf: false, anchors: false, virtualScroll: (data) => stops?.(data) ?? true });
+    const lenis = new Lenis({ lerp: 0.12, autoRaf: false, anchors: false, virtualScroll: (data) => stops?.(data) ?? true });
     stops = wheelStops(lenis);
     scroller.set(lenis);
     lenis.on("scroll", ScrollTrigger.update);
