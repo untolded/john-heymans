@@ -19,7 +19,7 @@
 set -euo pipefail
 export PATH="/opt/homebrew/bin:$PATH"
 
-src="${1:-media/Videos/20260826 John Heymans - Video keynote v2.mp4}"
+src="${1:-media/Videos/20260826 John Heymans - Video keynote v8.mp4}"
 out="public/story/film/hls"
 rm -rf "$out"
 mkdir -p "$out"/{360p,540p,720p,1080p}

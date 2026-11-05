@@ -9,10 +9,9 @@ import type { TypeKit } from "./typeKit";
 // adjustFontFallback alone does not.
 export const display = Big_Shoulders({ subsets: ["latin"], axes: ["opsz"], variable: "--font-display", display: "swap", fallback: ["Big Shoulders Fallback", "Arial", "sans-serif"], adjustFontFallback: false });
 // Reading: Instrument Sans, set slightly narrow so it sits under the display
-// face without arguing with it. Not preloaded: the first screen is set in the
-// display face, and next/font's metric-matched fallback holds the layout while
-// this one arrives, so it can wait its turn behind the display face and the poster.
-export const text = Instrument_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-text", display: "swap", preload: false });
+// face without arguing with it. Its stand-in is written by hand in app/story.css,
+// sized to the face at that narrow width; next/font's own is sized to full width.
+export const text = Instrument_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-text", display: "swap", fallback: ["Instrument Sans Fallback", "Arial", "sans-serif"], adjustFontFallback: false });
 // The algorithm's voice only. Not needed for the first paint.
 export const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap", preload: false });
 

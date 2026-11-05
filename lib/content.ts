@@ -375,7 +375,7 @@ export const content = {
       context: "Paris 2024, Olympic 5000m, and the keynote stage",
       line: "Two-year journey. One AI algorithm. The Olympic final.",
       /** The play button in the middle of the film: what it is, how long, and what a booker will see in it. */
-      watch: "Watch the film, 53 seconds",
+      watch: "Watch the film, 55 seconds",
       soundTouch: "Tap for sound",
       soundPointer: "Play with sound",
       scroll: "Scroll to begin",
@@ -405,8 +405,8 @@ export const content = {
       /** The other ways into the same film, further down the page. */
       entries: {
         /** Beside "The keynote" heading: a small preview and one button. */
-        keynote: { cta: "Watch the film, 53 seconds" },
-        enquiry: { title: "See me on stage before you write.", note: "53 seconds of the keynote, sound on." },
+        keynote: { cta: "Watch the film, 55 seconds" },
+        enquiry: { title: "See me on stage before you write.", note: "55 seconds of the keynote, sound on." },
         duration: "0:53",
         play: "Play the film",
       },

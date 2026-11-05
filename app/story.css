@@ -21,6 +21,23 @@
   line-gap-override: 0%;
 }
 
+/*
+ * Instrument Sans is set at "wdth" 96, but next/font sizes its stand-in to the
+ * face at full width (Arial at 102.7%), so body text first painted in it ran
+ * 5.6 percent wide and re-wrapped when the font arrived (a 0.07 layout shift
+ * on the legal pages). Measured on the FAQ's text at weight 400: the face at
+ * wdth 96 is 97.0% of Arial. The line box is next/font's own, rescaled to the
+ * new size, so line heights do not move either.
+ */
+@font-face {
+  font-family: "Instrument Sans Fallback";
+  src: local("Arial");
+  size-adjust: 97%;
+  ascent-override: 100%;
+  descent-override: 25.8%;
+  line-gap-override: 0%;
+}
+
 html:has(.story-root) {
   font-size: calc(clamp(992px, 100vw, 1920px) / 1728 * 16);
   scroll-behavior: auto;
@@ -1126,7 +1143,8 @@ button.gpt-you:hover svg, button.gpt-you:focus-visible svg { opacity: 0.75; }
 .footer-mail { font-family: var(--d-face); font-weight: var(--d-wght-mid); font-variation-settings: var(--d-axes); font-size: calc(3.64rem * var(--d-scale)); line-height: 1; letter-spacing: var(--d-track); }
 .footer-mail:hover { color: var(--amber-deep); }
 /* The page's last word is the action: the largest button on the page, then the email as the plain alternative. */
-.pill-xl { min-height: max(5.25rem, 64px); padding: 0 max(2.75rem, 28px); font-size: max(1.625rem, 20px); letter-spacing: -0.01em; }
+/* On small phones the label and padding scale with the screen, and on the narrowest (320px) the label may wrap inside the pill rather than be cut off. */
+.pill-xl { min-height: max(5.25rem, 64px); max-width: 100%; padding: 0 max(2.75rem, clamp(16px, 6vw, 28px)); font-size: max(1.625rem, clamp(17px, 5.2vw, 20px)); line-height: 1.15; letter-spacing: -0.01em; white-space: normal; text-align: center; }
 .footer-contact .pill-xl { margin: 0.5rem 0 0; }
 .footer-note { margin-bottom: 1.25rem; font-size: max(1rem, 15px); color: var(--ink-72); }
 /* Room for the round back-to-the-top button in the bottom right corner. */

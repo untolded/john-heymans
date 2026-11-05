@@ -312,7 +312,7 @@ export const pages = {
           {
             q: "Can I see John Heymans speak before booking him?",
             a: [
-              "The home page of johnheymans.com has a 53-second film of John Heymans' story and keynote, and short clips of audience members filmed straight after his keynote at Supernova, Antwerp.",
+              "The home page of johnheymans.com has a 55-second film of John Heymans' story and keynote, and short clips of audience members filmed straight after his keynote at Supernova, Antwerp.",
             ],
           },
         ],

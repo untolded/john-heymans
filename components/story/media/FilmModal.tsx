@@ -220,7 +220,13 @@ export default function FilmModal({ film, mode, from, onMini, onClose, onExpand 
   const loadTranscript = () => {
     if (cues) return;
     const tr = Array.from(video.current?.textTracks ?? []).find((x) => x.language === "en");
-    const list = tr?.cues ? Array.from(tr.cues).map((c) => (c as VTTCue).text.replace(/\n/g, " ")) : [];
+    // A speaker tag (<v Jürgen Ingels>) reads as "Jürgen Ingels: "; any other cue markup is dropped.
+    const plainCue = (text: string) =>
+      text
+        .replace(/<v(?:\.[^ >]*)? ([^>]+)>/g, "$1: ")
+        .replace(/<[^>]+>/g, "")
+        .replace(/\n/g, " ");
+    const list = tr?.cues ? Array.from(tr.cues).map((c) => plainCue((c as VTTCue).text)) : [];
     setCues(list);
   };
 

@@ -40,6 +40,10 @@ const nextConfig: NextConfig = {
       { source: "/signal", destination: "/archive/signal", permanent: true },
       { source: "/concept-:letter(a|b|c)", destination: "/archive/concept-:letter", permanent: true },
       { source: "/type/:path*", destination: "/archive/type/:path*", permanent: true },
+      // The old Wix site's keynote page (indexed as www.johnheymans.com/keynotes) lands on the keynote section.
+      // Its coaching pages (/coachinghub, /pricing-plans, /profile, /challenge-page) are not redirected: where the
+      // coaching goes after launch is John's decision.
+      { source: "/keynotes", destination: "/#keynote", permanent: true },
     ];
   },
 };

@@ -12,7 +12,7 @@ import { MOTION, UPRIGHT, sourcesFor, type VideoSource } from "./video";
  *   F1  public/story/film/film.webm, -hevc.mp4, .mp4               the full film with sound
  *   F4  public/story/film/film.en.vtt                           its English captions
  *   F5  public/story/film/poster.jpg and poster-portrait.jpg   poster frames
- *   F9  public/videos/testimonial-0N.en.vtt                     clip subtitles
+ *   F9  public/videos/testimonial-0N.en.vtt                     clip captions
  */
 
 const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));

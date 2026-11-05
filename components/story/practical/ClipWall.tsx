@@ -79,7 +79,7 @@ function Clip({ id, name, seconds, copy, playing, onOpen }: { id: string; name: 
  * The room, in its own words: the seven audience clips as a drifting wall,
  * muted and playing. The drift stops when pointed at, touched or focused,
  * and a visible control pauses the whole wall. A click opens the clip with
- * sound, and with English subtitles once they exist.
+ * sound and English captions.
  */
 export function ClipWall({ captions }: { captions: Record<string, string | null> }) {
   const { cinema } = useStoryPage();
@@ -176,7 +176,7 @@ export function ClipWall({ captions }: { captions: Record<string, string | null>
               {sourcesFor(`/videos/testimonial-${current.id}`, true).map((s) => (
                 <source key={s.src} src={s.src} type={s.type} />
               ))}
-              {captions[current.id] && <track kind="subtitles" src={captions[current.id]!} srcLang="en" label="English" default />}
+              {captions[current.id] && <track kind="captions" src={captions[current.id]!} srcLang="en" label="English" default />}
             </video>
           </div>
         </Dialog>
