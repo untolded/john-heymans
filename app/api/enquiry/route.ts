@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { content } from "@/lib/content";
 import { checkPayload } from "@/lib/altcha";
 import { FIELDS, MAX, MIN_FILL_SECONDS, countLinks, problem, type Field } from "@/lib/enquiry-rules";
 
@@ -24,7 +23,6 @@ import { FIELDS, MAX, MIN_FILL_SECONDS, countLinks, problem, type Field } from "
  * Environment:
  *   RESEND_API_KEY   the Resend key (needs DNS records on johnheymans.com)
  *   ENQUIRY_FROM     the sender, for example "Website <enquiries@johnheymans.com>"
- *   ENQUIRY_TO       the inbox, defaults to the address shown on the site
  *   ALTCHA_HMAC_KEY  signs the proof-of-work challenges (`openssl rand -hex 32`); dev falls
  *                    back to a dev-only key, production without it answers 503
  *
@@ -32,7 +30,11 @@ import { FIELDS, MAX, MIN_FILL_SECONDS, countLinks, problem, type Field } from "
  * the email address instead.
  */
 
-const e = content.story.enquiry;
+/**
+ * The one inbox every enquiry goes to. Fixed in code on purpose: no environment variable can add or
+ * change a recipient, and nothing is copied to the visitor or anyone else.
+ */
+const INBOX = "john@johnheymans.com";
 const WINDOW_MS = 60 * 60 * 1000;
 const LIMIT = 5;
 const hits = new Map<string, number[]>();
@@ -93,7 +95,6 @@ export async function POST(request: Request) {
 
   const key = process.env.RESEND_API_KEY;
   const from = process.env.ENQUIRY_FROM;
-  const to = process.env.ENQUIRY_TO || e.email;
   if (!key || !from) return Response.json({ error: "not_configured" }, { status: 503 });
 
   const lines = [
@@ -113,7 +114,7 @@ export async function POST(request: Request) {
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from,
-      to: [to],
+      to: [INBOX],
       reply_to: f.email,
       subject: `Enquiry from ${f.name}, ${f.org}`,
       text: lines.join("\n"),
