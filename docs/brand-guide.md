@@ -348,7 +348,7 @@ motion/    motion-tokens.json
 | This guide | `/brand/fe331dc0ae83be5b`, unlisted |
 | Instagram | [@heymans.john](https://www.instagram.com/heymans.john/) |
 | LinkedIn | [John Heymans](https://www.linkedin.com/in/john-heymans-308aa7154/) |
-| Enquiries | hello@johnheymans.com |
+| Enquiries | john@johnheymans.com |
 
 Earlier design rounds, including the two typefaces that were not chosen, are
 kept at `/archive`.

@@ -183,10 +183,10 @@ export const content = {
     sending: "Sending",
     success: {
       title: "Received.",
-      body: "I will reply within two working days. If it is urgent, write to hello@johnheymans.com.",
+      body: "I will reply within two working days. If it is urgent, write to john@johnheymans.com.",
       close: "Close",
     },
-    email: "hello@johnheymans.com",
+    email: "john@johnheymans.com",
   },
 
   film: {
@@ -663,7 +663,7 @@ export const content = {
       retry: "Try again",
       busy: "That's a few enquiries in a short time. Write to me directly at {email}.",
       direct: "Or write directly to {email}",
-      email: "hello@johnheymans.com",
+      email: "john@johnheymans.com",
     },
 
     bio: {

@@ -27,7 +27,7 @@
   "mailbox": {
     "value": null,
     "status": "pending",
-    "source": "The provider behind hello@johnheymans.com (for example Google Workspace or Microsoft 365), where enquiries arrive. To confirm with John."
+    "source": "The provider behind john@johnheymans.com (for example Google Workspace or Microsoft 365), where enquiries arrive. To confirm with John."
   },
   "courts": {
     "value": null,

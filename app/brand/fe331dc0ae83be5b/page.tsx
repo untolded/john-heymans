@@ -549,7 +549,7 @@ ffmpeg -i in.mov -vf scale=-2:1280 \\
       <footer className="b-foot">
         <Image className="b-mark b-mark-foot" src="/brand/wordmark/wordmark-paper.svg" alt="" width={531} height={80} />
         <p>
-          Brand guide, version 1.0, 22 September 2026. Unlisted. <a href="mailto:hello@johnheymans.com">hello@johnheymans.com</a>
+          Brand guide, version 1.0, 22 September 2026. Unlisted. <a href="mailto:john@johnheymans.com">john@johnheymans.com</a>
         </p>
       </footer>
     </main>
